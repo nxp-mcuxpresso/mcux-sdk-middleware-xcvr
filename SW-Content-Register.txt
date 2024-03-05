@@ -1,0 +1,7 @@
+Release Name: Connectivity Middleware Transceiver Driver
+Release Version: 2.0.17
+Outgoing License: BSD-3-Clause
+License File: LICENSE.txt                   
+Format: source code, header files                 
+Description: Connectivity Middleware Transceiver Driver to enable narrowband radio (2.4GHz) on KW4x SoCs.               
+Origin: NXP (BSD-3-Clause) 
