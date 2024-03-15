@@ -1183,7 +1183,6 @@ void XCVR_ClearManAgc(void);
  * @note
  *    The power increase requires DCDC voltage to be increased as well. This is NOT done by the XCVR driver.
  */
- #pragma deprecated
 void XCVR_bumpPaPowerUp(void);
 
 /*!
@@ -1194,7 +1193,6 @@ void XCVR_bumpPaPowerUp(void);
  * @note
  *    The power level change requires DCDC voltage to be changed as well. This is NOT done by the XCVR driver.
  */
- #pragma deprecated
  void XCVR_releasePaPowerBump(void);
 
 /*!
