@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 NXP
+ * Copyright 2020-2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -65,9 +65,6 @@
     8U /*!< Number of IQ samples per usec in 2Mbps data rate, used for checking averaging window for integer multiple \
           of samples length */
 #define F_2442_CUBED 14562534888L; /* 2442^3 Used in HPM_CAL interpolation curve */
-#if defined(KW45_A0_SUPPORT) && (KW45_A0_SUPPORT > 0)
-#define RSM_WA_KFOURWONE_1164 1U /* Enable workaround for RSM start failure. Fixed starting from A1 version */
-#endif
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -161,9 +158,6 @@ const uint16_t channel_num_from_hadm_chan[RSM_HADM_MAX_CHAN_INDEX +
 #if defined(HOP_TBL_CFG_OVRD) && (HOP_TBL_CFG_OVRD == 2U)
 #define OFFSET_NEG_1MHZ 0x100U /* HOP_TBL_CFG_OVRD format #2 numerator offset for -1MHz */
 #endif                         /* defined(HOP_TBL_CFG_OVRD) && (HOP_TBL_CFG_OVRD == 2U) */
-#if defined(RSM_WA_KFOURWONE_1164)
-static uint8_t store_rsm_trig_sel;
-#endif /* defined (RSM_WA_KFOURWONE_1164) */
 
 static struct
 {
@@ -899,9 +893,6 @@ xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr)
                  XCVR_MISC_RSM_CTRL0_RSM_TRIG_DLY((uint32_t)rsm_settings_ptr->trig_delay) |
                  XCVR_MISC_RSM_CTRL0_RSM_STEPS((uint32_t)rsm_settings_ptr->num_steps));
         XCVR_MISC->RSM_CTRL0 = temp;
-#if defined(RSM_WA_KFOURWONE_1164)
-        store_rsm_trig_sel = (uint8_t)(rsm_settings_ptr->trig_sel);
-#endif /* defined (RSM_WA_KFOURWONE_1164) */
 
         /* Write T_FC/T_IP values */
         temp = xcvr_lcl_rsm_generic_config.RSM_CTRL1; /* Structure based configuration for the RSM_CTRL1
@@ -1059,10 +1050,6 @@ xcvrLclStatus_t XCVR_LCL_RsmGo(XCVR_RSM_RXTX_MODE_T role, const xcvr_lcl_rsm_con
 
     (void)rsm_settings_ptr; /* Retain the rsm_settings_ptr parameter for future possible use; (void) touches it for
                                unused parameter errors */
-#if defined(RSM_WA_KFOURWONE_1164)
-    XCVR_MISC->RSM_CTRL0 &= ~(XCVR_MISC_RSM_CTRL0_RSM_TRIG_SEL_MASK);
-    XCVR_MISC->RSM_CTRL0 |= XCVR_MISC_RSM_CTRL0_RSM_TRIG_SEL(store_rsm_trig_sel);
-#endif /* defined (RSM_WA_KFOURWONE_1164) */
 
     /* Clear any interrupt flags that may be set so that they don't cause problems on RSM startup */
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450)
@@ -1100,16 +1087,6 @@ void XCVR_LCL_RsmStopAbort(bool abort_rsm)
     /* Remainder of the sequence is common to both ABORT and STOP */
     /* Make sure that state returns to IDLE */
     WAIT_RSM_IDLE();
-
-#if defined(RSM_WA_KFOURWONE_1164)
-    XCVR_MISC->RSM_CTRL0 &= ~(XCVR_MISC_RSM_CTRL0_RSM_TRIG_SEL_MASK);
-    XCVR_MISC->RSM_CTRL0 |= XCVR_MISC_RSM_CTRL0_RSM_TRIG_SEL(XCVR_RSM_TRIG_CRC_VLD);
-    uint8_t i = 64U; /* count for delay loop */
-    while (i > 0U)
-    {
-        i--;
-    }
-#endif /* defined (RSM_WA_KFOURWONE_1164) */
 
     /* Clear any interrupt flags that may be set so that they don't cause problems on RSM startup */
     /* This must be done before clearing RX_EN or TX_EN bits as once those are clear these bits cannot be cleared */
