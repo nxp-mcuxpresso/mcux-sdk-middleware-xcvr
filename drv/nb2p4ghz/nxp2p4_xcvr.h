@@ -1256,6 +1256,32 @@ void XCVR_setLdoAntHiz(void);
  */
 void XCVR_releaseLdoAntAll(void);
 
+/*!
+ * @brief Function to set LDO ANT TRIM value.
+ *
+ * This function set LDO_ANT_TRIM value only if receives valid input parameters.
+ * It first check if input parameter ucLdoAntTrimValue has valid value and if yes it set into XCVR register.
+ *
+ * @param[in] ucLdoAntTrimValue Valid values: 0x00 - 0x0F.
+ *
+ * @return gXcvrSuccess_c - if setting is valid and has been applied
+ *         gXcvrInvalidParameters_c - if setting is not valid and has not been applied
+ *
+ * @note This routine is used by Link Layers which needs to change LDO_ANT_TRIM value according with their needs
+ */
+xcvrStatus_t XCVR_setLdoAntTrim(unsigned char ucLdoAntTrimValue);
+
+/*!
+ * @brief Function to get actual LDO ANT TRIM value.
+ *
+ * This function get actual LDO_ANT_TRIM value from XCVR LDO_1 register.
+ *
+ * @return LDO_ANT_TRIM register settings value
+ *
+ * @note This routine is used by Link Layers which needs to check LDO_ANT_TRIM value
+ */
+unsigned char XCVR_getLdoAntTrim(void);
+
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 /*!
  * @brief Function to trigger start of a fast DMA upload/download of peripheral registers.

@@ -2094,6 +2094,28 @@ void XCVR_releaseLdoAntAll(void)
     XCVR_TSM->OVRD1  &= ~(XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_EN_MASK | XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_MASK);
 }
 
+xcvrStatus_t XCVR_setLdoAntTrim(unsigned char ucLdoAntTrimValue)
+{
+xcvrStatus_t status = gXcvrInvalidParameters_c;
+
+    /* check if input parameters is a valid value ... i.e. between 0x00-0x0F according with ref manual */
+    if(ucLdoAntTrimValue <= (XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_MASK >> XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_SHIFT))
+    {
+        uint32_t temp_trim;
+        temp_trim = XCVR_ANALOG->LDO_1;
+        temp_trim &= ~(XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_MASK);
+        temp_trim |= XCVR_ANALOG_LDO_1_LDO_ANT_TRIM(ucLdoAntTrimValue);
+        XCVR_ANALOG->LDO_1 = temp_trim;
+        status = gXcvrSuccess_c;
+    }
+    return status;
+}
+
+unsigned char XCVR_getLdoAntTrim(void)
+{
+    return (XCVR_ANALOG->LDO_1 & XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_MASK) >> XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_SHIFT;
+}
+
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 // TODO: define registers and bitfields for the light DMA peripheral. Define descriptor access macros.
 void XCVR_FastPeriphReg_UpDownload_Go(pkt_ram_bank_sel_t pkt_ram_sel, uint32_t offset_in_pkt_ram, bool upload)
