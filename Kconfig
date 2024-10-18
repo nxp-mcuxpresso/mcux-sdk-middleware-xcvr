@@ -24,7 +24,7 @@ if MCUX_COMPONENT_middleware.wireless.xcvr
         depends on  MCUX_HW_DEVICE_MCXW716C || MCUX_HW_DEVICE_MCXW716A ||       \
                     MCUX_HW_DEVICE_KW45B41Z52 || MCUX_HW_DEVICE_KW45B41Z53 ||   \
                     MCUX_HW_DEVICE_KW45B41Z82 || MCUX_HW_DEVICE_KW45B41Z83  ||  \
-                    MCUX_HW_DEVICE_K32W1480
+                    MCUX_HW_DEVICE_K32W1480 || MCUX_HW_DEVICE_KW45B41Z83_NBU
 
     config MCUX_COMPONENT_middleware.wireless.xcvr.kw47_mcxw72
         bool "KW47x, MCXW72x families"
