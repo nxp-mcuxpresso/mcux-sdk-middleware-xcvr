@@ -1,0 +1,54 @@
+# Example ignore file for copyrighter
+
+# An ignore file for copyrighter must be a valid YAML file.
+# Empty lines and all text starting with a # until the end of the line are ignored.
+
+# Three categories are defined: file, warning, revision
+
+# A RULE OF THUMB: STRIVE TO FIX WARNINGS, NOT TO HIDE THEM.
+
+# Category file:
+#   Exclude files and folders which will never be released.
+#   If present, must be a flat list of Python regular expressions. Matching is done case-insensitive.
+#   A file or folder whose absolute path matches any (one or more) of the listed regular expressions is not checked.
+#   This decreases execution time.
+file:
+    - ".*.clang-format"
+    - ".*.pre-commit-config.yaml*"
+    - ".*.copyrighter.ignore.yaml*"
+    - ".*LICENSE.txt"
+    - ".*README.md"
+    - ".*SCR.txt"
+
+# Category warning:
+#   Reduce false positives, or specific warnings which cannot be fixed.
+#   If present, must be a flat list. Each item is a tuple, using | as separator. In each tuple:
+#       The first field is a Python regular expression to match a file.
+#       The second field is a Python regular expression to match the warning message.
+#   Matching is done case-insensitive.
+#   A warning that matches any (one or more) of the listed regular expressions is not printed out. This will not
+#   decrease execution time.
+warning:
+    #- ".+bin.generator.src.test.ports.unix.netif.list.c|Warning changes without holding copyright"
+    #- ".+bin.generator.src.test.apps.smtp.smtp.c|Warning no copyright"
+    #- ".*|Warning redundant text"
+    #- ".+|Warning remove text indicating 'all rights reserved'"
+    # Legacy projects tend to have the redundant text 'all rights reserved', yielding this last warning.
+
+# Category revision:
+#   Ignore hashes or revisions which did not change source code - for example, commits to fix the copyright and
+#   disclaimer.
+#   If present, must be a flat list of exact short git hashes or svn revisions.
+#   When querying the underlying repository, these revisions are excluded for all checks. This will not decrease
+#   execution time.
+revision:
+    - "71bdd78"  # Ignore specific revision that only changed headers to correct errors, no functional changes.
+
+# Needless to say, try to use as little wildcards as possible. Suggestion: catch slash and backslash with it, and use it
+# to factor out the base path which is likely to differ among different machines; nothing more.
+
+# Best way to populate this list is to let the tool run without any ignore list, then build up this list to remove the
+# warnings you have a valid reason for to get rid of.
+
+# Ignore files are project specific. All users of copyrighter, using it to make checks, must be able to access that
+# file. A TA must also have access to this file.

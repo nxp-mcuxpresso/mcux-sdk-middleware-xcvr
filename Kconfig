@@ -1,0 +1,35 @@
+# Copyright 2024 NXP
+# SPDX-License-Identifier: BSD-3-Clause
+
+menuconfig MCUX_COMPONENT_middleware.wireless.xcvr
+    bool "XCVR tranceiver drivers for wireless Products"
+    help
+      Enable the XCVR drivers
+
+if MCUX_COMPONENT_middleware.wireless.xcvr
+
+  #source other Kconfig
+  #rsource "Common/Kconfig"
+
+  # enable Kconfig required for xcvr : TODO : find the correct component for 
+  # fsl_edma.h and fsl_dmamux.h - these below are not correct
+  # select MCUX_COMPONENT_driver.dma3
+  # select MCUX_COMPONENT_driver.dmamux
+
+  choice
+      prompt "XCVR platform selection"
+
+    config MCUX_COMPONENT_middleware.wireless.xcvr.kw45_k32w1_mcxw71
+        bool "KW45x, K32W1x, MCXW71x families"
+        depends on  MCUX_HW_DEVICE_MCXW716C || MCUX_HW_DEVICE_MCXW716A ||       \
+                    MCUX_HW_DEVICE_KW45B41Z52 || MCUX_HW_DEVICE_KW45B41Z53 ||   \
+                    MCUX_HW_DEVICE_KW45B41Z82 || MCUX_HW_DEVICE_KW45B41Z83  ||  \
+                    MCUX_HW_DEVICE_K32W1480
+
+    config MCUX_COMPONENT_middleware.wireless.xcvr.kw47_mcxw72
+        bool "KW47x, MCXW72x families"
+        #depends on MCUX_HW_DEVICE_xxx
+
+  endchoice
+
+endif
