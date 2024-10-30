@@ -1966,6 +1966,50 @@ void XCVR_releasePaPowerBump(void)
 #endif /* defined(RADIO_IS_GEN_4P0) */
 }
 
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
+static uint32_t tx_dac_pa_val = 0x01180000U; /* Register default */
+static uint32_t tx_pa_ctrl_val = 0x0000003FU; /* Register default */
+xcvrStatus_t XCVR_EnableAnaPaRamp(uint8_t smoother_cur)
+{
+    xcvrStatus_t status = gXcvrInvalidParameters_c;
+
+    /* Enable Analog PA ramp control (instead of digital) */
+    if (smoother_cur <= 0x7U)
+    {
+        uint32_t temp;
+        temp = XCVR_ANALOG->TX_DAC_PA;
+        tx_dac_pa_val = temp;  /* Backup for later restore upon disable request. */
+        temp &= ~(XCVR_ANALOG_TX_DAC_PA_PA_SMOOTHER_CUR_MASK);
+        temp |= (XCVR_ANALOG_TX_DAC_PA_PA_SMOOTHER_EN_MASK | XCVR_ANALOG_TX_DAC_PA_PA_SMOOTHER_CUR(smoother_cur));
+        XCVR_ANALOG->TX_DAC_PA = temp;
+        temp = XCVR_TX_DIG->PA_CTRL;
+        tx_pa_ctrl_val = temp;   /* Backup for later restore upon disable request. */
+        temp &= ~(XCVR_TX_DIG_PA_CTRL_PA_RAMP_DIG_INTERP_EN_MASK |
+                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX_MASK |
+                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX_TYPE_MASK |
+                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_HOLD_MASK
+                        );
+        temp |= (XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_EN_MASK |
+                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_HOLD(7U) |
+                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX(0U) |
+                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX_TYPE(0U) |
+                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_DIG_INTERP_EN(0U)
+                        );
+        XCVR_TX_DIG->PA_CTRL = temp;
+        
+        status = gXcvrSuccess_c;
+    }
+
+    return status; /* Success */
+}
+
+void XCVR_DisableAnaPaRamp(void)
+{
+    /* Return registers to prior settings */
+    XCVR_ANALOG->TX_DAC_PA = tx_dac_pa_val;
+    XCVR_TX_DIG->PA_CTRL = tx_pa_ctrl_val;    
+}
+#endif  /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
 uint16_t XCVR_ReadRadioVer(void)
 {
     uint16_t radio_id_gen = 0xFFFFU;

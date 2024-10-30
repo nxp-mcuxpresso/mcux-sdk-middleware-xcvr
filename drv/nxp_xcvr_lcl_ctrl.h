@@ -163,6 +163,12 @@
 #define RX_SYNC_DLY_2MBPS                  (7U)
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN > 450)   */
 
+/* DMA_MASK_CTRL Signal valid mask sel options */
+#define RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK (1<<0)  /*!< Enable capture using rsm or lcl dma mask */
+#define RSM_DMA_SIGNAL_VALID_MASK_SEL_FM_RX    (1<<1)  /*!< Enable full fm_rx state capture */
+#define RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX    (1<<2)  /*!< Enable full pm_rx state capture */
+#define RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX    (1<<3)  /*!< Enable full dt_rx state capture */
+      
 /* Channel Sounding Test Commands */
 #if (0)
 #define CS_TEST_AA_INIT     (0xCD31EF64U)

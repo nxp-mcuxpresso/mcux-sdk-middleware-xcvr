@@ -1166,6 +1166,34 @@ void XCVR_ReleasePAPower(void);
  */
 xcvrStatus_t XCVR_DftTxCW(uint32_t rf_freq);
 
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
+/*!
+ * @brief Function to enable Analog PA ramping instead of digital ramping.
+ *
+ * This function enables Analog PA ramping to provide smoother ramp with fewer transients.
+ *
+ * @param[in] smoother_cur  The current value for the PA slope. Speed of the analog ramping is inverselly
+ *  proportional to the register value (higher value == slower ramp).
+ *
+ * @return The status of the analog ramping enable.
+ */
+xcvrStatus_t XCVR_EnableAnaPaRamp(uint8_t smoother_cur);
+
+
+/*!
+ * @brief Function to disable Analog PA ramping and return to prior settings.
+ *
+ * This function disables Analog PA ramping and restores the settings to those prior to ::XCVR_EnableAnaPaRamp().
+ *
+ * @pre  The function ::XCVR_EnableAnaPaRamp() must have been called first in order to backup the 
+ *  settings in the affected registers.
+ *
+ */
+void XCVR_DisableAnaPaRamp(void);
+#endif  /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
+
+
+
 /*!
  * @brief Function to set AGC to manual and DCOC to auto.
  *
