@@ -286,7 +286,7 @@ extern const uint8_t rtt_payload_sizes[7];
  *
  */
 #define TGT_FM_CORR_1MBPS    (211)
-#define NADM_METRIC_DIV_1MBPS (5)
+#define NADM_METRIC_DIV_1MBPS (6)
 #define TGT_FM_CORR_2MBPS    (255)
 #define NADM_METRIC_DIV_2MBPS (8)
 #define XCVR_LCL_CalcNadmMetric(fm_corr_value, datarate, nadm_metric) \
