@@ -175,9 +175,13 @@ extern const uint8_t rtt_payload_sizes[7];
     do { \
          COM_MODE_CFG_HDR_UNION_Type * temp_cfg_entry; \
          temp_cfg_entry = (cfg_entry); \
+         COM_MODE_CFG_HDR_UNION_Type * temp_cfg_entry; \
+         temp_cfg_entry = (cfg_entry); \
          temp_cfg_entry->header.STEP_CFG = (uint16_t)(step_cfg); /* This is the output of XCVR_LCL_MakeStepCfg() function */ \
          uint16_t mapped_channel; \
          MAKE_MAPPED_CHAN_OVRD2((channel_num), mapped_channel); /* Maps to proper format for RSM channels */ \
+         temp_cfg_entry->header.CHANNEL_NUM = (uint16_t)(mapped_channel); /* Entry is full 16 bits wide so no need to mask/shift */ \
+         temp_cfg_entry->header.STEP_CFO = (uint16_t)(step_cfo); /* Entry is full 16 bits wide so no need to mask/shift */ \
          temp_cfg_entry->header.CHANNEL_NUM = (uint16_t)(mapped_channel); /* Entry is full 16 bits wide so no need to mask/shift */ \
          temp_cfg_entry->header.STEP_CFO = (uint16_t)(step_cfo); /* Entry is full 16 bits wide so no need to mask/shift */ \
          temp_cfg_entry->header.HPM_CAL_FACTOR = COM_MODE_013_CFG_HDR_HPM_CAL_FACTOR_HPM_CAL_FACTOR((hpm_cal)>>1U); /*  Field stores the 12MSBs of HPM_CAL_FACTOR: HPM_CAL_FACTOR[12:1] */ \
@@ -292,6 +296,9 @@ extern const uint8_t rtt_payload_sizes[7];
  *
  */
 #define TGT_FM_CORR_1MBPS    (211)
+#define NADM_METRIC_DIV_1MBPS (6)
+#define TGT_FM_CORR_2MBPS    (255)
+#define NADM_METRIC_DIV_2MBPS (8)
 #define XCVR_LCL_CalcNadmMetric(fm_corr_value, datarate, nadm_metric) \
     do { \
         nadm_metric = 0xFFU; \
@@ -300,11 +307,11 @@ extern const uint8_t rtt_payload_sizes[7];
             int16_t temp_calc = (int16_t)fm_corr_value; /* Working in signed values to handle subtract below zero. */ \
             if (datarate == XCVR_RSM_RATE_1MBPS) \
             { \
-                temp_calc = (TGT_FM_CORR_1MBPS-temp_calc)/5; /* Caculate metric result */ \
+                temp_calc = (TGT_FM_CORR_1MBPS-temp_calc)/NADM_METRIC_DIV_1MBPS; /* Caculate metric result */ \
             } \
             else \
             { \
-                temp_calc = 6; /* 2Mbps rate not implemented yet */ \
+                temp_calc = (TGT_FM_CORR_2MBPS-temp_calc)/NADM_METRIC_DIV_2MBPS; /* Caculate metric result */ \
             } \
             if (temp_calc < 0) /* Saturate anything below zero to zero */ \
             { \
@@ -644,6 +651,12 @@ xcvrLclStatus_t XCVR_LCL_HandleIrqStepEos(int32_t status_bits);
 xcvrLclStatus_t XCVR_LCL_SetupInitialConfigs(uint8_t total_num_steps, uint32_t * config_in_ptr, uint32_t * results_out_ptr, XCVR_RSM_RTT_TYPE_T rtt_type, uint8_t num_ap, bool sniffer_mode);
 
 xcvrLclStatus_t XCVR_LCL_FinishFinalResults(void);
+
+
+
+
+
+
 
 
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) && (RF_OSC_26MHZ == 0) */

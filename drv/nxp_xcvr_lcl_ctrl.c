@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
+#include "nxp2p4_xcvr.h"
 #include "nxp_xcvr_lcl_ctrl.h"
 #include "nxp_xcvr_lcl_step_mgr.h"
 #include "nxp_xcvr_common_config.h"
@@ -72,7 +73,6 @@
           of samples length */
 #define F_2442_CUBED 14562534888L; /* 2442^3 Used in HPM_CAL interpolation curve */
 #if defined(KW45_A0_SUPPORT) && (KW45_A0_SUPPORT > 0)
-//#define RSM_WA_KFOURWONE_1164 1U /* Enable workaround for RSM start failure. Fixed starting from A1 version */
 #error "A0 revision of KW45 is no longer supported."
 #endif
 
@@ -114,7 +114,6 @@ xcvr_lcl_tqi_setting_tbl_t tqi_2mbps_settings =
 };
 #endif
 
-// static bool cont_phase_ovrd_active = false;
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -481,8 +480,7 @@ void XCVR_LCL_RsmPLLInit(XCVR_RSM_SQTE_RATE_T rate)
     /* this is not needed, as long as RSM_HPM_CAL = 1. For the dynamic selection: RSM_HPM_CAL = 0, HPM_DYNAMIC_SEL=1, HPM_DYNAMIC_RX_PKT_TABLE=1, HPM_DYNAMIC_RX_TONE_TABLE=0  */ 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) /* KW47 always uses HPM CAL from PKT RAM */
         temp = XCVR_PLL_DIG->HPM_CTRL;
-        temp |= ( //XCVR_PLL_DIG_HPM_CTRL_HPM_DYNAMIC_RX_TONE_TABLE_MASK |
-                    XCVR_PLL_DIG_HPM_CTRL_HPM_DYNAMIC_RX_PKT_TABLE_MASK |
+        temp |= (XCVR_PLL_DIG_HPM_CTRL_HPM_DYNAMIC_RX_PKT_TABLE_MASK |
                     XCVR_PLL_DIG_HPM_CTRL_HPM_DYNAMIC_SEL_MASK);
         XCVR_PLL_DIG->HPM_CTRL = temp; 
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
@@ -750,8 +748,6 @@ xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr)
         /* Setup LCL_CTRL for antenna switching & DMA durations */
         /* Setup XCVR_DMA to capture phase and measurement samples  */
         /* Setup DSB to support the XCVR_DMA sample capture */
-        // XCVR_MISC_DMA_CTRL_DMA_START_TRG set to RSM trigger.
-        // XCVR_MISC_DMA_CTRL_DMA_SIGNAL_VALID_MASK_EN = 1
 
         /* ************** */
         /* Setup PHY RTT for ranging */
@@ -887,7 +883,6 @@ xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr)
         temp |= XCVR_TX_DIG_PA_CTRL_PA_RAMP_SEL(pa_ramp_sel_value);
 #else
         temp &= ~(XCVR_TX_DIG_PA_CTRL_PA_RAMP_SEL_MASK);
-//        temp |= XCVR_TX_DIG_PA_CTRL_PA_RAMP_SEL(1U); /* PFDEV padding */
         temp |= XCVR_TX_DIG_PA_CTRL_PA_RAMP_SEL(2U); /* MFDEV padding */
 #endif
         XCVR_TX_DIG->PA_CTRL = temp;
@@ -1233,7 +1228,6 @@ xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr)
         temp = xcvr_lcl_rsm_generic_config.RSM_CTRL6; /* Structure based configuration for the RSM_CTRL0 register;  */
         temp &= ~(XCVR_MISC_RSM_CTRL6_RSM_RXLAT_DIG_MASK |
                         XCVR_MISC_RSM_CTRL6_RSM_MODE0_TIMEOUT_MASK);
-//        temp |= (XCVR_MISC_RSM_CTRL6_RSM_RXLAT_DIG(3U) |        /* give time for latency for HARTT to complete */
         temp |= (XCVR_MISC_RSM_CTRL6_RSM_RXLAT_DIG(3U) |        /* give time for latency for HARTT to complete */
                         XCVR_MISC_RSM_CTRL6_RSM_EARLY_MOD_DIS_MASK |  // disable_lpm_mod for tones and pkts 
                         XCVR_MISC_RSM_CTRL6_RSM_SKIP_RECYCLE_R2R_MASK | // skip recycle at end of pkts (skip rx_init, to avoid hartt lost and also pulse can occur on AA_det instead of maintained level)
@@ -2317,19 +2311,7 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t * rsm_settings_ptr
             {
                 offset = 5U;
             }
-#if 0 // OJE: what is this dead code for?
-            uint8_t rx_settling_latency =
-                (uint8_t)(((xcvr_lcl_tsm_generic_config.WU_LATENCY) & XCVR_TSM_WU_LATENCY_RX_SETTLING_LATENCY_MASK) >>
-                          XCVR_TSM_WU_LATENCY_RX_SETTLING_LATENCY_SHIFT);
-            if ((rx_settling_latency+1) > (TX_DATA_FLUSH_DLY_1MBPS+rttPhy))
-            {
-                temp = (rx_settling_latency+1)-(TX_DATA_FLUSH_DLY_1MBPS+rttPhy);
-            }
-            else
-            {
-                temp = 0U;
-            }
-#endif
+
             XCVR_MISC->LCL_DMA_MASK_DELAY = XCVR_MISC_LCL_DMA_MASK_DELAY_DMA_MASK_DELAY_OFF(offset) | XCVR_MISC_LCL_DMA_MASK_DELAY_DMA_MASK_DELAY(5U);
 
             /* DMA mask centering & TQI setup */
@@ -2757,6 +2739,8 @@ static uint32_t rf_ctrl_backup;
 
 void XCVR_LCL_CalibrateDcocStart(XCVR_RSM_SQTE_RATE_T rate)
 {
+    xcvrStatus_t status = gXcvrSuccess_c;
+
     /* RX WU */
     rf_ctrl_backup = RADIO_CTRL->RF_CTRL;
     uint32_t temp_rf_ctrl = rf_ctrl_backup;
@@ -2771,6 +2755,10 @@ void XCVR_LCL_CalibrateDcocStart(XCVR_RSM_SQTE_RATE_T rate)
             ~(RADIO_CTRL_RF_CTRL_RIF_SEL_2MBPS_OVRD_MASK | RADIO_CTRL_RF_CTRL_RIF_SEL_2MBPS_OVRD_EN_MASK);
     }
     RADIO_CTRL->RF_CTRL = temp_rf_ctrl;
+
+    /* Set XCVR to an out-of-band frequency to avoid possible intereference to the DCOC DAC trim process */
+    status = XCVR_OverrideRxFrequency(2385000000UL, -1000000UL); /* 1MHz IF for BLE */
+    (void)status;
 
     /*** Configure TSM Timings to enable DCOC ***/
     /* Needed Signals to run DCOC:
@@ -2824,6 +2812,11 @@ xcvrLclStatus_t XCVR_LCL_CalibrateDcocComplete(void)
 
     /* Restore RF_CTRL state */
     RADIO_CTRL->RF_CTRL = rf_ctrl_backup;
+
+    /* Release channel over-rides and return PLL to Link Layer Control */
+    /* Remove any PLL settings that caused out-of-band receive operations (for safety) */
+    XCVR_OverrideRxFrequency(2402000000UL, -1000000UL);
+    XCVR_ReleasePLLOverride();
 
     if ((XCVR_RX_DIG->DCOC_STAT == 0x00002020U) && (XCVR_RX_DIG->DCOC_DIG_CORR_RESULT == 0U))
     {
@@ -2950,7 +2943,7 @@ void XCVR_LCL_EnablePhaseMeasure(void)
                        XCVR_TSM_OVRD3_SEQ_LO_PUP_VLO_TXDRV_OVRD_MASK | XCVR_TSM_OVRD3_SEQ_LO_PUP_VLO_TX_OVRD_EN_MASK |
                        XCVR_TSM_OVRD3_SEQ_LO_PUP_VLO_TX_OVRD_MASK;
      XCVR_RX_DIG->DCOC_CTRL0 |= XCVR_RX_DIG_DCOC_CTRL0_DCOC_DIG_CORR_EN_MASK;
-    // if another gain must be used for a better input signal measurement, it must be configured here ( DCOC_GAIN_CFG_EN to be forced LOW by override + AGC gain config) */
+    /* if another gain must be used for a better input signal measurement, it must be configured here ( DCOC_GAIN_CFG_EN to be forced LOW by override + AGC gain config) */
 }
 
 xcvrLclStatus_t XCVR_LCL_ProcessPhaseMeasure(int8_t *i_resid, int8_t *q_resid, uint32_t dc_resid_val)
@@ -3481,7 +3474,7 @@ xcvrLclStatus_t XCVR_LCL_EnaLpmClkSwitch(uint8_t mode)
     return status;
 }
 
-#define TSM_DISABLED (0xFFFFFFFF)  /* value for a TSM timing register that is disabled */
+#define TSM_DISABLED (0xFFFFFFFFU)  /* value for a TSM timing register that is disabled */
 xcvrLclStatus_t XCVR_LCL_EnaPic(XCVR_RSM_PIC_MODE_TYPE_T mode, bool slow_bw_reduction)
 {
     xcvrLclStatus_t status = gXcvrLclStatusSuccess;
