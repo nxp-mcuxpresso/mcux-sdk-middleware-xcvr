@@ -2356,6 +2356,7 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t * rsm_settings_ptr
                 default:
                     temp |= XCVR_MISC_DMA_MASK_CTRL_DMA_MASK_CENTER(lclDmaMaskNoCenter);
                     status = gXcvrLclStatusInvalidArgs;
+                    break;
             }
             XCVR_MISC->DMA_MASK_CTRL = temp;
             if (tqi_settings_ptr != NULLPTR)
@@ -2389,9 +2390,13 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t * rsm_settings_ptr
     
     /* Configure SPINT according to T_PM duration in order not to overflow SPINT and HI/LO_PER 5bits values */
     if ((ant_slot_time == XCVR_RSM_T_CAPTURE_20_SEL) || (ant_slot_time == XCVR_RSM_T_CAPTURE_40_SEL))
+    {
         spint_us = 2;
+    }
     else
+    {
         spint_us = 1;
+    }
 
     /* RX/TX config */
     offset = (T_TX_ANT_SW_DELAY / spint_us);

@@ -173,15 +173,17 @@ extern const uint8_t rtt_payload_sizes[7];
  */
 #define XCVR_LCL_MakeCommonHeader(cfg_entry, channel_num, ctune, step_cfo, hpm_cal, phase_add, step_cfg) \
     do { \
-         (cfg_entry)->header.STEP_CFG = (uint16_t)(step_cfg); /* This is the output of XCVR_LCL_MakeStepCfg() function */ \
+         COM_MODE_CFG_HDR_UNION_Type * temp_cfg_entry; \
+         temp_cfg_entry = (cfg_entry); \
+         temp_cfg_entry->header.STEP_CFG = (uint16_t)(step_cfg); /* This is the output of XCVR_LCL_MakeStepCfg() function */ \
          uint16_t mapped_channel; \
          MAKE_MAPPED_CHAN_OVRD2((channel_num), mapped_channel); /* Maps to proper format for RSM channels */ \
-         (cfg_entry)->header.CHANNEL_NUM = mapped_channel; /* Entry is full 16 bits wide so no need to mask/shift */ \
-         (cfg_entry)->header.STEP_CFO = (step_cfo); /* Entry is full 16 bits wide so no need to mask/shift */ \
-         (cfg_entry)->header.HPM_CAL_FACTOR = COM_MODE_013_CFG_HDR_HPM_CAL_FACTOR_HPM_CAL_FACTOR(hpm_cal>>1U); /*  Field stores the 12MSBs of HPM_CAL_FACTOR: HPM_CAL_FACTOR[12:1] */ \
-         (cfg_entry)->header.CTUNE_MANUAL = COM_MODE_013_CFG_HDR_CTUNE_MANUAL_CTUNE_MANUAL(ctune); \
-         (cfg_entry)->header.PHASE_ADD = COM_MODE_013_CFG_HDR_PHASE_ADD_PHASE_ADD(phase_add); } \
-     while (0)
+         temp_cfg_entry->header.CHANNEL_NUM = (uint16_t)(mapped_channel); /* Entry is full 16 bits wide so no need to mask/shift */ \
+         temp_cfg_entry->header.STEP_CFO = (uint16_t)(step_cfo); /* Entry is full 16 bits wide so no need to mask/shift */ \
+         temp_cfg_entry->header.HPM_CAL_FACTOR = COM_MODE_013_CFG_HDR_HPM_CAL_FACTOR_HPM_CAL_FACTOR((hpm_cal)>>1U); /*  Field stores the 12MSBs of HPM_CAL_FACTOR: HPM_CAL_FACTOR[12:1] */ \
+         temp_cfg_entry->header.CTUNE_MANUAL = COM_MODE_013_CFG_HDR_CTUNE_MANUAL_CTUNE_MANUAL((ctune)); \
+         temp_cfg_entry->header.PHASE_ADD = COM_MODE_013_CFG_HDR_PHASE_ADD_PHASE_ADD((phase_add)); } \
+     while (false)
 
 #if (1) /* use this option if the pointers passed into the macro are not incrementable */
 #define XCVR_LCL_WriteCommonHeader(pkt_ram_p, sys_ram_p) \
@@ -189,7 +191,7 @@ extern const uint8_t rtt_payload_sizes[7];
         (pkt_ram_p)->U32_data[0] = (sys_ram_p)->U32_data[0]; \
         (pkt_ram_p)->U32_data[1] = (sys_ram_p)->U32_data[1]; \
         (pkt_ram_p)->U32_data[2] = (sys_ram_p)->U32_data[2]; } \
-     while (0)
+     while (false)
 #else /* use this option if the pointers passed in are incrementable */
 #define XCVR_LCL_WriteCommonHeader(pkt_ram_p, sys_ram_p) \
     do { \
@@ -215,7 +217,7 @@ extern const uint8_t rtt_payload_sizes[7];
  */#define XCVR_LCL_UpdateHeaderCfo(cfg_entry, step_cfo) \
     do { \
          (cfg_entry)->header.STEP_CFO = (step_cfo);  } /* Entry is full 16 bits wide so no need to mask/shift */ \
-     while (0)
+     while (false)
 
 /*!
  * @brief Macro to configure the Mode 0/1/3 step payload structure.
@@ -237,17 +239,21 @@ extern const uint8_t rtt_payload_sizes[7];
     do { \
         (cfg_entry)->payload_body.AA_INIT = (aa_init); \
         (cfg_entry)->payload_body.AA_REFL = (aa_refl); \
-        volatile uint32_t * payload_ptr = &((cfg_entry)->payload_body.PAYLOAD[0].INIT); \
+        volatile uint32_t * payload_ptr = (volatile uint32_t *)(&((cfg_entry)->payload_body.PAYLOAD[0].INIT)); \
         for (uint8_t words = 0U;words<(num_payload_words);words++) \
         { \
-            *payload_ptr++ = *(payload_init_ptr)++; /* Increments the pointer that is passed in */ \
+            *payload_ptr = *(payload_init_ptr); \
+            payload_ptr++; \
+            (payload_init_ptr)++; /* Increments the pointer that is passed in */ \
         } \
          for (uint8_t words2 = 0U;words2<(num_payload_words);words2++) \
         { \
-            *payload_ptr++ = *(payload_refl_ptr)++;  /* Increments the pointer that is passed in */ \
+            *payload_ptr = *(payload_refl_ptr); \
+            payload_ptr++; \
+            (payload_refl_ptr)++; /* Increments the pointer that is passed in */ \
         } \
     } \
-     while (0)
+     while (false)
 
 /*!
  * @brief Macro to unpack the NADM portion of Mode 0/1/3 step result structure COM_MODE_013_RES_BODY.
@@ -273,7 +279,7 @@ extern const uint8_t rtt_payload_sizes[7];
         nadm_fm_symb_err_valid = ((nadm_result_packed&COM_MODE_013_RES_BODY_NADM_ERROR_RSSI_RAW_NADM_FM_SYM_ERR_VALID_MASK)>>COM_MODE_013_RES_BODY_NADM_ERROR_RSSI_RAW_NADM_FM_SYM_ERR_VALID_SHIFT); \
         nadm_pdelta = ((nadm_result_packed&COM_MODE_013_RES_BODY_NADM_ERROR_RSSI_RAW_NADM_PDELTA_VALUE_MASK)>>COM_MODE_013_RES_BODY_NADM_ERROR_RSSI_RAW_NADM_PDELTA_VALUE_SHIFT); \
     } \
-     while (0)
+     while (false)
 
 /*!
  * @brief Macro to calculate the NADM metric from the FM_CORR value reported in COM_MODE_013_RES_BODY.
@@ -317,7 +323,7 @@ extern const uint8_t rtt_payload_sizes[7];
             } \
         }\
     } \
-     while (0)
+     while (false)
 
 
 /*!
@@ -355,7 +361,7 @@ extern const uint8_t rtt_payload_sizes[7];
         rtt_int_adj = ((int8_t)(temp_adj<<6))>>6; /* extend sign */ \
         rtt_p_delta = (uint16_t)((rtt_result_packed&COM_MODE_013_RES_BODY_RTT_RESULT_RTT_P_DELTA_MASK)>>COM_MODE_013_RES_BODY_RTT_RESULT_RTT_P_DELTA_SHIFT); \
     } \
-     while (0)
+     while (false)
 
 /*!
  * @brief Macro to unpack the CFO portion of Mode 0/1/3 step result structure COM_MODE_013_RES_BODY.
@@ -372,7 +378,7 @@ extern const uint8_t rtt_payload_sizes[7];
         temp_cfo = (((temp_cfo&0x200U) == 0U )? temp_cfo : temp_cfo | 0xFC00); /* sign extend within the 16bits unsigned storage */ \
         cfo_signed = (int16_t)(temp_cfo); \
         } \
-     while (0)
+     while (false)
 
  #else
 /*!
@@ -418,7 +424,7 @@ uint16_t XCVR_LCL_MakeStepCfg(XCVR_RSM_FSTEP_TYPE_T step_format,
  *
  * @note Function is specified inline in the header to ensure it is inline always (for speed)
  */
-xcvrLclStatus_t XCVR_LCL_MakeMode013CfgHeader(xcvr_lcl_mode_0_cfg_t *cfg_entry,
+xcvrLclStatus_t XCVR_LCL_MakeMode013CfgHeader(xcvr_lcl_mode_0_1_3_cfg_t *cfg_entry,
                                    uint16_t channel_num,
                                    uint16_t ctune,
                                    uint16_t step_cfo,
@@ -637,13 +643,7 @@ xcvrLclStatus_t XCVR_LCL_HandleIrqStepEos(int32_t status_bits);
 
 xcvrLclStatus_t XCVR_LCL_SetupInitialConfigs(uint8_t total_num_steps, uint32_t * config_in_ptr, uint32_t * results_out_ptr, XCVR_RSM_RTT_TYPE_T rtt_type, uint8_t num_ap, bool sniffer_mode);
 
-xcvrLclStatus_t XCVR_LCL_FinishFinalResults();
-
-
-
-
-
-
+xcvrLclStatus_t XCVR_LCL_FinishFinalResults(void);
 
 
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) && (RF_OSC_26MHZ == 0) */

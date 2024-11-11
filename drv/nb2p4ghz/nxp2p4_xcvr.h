@@ -531,7 +531,7 @@ typedef double float64_t;
 /* This include must be down here rather than up top due to references to structs defined above */
 #include "nxp_xcvr_mode_config.h"
 /* Packet RAM pointer function macro - References enums from above */
-#define GET_PKT_RAM_PTR(r,ofst)         (r == TX_PKT_RAM_SEL ? (&(TX_PACKET_RAM->PACKET_RAM[ofst])) : (&(RX_PACKET_RAM->PACKET_RAM[ofst])))
+#define GET_PKT_RAM_PTR(r,ofst)         ((r) == TX_PKT_RAM_SEL ? (volatile void *)(&(TX_PACKET_RAM->PACKET_RAM[(ofst)])) : (volatile void *)(&(RX_PACKET_RAM->PACKET_RAM[(ofst)])))
 
 
 

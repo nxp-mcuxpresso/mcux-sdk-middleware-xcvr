@@ -663,12 +663,12 @@ typedef struct
 #define OFFSET_NEG_1MHZ 0x100U /* HOP_TBL_CFG_OVRD format #2 numerator offset for -1MHz */
 #define MAKE_MAPPED_CHAN_OVRD2(hadm_chan, output) \
         uint16_t mapped_chan_num = hadm_chan>>1U; \
-        if ((hadm_chan & 0x1U) == 0x1U) /* original HADM channel was an odd number */ \
+        if (((hadm_chan) & 0x1U) == 0x1U) /* original HADM channel was an odd number */ \
         { \
             mapped_chan_num++; /* go to next channel up (2MHz higher) to allow -1MHz to hit the target channel */ \
             mapped_chan_num |= (uint16_t)(OFFSET_NEG_1MHZ << 7U); /* Apply -1MHz */ \
         } \
-        output = mapped_chan_num;
+        (output) = mapped_chan_num;
 
 
         
