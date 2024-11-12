@@ -2146,7 +2146,7 @@ void XCVR_releaseLdoAntAll(void)
     XCVR_TSM->OVRD1  &= ~(XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_EN_MASK | XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_MASK);
 }
 
-xcvrStatus_t XCVR_setLdoAntTrim(unsigned char ucLdoAntTrimValue)
+xcvrStatus_t XCVR_setLdoAntTrim(uint8_t ucLdoAntTrimValue)
 {
 xcvrStatus_t status = gXcvrInvalidParameters_c;
 
@@ -2163,9 +2163,9 @@ xcvrStatus_t status = gXcvrInvalidParameters_c;
     return status;
 }
 
-unsigned char XCVR_getLdoAntTrim(void)
+uint8_t XCVR_getLdoAntTrim(void)
 {
-    return (XCVR_ANALOG->LDO_1 & XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_MASK) >> XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_SHIFT;
+    return (uint8_t)((XCVR_ANALOG->LDO_1 & XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_MASK) >> XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_SHIFT);
 }
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 400) */
 

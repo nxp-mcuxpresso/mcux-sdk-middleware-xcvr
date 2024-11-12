@@ -1310,7 +1310,7 @@ void XCVR_releaseLdoAntAll(void);
  *
  * @note This routine is used by Link Layers which needs to change LDO_ANT_TRIM value according with their needs
  */
-xcvrStatus_t XCVR_setLdoAntTrim(unsigned char ucLdoAntTrimValue);
+xcvrStatus_t XCVR_setLdoAntTrim(uint8_t ucLdoAntTrimValue);
 
 /*!
  * @brief Function to get actual LDO ANT TRIM value.
@@ -1321,7 +1321,7 @@ xcvrStatus_t XCVR_setLdoAntTrim(unsigned char ucLdoAntTrimValue);
  *
  * @note This routine is used by Link Layers which needs to check LDO_ANT_TRIM value
  */
-unsigned char XCVR_getLdoAntTrim(void);
+uint8_t XCVR_getLdoAntTrim(void);
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 400) */
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)

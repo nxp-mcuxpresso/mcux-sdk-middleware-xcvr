@@ -164,10 +164,10 @@
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN > 450)   */
 
 /* DMA_MASK_CTRL Signal valid mask sel options */
-#define RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK (1<<0)  /*!< Enable capture using rsm or lcl dma mask */
-#define RSM_DMA_SIGNAL_VALID_MASK_SEL_FM_RX    (1<<1)  /*!< Enable full fm_rx state capture */
-#define RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX    (1<<2)  /*!< Enable full pm_rx state capture */
-#define RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX    (1<<3)  /*!< Enable full dt_rx state capture */
+#define RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK (1U<<0U)  /*!< Enable capture using rsm or lcl dma mask */
+#define RSM_DMA_SIGNAL_VALID_MASK_SEL_FM_RX    (1U<<1U)  /*!< Enable full fm_rx state capture */
+#define RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX    (1U<<2U)  /*!< Enable full pm_rx state capture */
+#define RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX    (1U<<3U)  /*!< Enable full dt_rx state capture */
       
 /* Channel Sounding Test Commands */
 #if (0)
@@ -662,7 +662,8 @@ typedef struct
 
 #define OFFSET_NEG_1MHZ 0x100U /* HOP_TBL_CFG_OVRD format #2 numerator offset for -1MHz */
 #define MAKE_MAPPED_CHAN_OVRD2(hadm_chan, output) \
-        uint16_t mapped_chan_num = hadm_chan>>1U; \
+        uint16_t mapped_chan_num =(uint16_t)( hadm_chan); \
+        mapped_chan_num =( mapped_chan_num)>>1U; \
         if (((hadm_chan) & 0x1U) == 0x1U) /* original HADM channel was an odd number */ \
         { \
             mapped_chan_num++; /* go to next channel up (2MHz higher) to allow -1MHz to hit the target channel */ \
@@ -921,6 +922,7 @@ xcvrLclStatus_t XCVR_LCL_RsmRegBackup(rsm_reg_backup_t * reg_backup_ptr);
  */
 xcvrLclStatus_t XCVR_LCL_RsmRegRestore(const rsm_reg_backup_t * reg_backup_ptr);
 
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450)
 /*!
  * @brief Function to program the Frequency Step structure in Packet RAM for RSM operations.
  *
@@ -975,6 +977,7 @@ xcvrLclStatus_t XCVR_LCL_SetPnRamLong(const xcvr_lcl_pn64_config_t * pn_values, 
  *
  */
 xcvrLclStatus_t XCVR_LCL_GetCtuneResults(uint8_t * ctune_results, uint16_t num_steps);
+#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450) */
 
 /*!
  * @brief Function to unpack Round Trip Time data structures read from Packet RAM for RSM operations.

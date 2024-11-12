@@ -175,8 +175,6 @@ extern const uint8_t rtt_payload_sizes[7];
     do { \
          COM_MODE_CFG_HDR_UNION_Type * temp_cfg_entry; \
          temp_cfg_entry = (cfg_entry); \
-         COM_MODE_CFG_HDR_UNION_Type * temp_cfg_entry; \
-         temp_cfg_entry = (cfg_entry); \
          temp_cfg_entry->header.STEP_CFG = (uint16_t)(step_cfg); /* This is the output of XCVR_LCL_MakeStepCfg() function */ \
          uint16_t mapped_channel; \
          MAKE_MAPPED_CHAN_OVRD2((channel_num), mapped_channel); /* Maps to proper format for RSM channels */ \

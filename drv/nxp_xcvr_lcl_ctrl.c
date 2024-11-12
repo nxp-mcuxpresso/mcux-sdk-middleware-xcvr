@@ -99,14 +99,14 @@ xcvr_lcl_hpm_cal_interp_t hpm_cal_2442_data;
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 /* TQI register settings for 1Mbps and 2Mbps rates */
-xcvr_lcl_tqi_setting_tbl_t tqi_1mbps_settings = 
+static xcvr_lcl_tqi_setting_tbl_t tqi_1mbps_settings = 
 {
     .t_slot_10usec_tqi = {.iq_depth=0U, .mag_depth=3U, .t1=0x20U, .t2=0x20U},
     .t_slot_20usec_tqi = {.iq_depth=1U, .mag_depth=3U, .t1=0x20U, .t2=0x20U},
     .t_slot_40usec_tqi = {.iq_depth=2U, .mag_depth=3U, .t1=0x20U, .t2=0x20U},
 };
 
-xcvr_lcl_tqi_setting_tbl_t tqi_2mbps_settings = 
+static xcvr_lcl_tqi_setting_tbl_t tqi_2mbps_settings = 
 {
     .t_slot_10usec_tqi = {.iq_depth=1U, .mag_depth=3U, .t1=0x20U, .t2=0x20U},
     .t_slot_20usec_tqi = {.iq_depth=2U, .mag_depth=3U, .t1=0x20U, .t2=0x20U},
@@ -794,7 +794,6 @@ xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr)
         bool do_hpm_cal = ((xcvr_lcl_rsm_generic_config.RSM_CTRL3 & XCVR_MISC_RSM_CTRL3_RSM_HPM_CAL_MASK) ==
                            0U); /* RSM isn't providing HPM CAL values */
         XCVR_LCL_RsmPLLInit(rsm_settings_ptr->rate);
-        (void)status; /* Failure status won't affect the flow of the program, will just get passed as a return */
         if (do_hpm_cal)
         {
             XCVR_PLL_DIG->HPM_CTRL |=
@@ -839,7 +838,7 @@ xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr)
         temp = xcvr_settings.tx_dig_pa_ctrl;
         temp &= ~(XCVR_TX_DIG_PA_CTRL_PA_RAMP_SEL_MASK);
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) /* KW47 supports improved PA ramping */
-        uint8_t pa_ramp_sel_value = rsm_settings_ptr->pa_ramp_time;
+        XCVR_RSM_PA_RAMP_TIME_T  pa_ramp_sel_value = (rsm_settings_ptr->pa_ramp_time);
         switch (pa_ramp_sel_value)
         {
             case XCVR_RSM_PA_RAMP_0_USEC:
@@ -877,7 +876,7 @@ xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr)
                 pa_ramp_sel_value = XCVR_RSM_PA_RAMP_4_USEC; /* TX DIG bitfield gets the 4usec ramping value since it will count 4usec */
                 break;
             default:
-                status |= gXcvrLclStatusInvalidArgs;
+                status = gXcvrLclStatusInvalidArgs;
                 break;
         }
         temp |= XCVR_TX_DIG_PA_CTRL_PA_RAMP_SEL(pa_ramp_sel_value);
@@ -1041,7 +1040,12 @@ xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr)
         /* ************** */
         /* Setup TSM for ranging */
         /* ************** */
-        status |= XCVR_LCL_ReprogramTsmTimings(&xcvr_lcl_tsm_generic_config); /* TSM settings are stored in const config structures */
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) /* KW47 has possibility to have status not success */
+    if (status == gXcvrLclStatusSuccess)
+#endif
+    {
+        status = XCVR_LCL_ReprogramTsmTimings(&xcvr_lcl_tsm_generic_config); /* TSM settings are stored in const config structures */
+    }
 
         temp = XCVR_RX_DIG->DFT_CTRL;
 #if (1) /* TSM OVERRIDES for preserving PLL constant phase */
@@ -2169,7 +2173,7 @@ xcvrLclStatus_t XCVR_LCL_ValidateLclSettings(xcvr_lcl_rsm_config_t * rsm_setting
             /* T_SW==4 and PA_RAMP==1 */
             /* T_SW==10 and (any valid PA ramp time) */
             bool valid_combo = (rsm_settings_ptr->t_sw == lclTSw_4usec) && ((rsm_settings_ptr->pa_ramp_time == XCVR_RSM_PA_RAMP_1_USEC) || (rsm_settings_ptr->pa_ramp_time == XCVR_RSM_PA_RAMP_0_USEC));
-            valid_combo |= (rsm_settings_ptr->t_sw == lclTSw_10usec); /* 10usec T_SW works with any valid PA ramp value (checked above) */
+            valid_combo = valid_combo || (rsm_settings_ptr->t_sw == lclTSw_10usec); /* 10usec T_SW works with any valid PA ramp value (checked above) */
             tmp_logic_sum += (uint32_t)(!valid_combo); /* Evaluate to false when params are ok */
         }
     
@@ -2192,9 +2196,9 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t * rsm_settings_ptr
     if (status == gXcvrLclStatusSuccess)
     {
         /* Setup LCL block for normal operations with 1 antenna */
-        uint8_t t_pm = rsm_settings_ptr->t_pm0;
-        uint8_t t_sw = rsm_settings_ptr->t_sw;
-        uint8_t rttPhy = rsm_settings_ptr->rate;
+        uint8_t t_pm = (uint8_t)(rsm_settings_ptr->t_pm0);
+        uint8_t t_sw = (uint8_t)(rsm_settings_ptr->t_sw);
+        XCVR_RSM_SQTE_RATE_T rttPhy = (rsm_settings_ptr->rate);
         uint32_t spint_us, temp, offset, sampling_rate_factor;
         uint8_t temp_tx_sw_ena;
         xcvr_lcl_tqi_setting_tbl_t * tqi_tbl_ptr;
@@ -2226,23 +2230,25 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t * rsm_settings_ptr
         }
 
         /* PA ramp down/up feature calculations */
-        uint8_t t_ramp_usec = rsm_settings_ptr->pa_ramp_time;  /* Actual PA ramping time in usec; Valid values are 1, 2, 3, 4 (note: 3 requires reprogramming PA ramping) */
-        offset = (TX_DATA_FLUSH_DLY_1MBPS+t_ramp_usec)*8U;
+        uint8_t t_ramp_usec = (uint8_t)(rsm_settings_ptr->pa_ramp_time);  /* Actual PA ramping time in usec; Valid values are 1, 2, 3, 4 (note: 3 requires reprogramming PA ramping) */
+        uint8_t temp_u8 = ((TX_DATA_FLUSH_DLY_1MBPS+t_ramp_usec)*8U);
+        offset = (uint32_t)temp_u8;
         uint8_t add_up;
-        if ((2*t_ramp_usec) > t_sw)
+        if ((2U*t_ramp_usec) > t_sw)
         {
             add_up = 0U; 
         }
         else
         {
-            add_up = t_sw-(2*t_ramp_usec);
+            /* T_SW is <= 10; t_ramp_usec is <= 4 */
+            add_up =(uint8_t)( t_sw-(2U*t_ramp_usec));
             add_up = (add_up > 7U ? 7U : add_up); /* saturate to 7 maximum */
-            add_up = (add_up >2 ? (add_up-2U) : 0U); /* saturate to 0 minimum */
+            add_up = (add_up >2U ? (add_up-2U) : 0U); /* saturate to 0 minimum */
         }
         
         /* ensure divisions do not have remainder */
         if ((rsm_settings_ptr->op_mode != XCVR_RSM_SQTE_STABLE_PHASE_TEST_MODE) &&
-            (((t_capture+t_sw)*(rsm_settings_ptr->num_ant_path+1U)) != t_pm))
+            ((((uint16_t)t_capture+t_sw)*(rsm_settings_ptr->num_ant_path+1U)) != t_pm))
         {
             status = gXcvrLclStatusInvalidArgs;
         }
@@ -2269,7 +2275,7 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t * rsm_settings_ptr
             }
             else
             {
-              temp_t_capture = t_capture;
+              temp_t_capture = (uint16_t)(t_capture);
             }
             temp = XCVR_MISC_LCL_RX_CFG1_RX_ANT_TRIG_SEL(6)    /* RSM trigger */ |
                 XCVR_MISC_LCL_RX_CFG1_RX_HI_PER(temp_t_capture) |       /* HI_PER in usec for KW47 */
@@ -2283,18 +2289,23 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t * rsm_settings_ptr
                                                         XCVR_MISC_LCL_TX_CFG1_TX_SW_ADD_OFFSET_UP(add_up);
 
             /* Configure TX+RX mode, and duration. All other fields are reset value (0) */
+            temp_u8 = rsm_settings_ptr->num_ant_path - 1U;
             XCVR_MISC->LCL_CFG0 = XCVR_MISC_LCL_CFG0_CTE_DUR(rsm_settings_ptr->num_ant_path) | 
                             XCVR_MISC_LCL_CFG0_LCL_ADJ_ENDMASK_MASK |
                             XCVR_MISC_LCL_CFG0_LCL_ANT_PERMUT_EN_MASK |
                             XCVR_MISC_LCL_CFG0_DELAY_SIGNED_MASK |
-                            XCVR_MISC_LCL_CFG0_ANT_SYNC(rsm_settings_ptr->num_ant_path - 1U) |
-                            XCVR_MISC_LCL_CFG0_AP_MAX(rsm_settings_ptr->num_ant_path - 1U)  |  /* AP_MAX is a zero based register representing values 1 to 4 */
+                            XCVR_MISC_LCL_CFG0_ANT_SYNC(temp_u8) |
+                            XCVR_MISC_LCL_CFG0_AP_MAX(temp_u8)  |  /* AP_MAX is a zero based register representing values 1 to 4 */
                             XCVR_MISC_LCL_CFG0_RX_LCL_EN_MASK | 
                             XCVR_MISC_LCL_CFG0_TX_LCL_EN_MASK |
                             XCVR_MISC_LCL_CFG0_LCL_EN_MASK; 
 
             XCVR_MISC->LCL_GPIO_CTRL4 = XCVR_MISC_LCL_GPIO_CTRL4_LUT_WRAP_PTR(rsm_settings_ptr->num_ant_path);
-            temp = toneAntennaIDs_p[0] | (toneAntennaIDs_p[1] << 4U) | (toneAntennaIDs_p[2] << 8U) | (toneAntennaIDs_p[3] << 12U);
+//            temp = toneAntennaIDs_p[0] | (toneAntennaIDs_p[1] << 4U) | (toneAntennaIDs_p[2] << 8U) | (toneAntennaIDs_p[3] << 12U);
+            temp = toneAntennaIDs_p[3];
+            temp = toneAntennaIDs_p[2] | (temp <<4U);
+            temp = toneAntennaIDs_p[1] | (temp <<4U);
+            temp = toneAntennaIDs_p[1] | (temp <<4U);
             XCVR_MISC->LCL_GPIO_CTRL0 = temp;
             
             temp = XCVR_RX_DIG->AGC_CTRL_STAT;
@@ -2390,14 +2401,14 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t * rsm_settings_ptr
     XCVR_MISC->LCL_TX_CFG0 = temp; /* trigger delay = T_TX_ANT_SW_DELAY */
     
 /* ensure divisions do not have remainder */
-    if (((t_capture / spint_us) + ((ant_slot_time + (uint32_t)rsm_settings_ptr->t_sw - t_capture) / spint_us)) * spint_us != ((uint32_t)rsm_settings_ptr->t_sw + ant_slot_time))
+    if (((t_capture / spint_us) + (((uint32_t)ant_slot_time + (uint32_t)rsm_settings_ptr->t_sw - t_capture) / spint_us)) * spint_us != ((uint32_t)rsm_settings_ptr->t_sw +(uint32_t) ant_slot_time))
     {
         status = gXcvrLclStatusInvalidDuration;
     }
 
     temp = XCVR_MISC_LCL_RX_CFG1_RX_ANT_TRIG_SEL(6) /* RSM trigger */ |
         XCVR_MISC_LCL_RX_CFG1_RX_HI_PER(t_capture / spint_us /* HI_PER: dma mask enable duration */) | 
-        XCVR_MISC_LCL_RX_CFG1_RX_LO_PER((ant_slot_time + (uint32_t)rsm_settings_ptr->t_sw - t_capture) / spint_us); /* LO_PER */
+        XCVR_MISC_LCL_RX_CFG1_RX_LO_PER(((uint32_t)ant_slot_time + (uint32_t)(rsm_settings_ptr->t_sw) - t_capture) / spint_us); /* LO_PER */
 
     /* TX and RX configs have same register mapping. SPINT is different due to sampling rate */
     XCVR_MISC->LCL_RX_CFG1 = temp | XCVR_MISC_LCL_RX_CFG1_RX_SPINT(RX_SAMPLING_RATE*sampling_rate_factor*spint_us-1U);
@@ -2407,9 +2418,9 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t * rsm_settings_ptr
     XCVR_MISC->LCL_CFG0 = XCVR_MISC_LCL_CFG0_CTE_DUR(rsm_settings_ptr->num_ant_path) | XCVR_MISC_LCL_CFG0_RX_LCL_EN_MASK | XCVR_MISC_LCL_CFG0_TX_LCL_EN_MASK; /* account for T_PM ext */
     
     /* workaround for KFOURWONE-702 */
-    offset = (T_CAPTURE_DELAY + ant_slot_time + (uint32_t)rsm_settings_ptr->t_sw - t_capture ) / (2U * spint_us);
+    offset = (T_CAPTURE_DELAY + (uint32_t)ant_slot_time + (uint32_t)rsm_settings_ptr->t_sw - t_capture ) / (2U * spint_us);
     temp = XCVR_MISC_LCL_DMA_MASK_DELAY_DMA_MASK_DELAY(offset); /* LO_PER/2 to get dma_mask centered inside T_PM */
-    offset = (T_CAPTURE_DELAY + ant_slot_time + rsm_settings_ptr->t_sw - t_capture) % (2U * spint_us);
+    offset = (T_CAPTURE_DELAY + (uint32_t)ant_slot_time + (uint32_t)rsm_settings_ptr->t_sw - t_capture) % (2U * spint_us);
     temp |= XCVR_MISC_LCL_DMA_MASK_DELAY_DMA_MASK_DELAY_OFF(offset*RX_SAMPLING_RATE*sampling_rate_factor);
     XCVR_MISC->LCL_DMA_MASK_DELAY = temp;
     XCVR_MISC->LCL_DMA_MASK_PERIOD = XCVR_MISC_LCL_DMA_MASK_PERIOD_DMA_MASK_REF_PER(t_capture / spint_us); /* == HI_PER */
@@ -2757,9 +2768,10 @@ void XCVR_LCL_CalibrateDcocStart(XCVR_RSM_SQTE_RATE_T rate)
     RADIO_CTRL->RF_CTRL = temp_rf_ctrl;
 
     /* Set XCVR to an out-of-band frequency to avoid possible intereference to the DCOC DAC trim process */
-    status = XCVR_OverrideRxFrequency(2385000000UL, -1000000UL); /* 1MHz IF for BLE */
+    status = XCVR_OverrideRxFrequency((uint32_t)(2385000000UL), (int32_t)(-1000000L)); /* 1MHz IF for BLE */
+    assert(status == gXcvrSuccess_c);
     (void)status;
-
+    
     /*** Configure TSM Timings to enable DCOC ***/
     /* Needed Signals to run DCOC:
      * - DCOC_GAIN_CFG_EN (09)
@@ -2798,6 +2810,7 @@ void XCVR_LCL_CalibrateDcocStart(XCVR_RSM_SQTE_RATE_T rate)
 xcvrLclStatus_t XCVR_LCL_CalibrateDcocComplete(void)
 {
     xcvrLclStatus_t status = gXcvrLclStatusSuccess;
+    xcvrStatus_t xcvr_status = gXcvrSuccess_c;
 
     /* Wait for completion of RX WU that was started in XCVR_LCL_CalibrateDcocStart() */
     XCVR_WaitRxWu();
@@ -2815,7 +2828,10 @@ xcvrLclStatus_t XCVR_LCL_CalibrateDcocComplete(void)
 
     /* Release channel over-rides and return PLL to Link Layer Control */
     /* Remove any PLL settings that caused out-of-band receive operations (for safety) */
-    XCVR_OverrideRxFrequency(2402000000UL, -1000000UL);
+    xcvr_status = XCVR_OverrideRxFrequency((uint32_t)(2402000000UL), (int32_t)(-1000000L));
+    assert(xcvr_status == gXcvrSuccess_c);
+    (void)status;
+
     XCVR_ReleasePLLOverride();
 
     if ((XCVR_RX_DIG->DCOC_STAT == 0x00002020U) && (XCVR_RX_DIG->DCOC_DIG_CORR_RESULT == 0U))
@@ -3112,7 +3128,7 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
         uint8_t rate =
             (uint8_t)((XCVR_MISC->RSM_CTRL0 & XCVR_MISC_RSM_CTRL0_RSM_RATE_MASK) >> XCVR_MISC_RSM_CTRL0_RSM_RATE_SHIFT);
         uint8_t rx_settling_latency = (uint8_t)((XCVR_TSM->WU_LATENCY & XCVR_TSM_WU_LATENCY_RX_SETTLING_LATENCY_MASK)>>XCVR_TSM_WU_LATENCY_RX_SETTLING_LATENCY_SHIFT);
-        uint8_t rsm_rxlat_dig = 0;
+        uint8_t rsm_rxlat_dig = 0U;
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN>=470)
         rsm_rxlat_dig = (uint8_t)((XCVR_MISC->RSM_CTRL6 & XCVR_MISC_RSM_CTRL6_RSM_RXLAT_DIG_MASK)>>XCVR_MISC_RSM_CTRL6_RSM_RXLAT_DIG_SHIFT);
 #endif
@@ -3123,9 +3139,11 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
         uint32_t rx_dig_ctrl1 = XCVR_RX_DIG->CTRL1;
         uint16_t dma_iq_avg = (uint16_t)(((rx_dig_ctrl1 & XCVR_RX_DIG_CTRL1_RX_IQ_PH_AVG_WIN_MASK) >>
                                           XCVR_RX_DIG_CTRL1_RX_IQ_PH_AVG_WIN_SHIFT));
-        uint8_t rx_dft_iq_out_averaged = 1; /* default dma get averaged samples with reduced sample rate ( KW45 ) */
+        uint8_t rx_dft_iq_out_averaged; /* default dma get averaged samples with reduced sample rate ( KW45 ) */
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN>=470)      
-        rx_dft_iq_out_averaged = (rx_dig_ctrl1&XCVR_RX_DIG_CTRL1_RX_DFT_IQ_OUT_AVERAGED_MASK)>>XCVR_RX_DIG_CTRL1_RX_DFT_IQ_OUT_AVERAGED_SHIFT;
+        rx_dft_iq_out_averaged = (uint8_t)((rx_dig_ctrl1&XCVR_RX_DIG_CTRL1_RX_DFT_IQ_OUT_AVERAGED_MASK)>>XCVR_RX_DIG_CTRL1_RX_DFT_IQ_OUT_AVERAGED_SHIFT);
+#else
+        rx_dft_iq_out_averaged = 1U; /* default dma get averaged samples with reduced sample rate ( KW45 ) */
 #endif
         uint32_t temp       = (XCVR_MISC->RSM_CTRL1);
         uint16_t t_fc_usec =
@@ -3189,7 +3207,11 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
         t_pm_usec[3] = (uint16_t)(
             T_PM_INCMT * (T_PM_REG_OFFSET + ((temp & XCVR_MISC_RSM_CTRL2_RSM_T_PM3_MASK) >> XCVR_MISC_RSM_CTRL2_RSM_T_PM3_SHIFT)));
 #endif
-        if ((dma_iq_avg == 0U) || (rx_dft_iq_out_averaged==0))
+        if ((dma_iq_avg == 0U)
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN>=470)      
+             || (rx_dft_iq_out_averaged==0U)
+#endif
+            )
         {
             dma_iq_avg = 1U;
         }
@@ -3205,10 +3227,10 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
         bool rsm_dma_mask_used;
         temp = XCVR_MISC->RSM_CTRL3;
         uint32_t dma_mask_ctrl = 0;
-        uint8_t dma_mask_center = 0; /* disabled by default for KW45 compability */
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN>=470)
+        uint8_t dma_mask_center = 0; /* disabled by default for KW45 compability */
         dma_mask_ctrl = XCVR_MISC->DMA_MASK_CTRL;
-        dma_mask_center = (dma_mask_ctrl&XCVR_MISC_DMA_MASK_CTRL_DMA_MASK_CENTER_MASK)>>XCVR_MISC_DMA_MASK_CTRL_DMA_MASK_CENTER_SHIFT;
+        dma_mask_center = (uint8_t)((dma_mask_ctrl&XCVR_MISC_DMA_MASK_CTRL_DMA_MASK_CENTER_MASK)>>XCVR_MISC_DMA_MASK_CTRL_DMA_MASK_CENTER_SHIFT);
 #else
         (void)dma_mask_ctrl;  /* Compilation for other derivative can fail for unused variable */
 #endif
@@ -3234,14 +3256,16 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
             dma_pm_dur = (uint8_t)((dma_intervals * rx_spint) / sample_rate_per_usec);
             assert(((dma_intervals * rx_spint) % sample_rate_per_usec) == 0U); /* There shouldn't be any remainder... */
         
-            if(dma_mask_center > 0) /* if dma_mask_center in use, the window duration is given by this field */
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN>=470)
+            if(dma_mask_center > 0U) /* if dma_mask_center in use, the window duration is given by this field */
             {
-                uint16_t center_window = (1<<(dma_mask_center-1)); /* us. dma_mask_center>0 only */
+                uint16_t center_window = (uint16_t)((1U<<(dma_mask_center-1U))); /* us. dma_mask_center>0 only */
                 if( center_window < dma_pm_dur ) /* pm duration used is the min between centering size and lcl_high_per */
                 {
-                    dma_pm_dur = center_window;
+                    dma_pm_dur = (uint8_t)(center_window);
                 }
             }
+#endif
         }
 
         /* Read TSM WU WD configuration [CONNRF-1076] */
@@ -3299,9 +3323,11 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
         }
 
         /* Read DMA Mask configuration */
-        uint8_t dma_signal_valid_mask_sel = RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK; // enable DMA/LCL mask for KW45 and by default
+        uint8_t dma_signal_valid_mask_sel;
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
         dma_signal_valid_mask_sel = (XCVR_MISC->DMA_MASK_CTRL & XCVR_MISC_DMA_MASK_CTRL_DMA_SIGNAL_VALID_MASK_SEL_MASK) >> XCVR_MISC_DMA_MASK_CTRL_DMA_SIGNAL_VALID_MASK_SEL_SHIFT;
+#else
+        dma_signal_valid_mask_sel = RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK; // enable DMA/LCL mask for KW45 and by default
 #endif
 
         /* Read Step configuration from RAM */
@@ -3334,15 +3360,17 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
             switch ((XCVR_RSM_FSTEP_TYPE_T)step_format)
             {
                 case XCVR_RSM_STEP_FCS:
-                    if( dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX) { /* dt_rx state mask capture */
+                    if (0U != (dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX)) 
+                    { /* dt_rx state mask capture */
                         dma_samples += ((t_dt_mode0_usec+rx_settling_latency+rsm_rxlat_dig+1) * sample_rate_per_usec ); /* no averaging */
                     }
                     if (role == XCVR_RSM_TX_MODE)
                     {   /* Only Initiator captures DMA samples for the frequency compensation */
-                        if(dma_signal_valid_mask_sel & (RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK|RSM_DMA_SIGNAL_VALID_MASK_SEL_FM_RX))
+                        if (0U != (dma_signal_valid_mask_sel & (RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK|RSM_DMA_SIGNAL_VALID_MASK_SEL_FM_RX)))
                         {
                             dma_samples += (dma_fm_dur * sample_rate_per_usec / dma_iq_avg);
-                            if(dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_FM_RX) { /* fm_rx state mask capture */
+                            if (0U != (dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_FM_RX) )
+                            { /* fm_rx state mask capture */
                               /* add additionnal samples with no averaging */
                               dma_samples += ((t_fm_usec[t_pm_sel] - dma_fm_dur + rx_settling_latency) * sample_rate_per_usec);
                             }  
@@ -3353,9 +3381,12 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
                         t_fc_usec + (2U * t_dt_mode0_usec) + t_ip1_usec + t_s_usec + t_fm_usec[t_pm_sel];
                     break;
                 case XCVR_RSM_STEP_PK_PK:
-                    if( dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX) { /* dt_rx state mask capture. no averaging */
-                        dma_samples += ((t_dt_usec+rx_settling_latency+rsm_rxlat_dig+1) * sample_rate_per_usec);
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
+                    if (0U != (dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX))
+                    { /* dt_rx state mask capture. no averaging */
+                        dma_samples += ((t_dt_usec+rx_settling_latency+rsm_rxlat_dig+1U) * sample_rate_per_usec);
                     }
+#endif
                     /* Seq Len = T_FC+2*T_DT+T_IP1 */
                     step_length_us = t_fc_usec + (2U * t_dt_usec) + t_ip1_usec;
                     break;
@@ -3365,13 +3396,14 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
                         /* RSM DMA mask not used == LCL block used; Must consider multi-ant */
                         temp_samples = dma_pm_dur * ((uint16_t)ant_cnt+(uint16_t)TONE_EXT_COUNT); /* DMA capture is repeated for each antenna */
                     }
-                    else { /* Use RSM DMA Mask */
+                    else 
+                    { /* Use RSM DMA Mask */
                         temp_samples = dma_pm_dur;
                     }
-                    if(dma_signal_valid_mask_sel & (RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK|RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX))
+                    if (0U != (dma_signal_valid_mask_sel & (RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK|RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX)))
                     {
                         dma_samples += (temp_samples * sample_rate_per_usec) / dma_iq_avg;
-                        if( dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX)
+                        if (0U != ( dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX))
                         {
                             /* pm_rx state mask capture : add additionnal samples with no averaging */
                             dma_samples += ((t_pm_usec[t_pm_sel] - temp_samples +rx_settling_latency) * sample_rate_per_usec);
@@ -3382,27 +3414,29 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
                     step_length_us = t_fc_usec + (2U * t_pm_usec[t_pm_sel]) + t_ip2_usec;
                     break;
                 case XCVR_RSM_STEP_PK_TN_TN_PK:
-                    if( dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX) { /* dt_rx state mask capture . no averaging */
+                    if (0U != (dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX))
+                    { /* dt_rx state mask capture . no averaging */
                         dma_samples += ((t_dt_usec+rx_settling_latency+rsm_rxlat_dig+1) * sample_rate_per_usec);
                     }
                     
-                    if(!rsm_dma_mask_used)
+                    if (!rsm_dma_mask_used)
                     {
                         /* RSM DMA mask not used == LCL block used; Must consider multi-ant */
                         temp_samples = dma_pm_dur * ((uint16_t)ant_cnt+(uint16_t)TONE_EXT_COUNT); /* DMA capture is repeated for each antenna */
                     }
-                    else { /* Use RSM DMA Mask */
+                    else 
+                    { /* Use RSM DMA Mask */
                         temp_samples = dma_pm_dur;
                     }
-                    if(dma_signal_valid_mask_sel & (RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK|RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX))
+                    if (0U != (dma_signal_valid_mask_sel & (RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK|RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX)))
                     {
                         dma_samples += (temp_samples * sample_rate_per_usec) / dma_iq_avg;
                         
-                        if( dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX)
+                        if (0U != (dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX))
                         {
                             /* pm_rx state mask capture : add additionnal samples with no averaging */
                             dma_samples += ((t_pm_usec[t_pm_sel] - temp_samples +rx_settling_latency ) * sample_rate_per_usec);
-                            dma_samples += (3*sample_rate_per_usec); /* compensate for additialnal sample */
+                            dma_samples += (3U*sample_rate_per_usec); /* compensate for additialnal sample */
                         }
                     } 
                     /* Seq Len = T_FC+2*T_DT+2*T_S+2*T_PM*NUM_ANT+T_IP2 */
@@ -3518,13 +3552,13 @@ xcvrLclStatus_t XCVR_LCL_EnaPic(XCVR_RSM_PIC_MODE_TYPE_T mode, bool slow_bw_redu
             uint32_t temp_seq_divn_closedloop;
             temp_seq_divn_closedloop = xcvr_lcl_tsm_generic_config.TIMING48;
             /* Go 2 ticks back for the start of the signals */
-            uint8_t closedloop_tx_hi = ((temp_seq_divn_closedloop&XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_TX_HI_MASK)>>XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_TX_HI_SHIFT)-2U;
-            uint8_t closedloop_rx_hi = ((temp_seq_divn_closedloop&XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_RX_HI_MASK)>>XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_RX_HI_SHIFT)-2U;
+            uint32_t closedloop_tx_hi = (uint32_t)(((temp_seq_divn_closedloop&XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_TX_HI_MASK)>>XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_TX_HI_SHIFT)-2U);
+            uint32_t closedloop_rx_hi = (uint32_t)(((temp_seq_divn_closedloop&XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_RX_HI_MASK)>>XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_RX_HI_SHIFT)-2U);
             /* signals change second time 1 tick after end of PA rampup */
             // TODO: properly calculate end of PA ramp from TX DIG settings or input parameters for TX_LO
             /* Use 1 tick before end of TX WU regardless of DATA PADDING and PA RAMP time. This may need to be modified for long padding or ramp times */
-            uint8_t tx_end_tx_wu = ((xcvr_lcl_tsm_generic_config.END_OF_SEQ&XCVR_TSM_END_OF_SEQ_END_OF_TX_WU_MASK)>>XCVR_TSM_END_OF_SEQ_END_OF_TX_WU_SHIFT)-1U;
-            uint8_t rx_dig_en = ((xcvr_lcl_tsm_generic_config.TIMING17&XCVR_TSM_TIMING17_RX_DIG_EN_RX_HI_MASK)>>XCVR_TSM_TIMING17_RX_DIG_EN_RX_HI_SHIFT)-1U; 
+            uint32_t tx_end_tx_wu = (uint32_t)(((xcvr_lcl_tsm_generic_config.END_OF_SEQ&XCVR_TSM_END_OF_SEQ_END_OF_TX_WU_MASK)>>XCVR_TSM_END_OF_SEQ_END_OF_TX_WU_SHIFT)-1U);
+            uint32_t rx_dig_en = (uint32_t)(((xcvr_lcl_tsm_generic_config.TIMING17&XCVR_TSM_TIMING17_RX_DIG_EN_RX_HI_MASK)>>XCVR_TSM_TIMING17_RX_DIG_EN_RX_HI_SHIFT)-1U); 
             temp_pic_rint2_short_fm_en = (XCVR_TSM_TIMING58_SEQ_PIC_RINT2_SHORT_FM_EN_TX_HI(closedloop_tx_hi) |
                                                         XCVR_TSM_TIMING58_SEQ_PIC_RINT2_SHORT_FM_EN_TX_LO(tx_end_tx_wu) |
                                                         XCVR_TSM_TIMING58_SEQ_PIC_RINT2_SHORT_FM_EN_RX_HI(closedloop_rx_hi) |
@@ -3569,8 +3603,8 @@ void XCVR_LCL_EnaDividerSync(bool enable)
     
     if (enable)
     {
-        uint8_t closedloop_tx_hi = (xcvr_lcl_tsm_generic_config.TIMING48&XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_TX_HI_MASK)>>XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_TX_HI_SHIFT;
-        uint8_t closedloop_rx_hi = (xcvr_lcl_tsm_generic_config.TIMING48&XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_RX_HI_MASK)>>XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_RX_HI_SHIFT;
+        uint32_t closedloop_tx_hi = (xcvr_lcl_tsm_generic_config.TIMING48&XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_TX_HI_MASK)>>XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_TX_HI_SHIFT;
+        uint32_t closedloop_rx_hi = (xcvr_lcl_tsm_generic_config.TIMING48&XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_RX_HI_MASK)>>XCVR_TSM_TIMING48_SEQ_DIVN_CLOSEDLOOP_RX_HI_SHIFT;
         temp_lodiv_sync_en = ( XCVR_TSM_TIMING60_SEQ_LODIV_SYNC_EN_TX_HI(closedloop_tx_hi+2U) |
                                                      XCVR_TSM_TIMING60_SEQ_LODIV_SYNC_EN_TX_LO(closedloop_tx_hi+5U+DELAY_DIV_SYNC) |
                                                      XCVR_TSM_TIMING60_SEQ_LODIV_SYNC_EN_RX_HI(closedloop_rx_hi+2U+DELAY_DIV_SYNC) |
