@@ -2242,7 +2242,7 @@ xcvrStatus_t XCVR_FastPeriphDescrip_Load(uint32_t * descriptor_list, uint16_t nu
         /* All zeros descriptor is detected and skipped in the input handling. The last descriptor written to ouptut in PKT RAM is always all zeros */
         for (i=0;i<num_descrips;i++)
         {
-            descriptor = *descriptor_ptr++; /* Read the descriptor from the list */
+            descriptor = descriptor_ptr[i]; /* Read the descriptor from the list */
     // TODO: handle the all zeros descriptor in the input list other than at the end of the list (should an error be produced?)
             if (descriptor != 0U) /* All zeros descriptor is the end of the descriptor list, no need to write any other words */
             {
@@ -2282,7 +2282,7 @@ xcvrStatus_t XCVR_FastPeriphDescripData_Load(uint32_t * descriptor_data_list, ui
         uint32_t index;
         for (index=0U; index<total_words_to_load; index++)
         {
-            pkt_ram_mem_ptr[index] = *desc_data_ptr++;
+            pkt_ram_mem_ptr[index] = desc_data_ptr[index];
         }
         /* Write an all zero descriptor to terminate the list (it is assumed NOT to be in the original descriptors) */
         pkt_ram_mem_ptr[index] = 0UL;

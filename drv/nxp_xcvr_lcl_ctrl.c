@@ -2569,7 +2569,7 @@ xcvrLclStatus_t XCVR_LCL_CalibratePll(const channel_num_t *hadm_chan_idx_list,
         {
             /* Setup the desired frequency */
             XCVR_PLL_DIG->CHAN_MAP &= ~(XCVR_PLL_DIG_CHAN_MAP_CHANNEL_NUM_OVRD_MASK);
-            XCVR_PLL_DIG->CHAN_MAP |= XCVR_PLL_DIG_CHAN_MAP_CHANNEL_NUM_OVRD(*list_ptr);
+            XCVR_PLL_DIG->CHAN_MAP |= XCVR_PLL_DIG_CHAN_MAP_CHANNEL_NUM_OVRD(list_ptr[i]);
             /* Warmup RX & wait for completion - takes ~100usec */
 #if (HPM_CAL_IN_RX)
             XCVR_ForceRxWu();
@@ -2588,16 +2588,16 @@ xcvrLclStatus_t XCVR_LCL_CalibratePll(const channel_num_t *hadm_chan_idx_list,
             XCVR_WaitTxWu();
 #endif /* HPM_CAL_IN_RX */
             /* Capture calibrated values & warmdown */
-            results_ptr->hpm_cal_val =
+            results_ptr[i].hpm_cal_val =
                 (uint16_t)((XCVR_PLL_DIG->HPMCAL_CTRL & XCVR_PLL_DIG_HPMCAL_CTRL_HPM_CAL_FACTOR_MASK) >>
                            XCVR_PLL_DIG_HPMCAL_CTRL_HPM_CAL_FACTOR_SHIFT);
 #if (defined(CTUNE_MANUAL_CAL) && (CTUNE_MANUAL_CAL == 1))
-            results_ptr->ctune_cal_val =
+            results_ptr[i].ctune_cal_val =
                 (uint8_t)((XCVR_PLL_DIG->CTUNE_RES & XCVR_PLL_DIG_CTUNE_RES_CTUNE_SELECTED_MASK) >>
                           XCVR_PLL_DIG_CTUNE_RES_CTUNE_SELECTED_SHIFT);
 #endif /* (defined(CTUNE_MANUAL_CAL) && (CTUNE_MANUAL_CAL == 1)) */
             if (update_curve_fit &&
-                (*list_ptr ==
+                (list_ptr[i] ==
                  chan_2442_num)) /* Only perform the curve fit update when needed and when the frequency is 2442MHz. */
             {
                 /* calculation of effective frequency (in MHz) */
@@ -2607,7 +2607,7 @@ xcvrLclStatus_t XCVR_LCL_CalibratePll(const channel_num_t *hadm_chan_idx_list,
                                XCVR_PLL_DIG_HPM_CAL2_HPM_COUNT_2_SHIFT);
                 hpm_cal_2442_data.eff_cal_freq =
                     (uint16_t)(temp_count / (4U * hpm_cal_time)); /* Frequency of the calibration in MHz*/
-                hpm_cal_2442_data.hpm_cal_factor_2442 = results_ptr->hpm_cal_val;
+                hpm_cal_2442_data.hpm_cal_factor_2442 = results_ptr[i].hpm_cal_val;
             }
 #if (HPM_CAL_IN_RX)
             XCVR_ForceRxWd();
@@ -2624,8 +2624,6 @@ xcvrLclStatus_t XCVR_LCL_CalibratePll(const channel_num_t *hadm_chan_idx_list,
                 temp_count--;
             }
 #endif
-            list_ptr++;
-            results_ptr++;
             while (((XCVR_MISC->XCVR_STATUS & XCVR_MISC_XCVR_STATUS_TSM_COUNT_MASK) >>
                     XCVR_MISC_XCVR_STATUS_TSM_COUNT_SHIFT) != 0U)
             {
@@ -3059,13 +3057,12 @@ uint8_t XCVR_LCL_CountPnRttSteps(const xcvr_lcl_fstep_t *fstep_settings, uint16_
         count                            = 0;
         for (i = 0U; i < num_steps; i++)
         {
-            uint8_t temp = (step_ptr->tpm_step_format_hmp_cal_factor_msb & XCVR_RSM_STEP_FORMAT_MASK) >>
+            uint8_t temp = (step_ptr[i].tpm_step_format_hmp_cal_factor_msb & XCVR_RSM_STEP_FORMAT_MASK) >>
                            XCVR_RSM_STEP_FORMAT_SHIFT;
             if (temp != (uint8_t)XCVR_RSM_STEP_TN_TN) /* Count all steps other than Tn-Tn */
             {
                 count++;
             }
-            step_ptr++;
         }
     }
 
@@ -3259,10 +3256,10 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN>=470)
             if(dma_mask_center > 0U) /* if dma_mask_center in use, the window duration is given by this field */
             {
-                uint16_t center_window = (uint16_t)((1U<<(dma_mask_center-1U))); /* us. dma_mask_center>0 only */
+                uint8_t center_window = (uint8_t)((1U<<(dma_mask_center-1U))); /* us. dma_mask_center>0 only */
                 if( center_window < dma_pm_dur ) /* pm duration used is the min between centering size and lcl_high_per */
                 {
-                    dma_pm_dur = (uint8_t)(center_window);
+                    dma_pm_dur = center_window;
                 }
             }
 #endif
@@ -3316,16 +3313,16 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
             uint8_t fast_fc_rx_wu = (uint8_t)((XCVR_MISC->RSM_CTRL0 & XCVR_MISC_RSM_CTRL0_RSM_FAST_FC_RX_WU_MASK) >>
                                               XCVR_MISC_RSM_CTRL0_RSM_FAST_FC_RX_WU_SHIFT);
 
-            warmup_us = (uint16_t)((uint16_t)end_of_rx_wu -
+            warmup_us = ((uint16_t)end_of_rx_wu -
                                    ((uint16_t)fast_dest_rx - (uint16_t)fast_start_rx) * (uint16_t)fast_fc_rx_wu + 1U);
             warmdown_us =
-                (uint16_t)((uint16_t)tx_data_flush_dly + 2U + ((uint16_t)end_of_tx_wd - (uint16_t)end_of_tx_wu) + 1U);
+                ((uint16_t)tx_data_flush_dly + 2U + ((uint16_t)end_of_tx_wd - (uint16_t)end_of_tx_wu) + 1U);
         }
 
         /* Read DMA Mask configuration */
         uint8_t dma_signal_valid_mask_sel;
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
-        dma_signal_valid_mask_sel = (XCVR_MISC->DMA_MASK_CTRL & XCVR_MISC_DMA_MASK_CTRL_DMA_SIGNAL_VALID_MASK_SEL_MASK) >> XCVR_MISC_DMA_MASK_CTRL_DMA_SIGNAL_VALID_MASK_SEL_SHIFT;
+        dma_signal_valid_mask_sel = (uint8_t)((XCVR_MISC->DMA_MASK_CTRL & XCVR_MISC_DMA_MASK_CTRL_DMA_SIGNAL_VALID_MASK_SEL_MASK) >> XCVR_MISC_DMA_MASK_CTRL_DMA_SIGNAL_VALID_MASK_SEL_SHIFT);
 #else
         dma_signal_valid_mask_sel = RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK; // enable DMA/LCL mask for KW45 and by default
 #endif
@@ -3338,7 +3335,7 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
         uint8_t config_size;
         for (uint8_t i = 0; i < num_steps; i++)
         {
-            XCVR_RSM_T_PM_FM_SEL_T t_pm_sel;
+            uint8_t t_pm_sel;
             uint8_t step_format ;
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
             uint8_t dummy;
@@ -3353,7 +3350,7 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
 #else  /* KW45 version */
             temp                = fstep_ptr->tpm_step_format_hmp_cal_factor_msb;
             step_format = (uint8_t)((temp & XCVR_RSM_STEP_FORMAT_MASK) >> XCVR_RSM_STEP_FORMAT_SHIFT);
-            t_pm_sel    = (XCVR_RSM_T_PM_FM_SEL_T)((temp & XCVR_RSM_T_PM_FM_SEL_MASK) >> XCVR_RSM_T_PM_FM_SEL_SHIFT);
+            t_pm_sel    = (uint8_t)((temp & XCVR_RSM_T_PM_FM_SEL_MASK) >> XCVR_RSM_T_PM_FM_SEL_SHIFT);
             (void)config_size; /* Touch unused variable */
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
             step_length_us      = 0U;
@@ -3403,21 +3400,25 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
                     if (0U != (dma_signal_valid_mask_sel & (RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK|RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX)))
                     {
                         dma_samples += (temp_samples * sample_rate_per_usec) / dma_iq_avg;
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
                         if (0U != ( dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX))
                         {
                             /* pm_rx state mask capture : add additionnal samples with no averaging */
                             dma_samples += ((t_pm_usec[t_pm_sel] - temp_samples +rx_settling_latency) * sample_rate_per_usec);
-                            dma_samples += (rx_dft_iq_out_averaged)? -1 : 1; /* compensate for additialnal sample */
+                            dma_samples = (rx_dft_iq_out_averaged) ? dma_samples-1U : dma_samples+1U; /* compensate for additional sample */
                         }
+#endif
                     }
                     /* Seq Len = T_FC+2*T_PM*NUM_ANT+T_IP2 */
                     step_length_us = t_fc_usec + (2U * t_pm_usec[t_pm_sel]) + t_ip2_usec;
                     break;
                 case XCVR_RSM_STEP_PK_TN_TN_PK:
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
                     if (0U != (dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX))
                     { /* dt_rx state mask capture . no averaging */
-                        dma_samples += ((t_dt_usec+rx_settling_latency+rsm_rxlat_dig+1) * sample_rate_per_usec);
+                        dma_samples += ((t_dt_usec+(uint16_t)rx_settling_latency+(uint16_t)rsm_rxlat_dig+1U) * sample_rate_per_usec);
                     }
+#endif
                     
                     if (!rsm_dma_mask_used)
                     {
@@ -3432,12 +3433,14 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
                     {
                         dma_samples += (temp_samples * sample_rate_per_usec) / dma_iq_avg;
                         
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
                         if (0U != (dma_signal_valid_mask_sel & RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX))
                         {
                             /* pm_rx state mask capture : add additionnal samples with no averaging */
                             dma_samples += ((t_pm_usec[t_pm_sel] - temp_samples +rx_settling_latency ) * sample_rate_per_usec);
                             dma_samples += (3U*sample_rate_per_usec); /* compensate for additialnal sample */
                         }
+#endif
                     } 
                     /* Seq Len = T_FC+2*T_DT+2*T_S+2*T_PM*NUM_ANT+T_IP2 */
                     step_length_us = t_fc_usec + (2U * t_dt_usec) + (2U * t_pm_usec[t_pm_sel] ) +
