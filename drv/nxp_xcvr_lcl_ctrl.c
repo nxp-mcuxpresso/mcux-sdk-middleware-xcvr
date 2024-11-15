@@ -2734,7 +2734,6 @@ static uint32_t rf_ctrl_backup;
 
 void XCVR_LCL_CalibrateDcocStart(XCVR_RSM_SQTE_RATE_T rate)
 {
-    xcvrStatus_t status = gXcvrSuccess_c;
 
     /* RX WU */
     rf_ctrl_backup = RADIO_CTRL->RF_CTRL;
@@ -2751,9 +2750,12 @@ void XCVR_LCL_CalibrateDcocStart(XCVR_RSM_SQTE_RATE_T rate)
     }
     RADIO_CTRL->RF_CTRL = temp_rf_ctrl;
 
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  
     /* Set XCVR to an out-of-band frequency to avoid possible intereference to the DCOC DAC trim process */
+    xcvrStatus_t status = gXcvrSuccess_c;
     status = XCVR_OverrideRxFrequency(2385000000UL, -1000000UL); /* 1MHz IF for BLE */
     (void)status;
+#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
 
     /*** Configure TSM Timings to enable DCOC ***/
     /* Needed Signals to run DCOC:
@@ -2808,10 +2810,12 @@ xcvrLclStatus_t XCVR_LCL_CalibrateDcocComplete(void)
     /* Restore RF_CTRL state */
     RADIO_CTRL->RF_CTRL = rf_ctrl_backup;
 
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  
     /* Release channel over-rides and return PLL to Link Layer Control */
     /* Remove any PLL settings that caused out-of-band receive operations (for safety) */
     XCVR_OverrideRxFrequency(2402000000UL, -1000000UL);
     XCVR_ReleasePLLOverride();
+#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
 
     if ((XCVR_RX_DIG->DCOC_STAT == 0x00002020U) && (XCVR_RX_DIG->DCOC_DIG_CORR_RESULT == 0U))
     {
