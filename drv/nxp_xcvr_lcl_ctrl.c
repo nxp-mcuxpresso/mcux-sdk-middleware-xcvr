@@ -3337,6 +3337,7 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
         {
             uint8_t t_pm_sel;
             uint8_t step_format ;
+            int8_t sample_compensation = 0;
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
             uint8_t dummy;
             uint8_t tone_extension;
@@ -3392,10 +3393,12 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
                     {
                         /* RSM DMA mask not used == LCL block used; Must consider multi-ant */
                         temp_samples = dma_pm_dur * ((uint16_t)ant_cnt+(uint16_t)TONE_EXT_COUNT); /* DMA capture is repeated for each antenna */
+                        sample_compensation = (rx_dft_iq_out_averaged) ? -1 : 1;
                     }
                     else 
                     { /* Use RSM DMA Mask */
                         temp_samples = dma_pm_dur;
+                        sample_compensation = 1;
                     }
                     if (0U != (dma_signal_valid_mask_sel & (RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK|RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX)))
                     {
@@ -3405,7 +3408,7 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
                         {
                             /* pm_rx state mask capture : add additionnal samples with no averaging */
                             dma_samples += ((t_pm_usec[t_pm_sel] - temp_samples +rx_settling_latency) * sample_rate_per_usec);
-                            dma_samples = (rx_dft_iq_out_averaged) ? dma_samples-1U : dma_samples+1U; /* compensate for additional sample */
+                            dma_samples += sample_compensation; /* compensate for additional sample */
                         }
 #endif
                     }
@@ -3419,14 +3422,17 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
                         dma_samples += ((t_dt_usec+(uint16_t)rx_settling_latency+(uint16_t)rsm_rxlat_dig+1U) * sample_rate_per_usec);
                     }
 #endif
-                    
-                    if (!rsm_dma_mask_used)
+                    sample_compensation = (role == XCVR_RSM_TX_MODE)? (3U*sample_rate_per_usec):1;
+                    if ((!rsm_dma_mask_used) && (dma_signal_valid_mask_sel&RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK))
                     {
                         /* RSM DMA mask not used == LCL block used; Must consider multi-ant */
                         temp_samples = dma_pm_dur * ((uint16_t)ant_cnt+(uint16_t)TONE_EXT_COUNT); /* DMA capture is repeated for each antenna */
+                        if(rx_dft_iq_out_averaged == 1) {  /* update compensation values if iq averaged captured */
+                            sample_compensation = (role == XCVR_RSM_TX_MODE)? (3U*sample_rate_per_usec)-2 : -1;
+                        }
                     }
                     else 
-                    { /* Use RSM DMA Mask */
+                    {   /* Use RSM DMA Mask */
                         temp_samples = dma_pm_dur;
                     }
                     if (0U != (dma_signal_valid_mask_sel & (RSM_DMA_SIGNAL_VALID_MASK_SEL_DMA_MASK|RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX)))
@@ -3438,10 +3444,10 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
                         {
                             /* pm_rx state mask capture : add additionnal samples with no averaging */
                             dma_samples += ((t_pm_usec[t_pm_sel] - temp_samples +rx_settling_latency ) * sample_rate_per_usec);
-                            dma_samples += (3U*sample_rate_per_usec); /* compensate for additialnal sample */
+                            dma_samples += sample_compensation; /* compensate for additional sample */
                         }
 #endif
-                    } 
+                    }
                     /* Seq Len = T_FC+2*T_DT+2*T_S+2*T_PM*NUM_ANT+T_IP2 */
                     step_length_us = t_fc_usec + (2U * t_dt_usec) + (2U * t_pm_usec[t_pm_sel] ) +
                                      (2U * t_s_usec) +  t_ip2_usec;
