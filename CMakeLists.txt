@@ -40,6 +40,8 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.xcvr)
             SOURCES 
                 drv/nb2p4ghz/configs/gen45/*.c
                 drv/nb2p4ghz/configs/gen45/*.h
+                drv/nxp_xcvr_lcl_step_mgr.h
+                drv/nxp_xcvr_lcl_step_structs.h
         )
         mcux_add_include(
             INCLUDES 
