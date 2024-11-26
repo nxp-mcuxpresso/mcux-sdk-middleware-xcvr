@@ -5,7 +5,9 @@
  */
 #include "nxp2p4_xcvr.h"
 #include "nxp_xcvr_lcl_ctrl.h"
-#include "nxp_xcvr_lcl_step_mgr.h"
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
+#include "nxp_xcvr_lcl_step_mgr.h"  /* Support for PKT RAM based CONFIG and RESULT circular buffers only on KW47 */
+#endif
 #include "nxp_xcvr_common_config.h"
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) && (RF_OSC_26MHZ == 0) /* RSM only supported on Gen 4.5 radios & with 32MHZ RF_OSC */

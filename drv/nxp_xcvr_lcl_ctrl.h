@@ -297,10 +297,10 @@ typedef enum
 /*! @brief  PLL PIC mode enumeration type. */
 typedef enum
 {
-    XCVR_RSM_PIC_DISABLED                = 0U, /*!< Legacy mode for PLL PIC, not enabled. */
-    XCVR_RSM_PIC_FAST_ONLY             = 1U, /*!< PIC Fast mode only */
+    XCVR_RSM_PIC_DISABLED               = 0U, /*!< Legacy mode for PLL PIC, not enabled. */
+    XCVR_RSM_PIC_FAST_ONLY            = 1U, /*!< PIC Fast mode only */
     XCVR_RSM_PIC_FAST_SLOW            = 2U, /*!< PIC Fast plus Slow mode */
-    XCVR_RSM_PIC_ERROR                          = 7U, /*!< Error value */
+    XCVR_RSM_PIC_ERROR                      = 3U, /*!< Error value */
 }   XCVR_RSM_PIC_MODE_TYPE_T;
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  */
 
