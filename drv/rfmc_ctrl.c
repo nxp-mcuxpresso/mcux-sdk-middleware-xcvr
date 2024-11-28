@@ -157,9 +157,10 @@ void RFMC_rf_osc_shutdown(void)
 
 void RFMC_radio_reset(void)
 {
-    /* Assert and then clear radio reset */
-    RFMC->CTRL |= RFMC_CTRL_RFMC_RST_MASK;
-    RFMC->CTRL &= ~(RFMC_CTRL_RFMC_RST_MASK);
+    /* Assert and then clear XCVR soft reset to reset only the XCVR hardware (no CPU reset) */
+    /* Does not reset registers, XCVR_Init() must be used for reconfiguring registers */
+    XCVR_MISC->XCVR_CTRL |= XCVR_MISC_XCVR_CTRL_XCVR_SOFT_RESET_MASK;
+    XCVR_MISC->XCVR_CTRL &= ~(XCVR_MISC_XCVR_CTRL_XCVR_SOFT_RESET_MASK);
 }
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) && !defined(KW45B41Z82_NBU_SERIES) && !defined(KW45B41Z83_NBU_SERIES)
