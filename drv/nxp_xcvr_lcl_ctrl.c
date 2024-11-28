@@ -114,29 +114,6 @@ static xcvr_lcl_tqi_setting_tbl_t tqi_2mbps_settings =
 };
 #endif
 
-typedef struct {
-    uint16_t t_fc_usec;
-    uint16_t t_ip1_usec;
-    uint16_t t_ip2_usec;
-    uint8_t t_s_usec;
-    uint16_t t_fm_usec[T_FM_FLD_COUNT];
-    uint16_t t_pm_usec[T_PM_FLD_COUNT];
-    uint8_t t_dt0_usec;
-    uint16_t t_dt_usec;
-    uint16_t warmup_usec;
-    uint8_t warmdown_usec;
-} xcvr_lcl_rsmstate_duration_t;
-
-typedef struct {
-    uint8_t dma_fm_dur;
-    uint8_t dma_pm_dur;
-    uint16_t dma_iq_avg;
-    uint8_t sample_rate_per_usec;
-    bool rx_dft_iq_out_averaged;
-    bool rsm_dma_mask_used;
-    uint8_t dma_signal_valid_mask_sel;
-} xcvr_lcl_rsmdma_config_t;
-
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -203,10 +180,35 @@ static xcvrLclStatus_t XCVR_LCL_RsmCheckDmaMask(const xcvr_lcl_rsm_config_t *rsm
  *
  */
 static uint8_t XCVR_LCL_CalcAdcOffset(uint8_t adc_offset_s7, uint8_t dig_corr_s8);
+
+/*!
+ * @brief Function to compute rsm states duration from current register configuration.
+ *
+ * This function reads the current applied rsm timings and calculates the RSM state's duration.
+ *
+ * @param role - RSM mode XCVR_RSM_RX_MODE (reflector) or XCVR_RSM_TX_MODE (initiator)
+ * @param state_duration - struct @ref xcvr_lcl_rsmstate_duration_t to store all rsm state's timings
+ *
+ * @return status - gXcvrLclStatusSuccess if no error. 
+ *
+ */
+static xcvrLclStatus_t XCVR_LCL_GetRsmStateTimings(XCVR_RSM_RXTX_MODE_T role, xcvr_lcl_rsmstate_duration_t* state_duration);
+
+/*!
+ * @brief Function to return dma configuration and compute dma mask durations.
+ *
+ * This function reads the current applied dma configuration and calculates the fm and pm capture duration in us. 
+ *
+ * @param rsm_dma_config - struct @ref xcvr_lcl_rsmdma_config_t to store dma mask configuration and duration
+ *
+ * @return status - gXcvrLclStatusSuccess if no error. 
+ *
+ */
+static xcvrLclStatus_t XCVR_LCL_GetRsmDmaConfig(xcvr_lcl_rsmdma_config_t* rsm_dma_config);
+
 #endif /* !defined(GCOV_DO_COVERAGE) */
 
-xcvrLclStatus_t XCVR_LCL_GetRsmStateTimings(XCVR_RSM_RXTX_MODE_T role, xcvr_lcl_rsmstate_duration_t* state_duration);
-xcvrLclStatus_t XCVR_LCL_GetRsmDmaConfig(xcvr_lcl_rsmdma_config_t* rsm_dma_config);
+
 
 static inline void WAIT_RSM_IDLE(void)
 {
@@ -3119,7 +3121,11 @@ static xcvrLclStatus_t XCVR_LCL_CheckCaptureBufferParams(const xcvr_lcl_fstep_t 
 
 }
 
+#if !defined(GCOV_DO_COVERAGE) /* local except when testing code coverage */
+static xcvrLclStatus_t XCVR_LCL_GetRsmStateTimings(XCVR_RSM_RXTX_MODE_T role, xcvr_lcl_rsmstate_duration_t* state_duration)
+#else
 xcvrLclStatus_t XCVR_LCL_GetRsmStateTimings(XCVR_RSM_RXTX_MODE_T role, xcvr_lcl_rsmstate_duration_t* state_duration)
+#endif /* !defined(GCOV_DO_COVERAGE) */
 {
     xcvrLclStatus_t status = gXcvrLclStatusSuccess;
 
@@ -3226,7 +3232,11 @@ xcvrLclStatus_t XCVR_LCL_GetRsmStateTimings(XCVR_RSM_RXTX_MODE_T role, xcvr_lcl_
     return status;
 }
 
+#if !defined(GCOV_DO_COVERAGE) /* local except when testing code coverage */
+static xcvrLclStatus_t XCVR_LCL_GetRsmDmaConfig(xcvr_lcl_rsmdma_config_t* rsm_dma_config)
+#else
 xcvrLclStatus_t XCVR_LCL_GetRsmDmaConfig(xcvr_lcl_rsmdma_config_t* rsm_dma_config)
+#endif /* !defined(GCOV_DO_COVERAGE) */
 {
     xcvrLclStatus_t status = gXcvrLclStatusSuccess;
 
