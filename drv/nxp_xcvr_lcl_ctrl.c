@@ -2920,6 +2920,8 @@ xcvrLclStatus_t XCVR_LCL_CalibrateDcocComplete(void)
     (void)status;
 
     XCVR_ReleasePLLOverride();
+#else
+    (void)xcvr_status;
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
 
     if ((XCVR_RX_DIG->DCOC_STAT == 0x00002020U) && (XCVR_RX_DIG->DCOC_DIG_CORR_RESULT == 0U))
@@ -3211,9 +3213,9 @@ xcvrLclStatus_t XCVR_LCL_GetRsmStateTimings(XCVR_RSM_RXTX_MODE_T role, xcvr_lcl_
     /* Get T_FM state timings */
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450)
     state_duration->t_fm_usec[0] =
-        (uint16_t)(10U * (1U + ((temp & XCVR_MISC_RSM_CTRL1_RSM_T_FM0_MASK) >> XCVR_MISC_RSM_CTRL1_RSM_T_FM0_SHIFT)));
+        (uint16_t)(10U * (1U + ((rsm_ctrl1 & XCVR_MISC_RSM_CTRL1_RSM_T_FM0_MASK) >> XCVR_MISC_RSM_CTRL1_RSM_T_FM0_SHIFT)));
     state_duration->t_fm_usec[1] =
-        (uint16_t)(10U * (1U + ((temp & XCVR_MISC_RSM_CTRL1_RSM_T_FM1_MASK) >> XCVR_MISC_RSM_CTRL1_RSM_T_FM1_SHIFT)));
+        (uint16_t)(10U * (1U + ((rsm_ctrl1 & XCVR_MISC_RSM_CTRL1_RSM_T_FM1_MASK) >> XCVR_MISC_RSM_CTRL1_RSM_T_FM1_SHIFT)));
     state_duration->t_fm_usec[2] = (uint16_t)(0U);
     state_duration->t_fm_usec[3] = (uint16_t)(0U);
 #else
@@ -3550,6 +3552,8 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_s
                                             dma_config.sample_rate_per_usec);
                             dma_samples += sample_compensation; /* compensate for additional sample */
                         }
+#else
+                        (void)sample_compensation;
 #endif
                     }
                     /* Seq Len = T_FC+2*T_PM*NUM_ANT+T_IP2 */
