@@ -154,10 +154,11 @@ void XCVR_RadioStartup(void)
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 400)
     RFMC_rf_osc_startup();
 #else
-// TODO: update CPU names
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) && !defined(KW45B41Z82_NBU_SERIES) && !defined(KW45B41Z83_NBU_SERIES)
-    RFMC_rf_osc_startup(); /* Startup the RF OSC (has no effect if it is already started) and make sure radio is not in
-                              reset or low power */
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) && \
+    !defined(KW45B41Z82_NBU_SERIES) &&  /* Not on radio core (KW5) */ \
+    !defined(KW45B41Z83_NBU_SERIES) &&   /* Not on radio core (KW5) */ \
+    !(defined(IS_RADIO_CORE) && IS_RADIO_CORE == 1)  /* Not on radio core (KW47 and later radios) */
+    RFMC_rf_osc_startup(); /* Startup the RF OSC (has no effect if it is already started) and make sure radio is not in reset or low power */
 #if defined (FPGA_TARGET) && (FPGA_TARGET == 1)
 #else
     (void)RFMC_check_radio_warmup_complete(
