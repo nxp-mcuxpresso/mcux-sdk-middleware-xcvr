@@ -260,9 +260,9 @@ typedef struct tag_xcvr_mode_datarate_config_t
     /* XCVR_ANALOG registers */
     uint32_t tx_dac_pa;
     /* XCVR_MISC registers */
-    uint32_t ips_fo_addr[1];
-    uint32_t ips_fo_drs0_data[1];
-    uint32_t ips_fo_drs1_data[1];
+    uint32_t ips_fo_addr[3];
+    uint32_t ips_fo_drs0_data[3];
+    uint32_t ips_fo_drs1_data[3];
     uint32_t xcvr_ctrl;
     /* XCVR_PLL_DIG registers */
     uint32_t chan_map;

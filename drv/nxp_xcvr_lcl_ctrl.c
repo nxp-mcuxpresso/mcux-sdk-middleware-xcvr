@@ -994,6 +994,11 @@ xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr)
             XCVR_RX_DIG->CTRL0 |= (XCVR_RX_DIG_CTRL0_DIG_MIXER_FREQ(56U));
         }
 #endif /* NADM_WORKAROUND_IF_1_7MHZ */
+
+        /* Enable IPS FO for GFSK FDEV -> 0x400 for RX and 0x200 for TX for NADM 1Mbps correlation improvement */; 
+        XCVR_MISC->IPS_FO_ADDR[1] |= XCVR_MISC_IPS_FO_ADDR_ENTRY_RX_MASK;  /* FO data #1 override during RX */
+        XCVR_MISC->IPS_FO_ADDR[2] |= XCVR_MISC_IPS_FO_ADDR_ENTRY_TX_MASK;  /* FO data #2 override during TX */
+
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  */
 
 #if (0) // DCOC is not run with generic tsm sequence. if enabled, this should be moved after saving the ovrd regs for
@@ -1786,6 +1791,13 @@ xcvrLclStatus_t XCVR_LCL_RsmRegBackup(rsm_reg_backup_t *reg_backup_ptr)
         reg_backup_ptr->XCVR_MISC_RSM_INT_ENABLE   = XCVR_MISC->RSM_INT_ENABLE;
 #endif
 #endif /* BACKUP_LCL_REGS */
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
+        /* IPS_FO_ADDR */
+        reg_backup_ptr->XCVR_MISC_IPS_FO_ADDR_1 = XCVR_MISC->IPS_FO_ADDR[1];
+        reg_backup_ptr->XCVR_MISC_IPS_FO_ADDR_2 = XCVR_MISC->IPS_FO_ADDR[2];
+//        reg_backup_ptr->XCVR_MISC_IPS_FO_ADDR_3 = XCVR_MISC->IPS_FO_ADDR[3];
+#endif
+
         /* XCVR_2P4GHZ_PHY */
         reg_backup_ptr->XCVR_2P4GHZ_PHY_RTT_CTRL = XCVR_2P4GHZ_PHY->RTT_CTRL;
         reg_backup_ptr->XCVR_2P4GHZ_PHY_RTT_REF  = XCVR_2P4GHZ_PHY->RTT_REF;
@@ -1867,6 +1879,13 @@ xcvrLclStatus_t XCVR_LCL_RsmRegRestore(const rsm_reg_backup_t *reg_backup_ptr)
         XCVR_MISC->RSM_INT_ENABLE = reg_backup_ptr->XCVR_MISC_RSM_INT_ENABLE;
 #endif
 #endif /* (defined(BACKUP_RSM_LCL) && (BACKUP_RSM_LCL==1)) */   
+
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
+        /* IPS_FO_ADDR */
+        XCVR_MISC->IPS_FO_ADDR[1] = reg_backup_ptr->XCVR_MISC_IPS_FO_ADDR_1;
+        XCVR_MISC->IPS_FO_ADDR[2] = reg_backup_ptr->XCVR_MISC_IPS_FO_ADDR_2;
+//        XCVR_MISC->IPS_FO_ADDR[3] = reg_backup_ptr->XCVR_MISC_IPS_FO_ADDR_3;
+#endif
 
         /* XCVR_2P4GHZ_PHY */
         XCVR_2P4GHZ_PHY->RTT_CTRL = reg_backup_ptr->XCVR_2P4GHZ_PHY_RTT_CTRL;

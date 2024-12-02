@@ -569,6 +569,9 @@ typedef struct
     uint32_t XCVR_MISC_RSM_INT_ENABLE;
 #endif
 #endif /* (defined(BACKUP_RSM_LCL) && (BACKUP_RSM_LCL==1)) */
+    uint32_t XCVR_MISC_IPS_FO_ADDR_1; /* Supporting NADM 1Mbps GFSK FDEV */
+    uint32_t XCVR_MISC_IPS_FO_ADDR_2; /* Supporting NADM 1Mbps GFSK FDEV */
+    uint32_t XCVR_MISC_IPS_FO_ADDR_3; /* Supporting KW47 per-step CFO  */
 
     /* XCVR_2P4GHZ_PHY */
     uint32_t XCVR_2P4GHZ_PHY_RTT_CTRL;
