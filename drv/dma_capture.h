@@ -29,7 +29,7 @@
  ******************************************************************************/
 #ifndef DSB /* Normalize DSB name for version compatibility */
 #define DSB DSB0
-#endif/* Define DSB FIFO size */
+#endif /* Define DSB FIFO size */
 
 #define DSB_FIFO_SIZE (16U)         /*!< Maximum FIFO size  */
 #define DMA_START_DELAY_MAX (2048U) /*!< Maximum start delay+1 value for error checking  */
@@ -177,7 +177,7 @@ typedef struct
     dmaCaptureEdgeType_t capture_edge; /*!< Select capturing edge */
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN > 450)
     bool enable_dma_valid_mask; /*!< KW47 alternate DMA mask enable to capture only data when mask is high */
-#endif /*defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)  */
+#endif                          /*defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)  */
 } dma_capture_config_t;
 
 /* DSB settings structure*/

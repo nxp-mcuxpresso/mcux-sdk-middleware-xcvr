@@ -55,7 +55,7 @@ typedef struct
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN< 400)
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN < 400)
 
 #ifdef SUPPORT_IQ_DAC_TRIM
 static void DC_Measure_short(IQ_t chan, DAC_SWEEP_STEP2_t dcoc_init_val);

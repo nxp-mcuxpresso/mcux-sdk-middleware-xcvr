@@ -154,12 +154,13 @@ void XCVR_RadioStartup(void)
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 400)
     RFMC_rf_osc_startup();
 #else
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) && \
-    !defined(KW45B41Z82_NBU_SERIES) &&  /* Not on radio core (KW5) */ \
-    !defined(KW45B41Z83_NBU_SERIES) &&   /* Not on radio core (KW5) */ \
-    !(defined(IS_RADIO_CORE) && IS_RADIO_CORE == 1)  /* Not on radio core (KW47 and later radios) */
-    RFMC_rf_osc_startup(); /* Startup the RF OSC (has no effect if it is already started) and make sure radio is not in reset or low power */
-#if defined (FPGA_TARGET) && (FPGA_TARGET == 1)
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) &&                           \
+    !defined(KW45B41Z82_NBU_SERIES) &&              /* Not on radio core (KW5) */ \
+    !defined(KW45B41Z83_NBU_SERIES) &&              /* Not on radio core (KW5) */ \
+    !(defined(IS_RADIO_CORE) && IS_RADIO_CORE == 1) /* Not on radio core (KW47 and later radios) */
+    RFMC_rf_osc_startup(); /* Startup the RF OSC (has no effect if it is already started) and make sure radio is not in
+                              reset or low power */
+#if defined(FPGA_TARGET) && (FPGA_TARGET == 1)
 #else
     (void)RFMC_check_radio_warmup_complete(
         true); /* wait for radio (incl. RF OSC) to be ready. No delay if RF OSC was already ready */
@@ -529,7 +530,7 @@ xcvrStatus_t XCVR_SetActiveLL(XCVR_ACTIVE_LL_SEL_T active_ll)
     xcvrStatus_t status = gXcvrSuccess_c;
     if (
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN < 450)
- /* Gen 4.5 doesn't have a RESERVED entry */
+        /* Gen 4.5 doesn't have a RESERVED entry */
         (active_ll == XCVR_ACTIVE_LL_RESERVED) ||
 #endif                                     /* !defined(RADIO_IS_GEN_4P5) */
         (active_ll >= XCVR_ACTIVE_LL_MAX)) /* Disallow the reserved field and invalid higher values */
@@ -974,7 +975,7 @@ int16_t XCVR_GetInstantRssi(void)
     XCVR_ForceRxWd();
 
     /* Restore corrupted registers */
-    XCVR_2P4GHZ_PHY->FSK_CFG0 = t1; 
+    XCVR_2P4GHZ_PHY->FSK_CFG0     = t1;
     XCVR_RX_DIG->RSSI_GLOBAL_CTRL = t2;
     XCVR_2P4GHZ_PHY->FSK_PD_CFG2  = t3;
 
@@ -985,7 +986,7 @@ int16_t XCVR_GetRssiResult(void)
 {
     uint16_t rssi_result = 0U;
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)  
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)
     if ((XCVR_RX_DIG->RSSI_GLOBAL_CTRL & XCVR_RX_DIG_RSSI_GLOBAL_CTRL_NB_RSSI_AA_MATCH_OVRD_EN_MASK) != 0U)
     {
         /* Trigger the start of a narrowband measurement */
@@ -1582,8 +1583,8 @@ xcvrStatus_t XCVR_DftTxPatternReg(uint8_t channel_num,
     }
     else
     {
-        cfgptr = *xcvr_config;
-        status = XCVR_ChangeMode(xcvr_config,
+        cfgptr               = *xcvr_config;
+        status               = XCVR_ChangeMode(xcvr_config,
                                  rbme_config); /* this sets the main modulation parameters but doesn't set RBME */
         xcvrStatus_t status2 = XCVR_SetActiveLL(XCVR_ACTIVE_LL_GENFSK); /* Make sure GENFSK LL is active */
 
@@ -1657,7 +1658,7 @@ xcvrStatus_t XCVR_DftTxPatternReg(uint8_t channel_num,
         }
         else
         {
-          status = gXcvrInvalidParameters_c;
+            status = gXcvrInvalidParameters_c;
         }
     }
 
@@ -1691,8 +1692,8 @@ xcvrStatus_t XCVR_DftTxLfsrReg(uint8_t channel_num,
             ll_to_use   = XCVR_ACTIVE_LL_ZIGBEE_LL;
             band_to_use = XCVR_BAND_SEL_802_15_4_ISM;
         }
-#endif                                                      /* defined(RADIO_IS_GEN_4P5) */
-        status = XCVR_ChangeMode(xcvr_config, rbme_config); /* this sets the main modulation parameters */
+#endif                                                                    /* defined(RADIO_IS_GEN_4P5) */
+        status               = XCVR_ChangeMode(xcvr_config, rbme_config); /* this sets the main modulation parameters */
         xcvrStatus_t status2 = XCVR_SetActiveLL(ll_to_use);               /* Make sure correct LL is active */
         xcvrStatus_t status3 = XCVR_SetPLLBand(band_to_use);              /* Set correc PLL band */
 
@@ -1703,7 +1704,7 @@ xcvrStatus_t XCVR_DftTxLfsrReg(uint8_t channel_num,
         }
         else
         {
-          status = gXcvrInvalidParameters_c;
+            status = gXcvrInvalidParameters_c;
         }
 
         /* DFT modulation is determined by radio mode */
@@ -1808,7 +1809,7 @@ void XCVR_DftTxOff(void)
     XCVR_ReleasePLLOverride();           /* releases manual PLL programming */
     status = XCVR_OverrideChannel(0xFF); /* 0xFF is the release override code */
     (void)status;                        /* Workaround unused variable warnings in GCC */
-    assert(status == gXcvrSuccess_c); /* Check the status */
+    assert(status == gXcvrSuccess_c);    /* Check the status */
     /* First shut everything off */
     XCVR_setDftMode(0U);
     /* Clear DFT features */
@@ -1828,14 +1829,13 @@ xcvrStatus_t XCVR_ForcePAPower(uint8_t pa_power)
         temp_pa_pwr &= (pa_power > 1U) ?
                            0xFEU :
                            0xFFU; /* Ensure the lowest bit is cleared to prevent incorrect PA power setting */
-#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN < 450) */        
+#endif                            /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN < 450) */
         temp = XCVR_TX_DIG->PA_CTRL;
-        temp  &= ~(XCVR_TX_DIG_PA_CTRL_PA_TGT_POWER_MASK | XCVR_TX_DIG_PA_CTRL_TGT_PWR_SRC_MASK);
-        temp |=
-            (XCVR_TX_DIG_PA_CTRL_PA_TGT_POWER(temp_pa_pwr) |
-             XCVR_TX_DIG_PA_CTRL_TGT_PWR_SRC(0UL)); /* Select power source to be TX_DIG PA_TGT_POWER field */
+        temp &= ~(XCVR_TX_DIG_PA_CTRL_PA_TGT_POWER_MASK | XCVR_TX_DIG_PA_CTRL_TGT_PWR_SRC_MASK);
+        temp |= (XCVR_TX_DIG_PA_CTRL_PA_TGT_POWER(temp_pa_pwr) |
+                 XCVR_TX_DIG_PA_CTRL_TGT_PWR_SRC(0UL)); /* Select power source to be TX_DIG PA_TGT_POWER field */
         XCVR_TX_DIG->PA_CTRL = temp;
-        status = gXcvrSuccess_c;
+        status               = gXcvrSuccess_c;
     }
 
     return status; /* Success */
@@ -1968,7 +1968,7 @@ void XCVR_releasePaPowerBump(void)
 }
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
-static uint32_t tx_dac_pa_val = 0x01180000U; /* Register default */
+static uint32_t tx_dac_pa_val  = 0x01180000U; /* Register default */
 static uint32_t tx_pa_ctrl_val = 0x0000003FU; /* Register default */
 xcvrStatus_t XCVR_EnableAnaPaRamp(uint8_t smoother_cur)
 {
@@ -1978,26 +1978,20 @@ xcvrStatus_t XCVR_EnableAnaPaRamp(uint8_t smoother_cur)
     if (smoother_cur <= 0x7U)
     {
         uint32_t temp;
-        temp = XCVR_ANALOG->TX_DAC_PA;
-        tx_dac_pa_val = temp;  /* Backup for later restore upon disable request. */
+        temp          = XCVR_ANALOG->TX_DAC_PA;
+        tx_dac_pa_val = temp; /* Backup for later restore upon disable request. */
         temp &= ~(XCVR_ANALOG_TX_DAC_PA_PA_SMOOTHER_CUR_MASK);
         temp |= (XCVR_ANALOG_TX_DAC_PA_PA_SMOOTHER_EN_MASK | XCVR_ANALOG_TX_DAC_PA_PA_SMOOTHER_CUR(smoother_cur));
         XCVR_ANALOG->TX_DAC_PA = temp;
-        temp = XCVR_TX_DIG->PA_CTRL;
-        tx_pa_ctrl_val = temp;   /* Backup for later restore upon disable request. */
-        temp &= ~(XCVR_TX_DIG_PA_CTRL_PA_RAMP_DIG_INTERP_EN_MASK |
-                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX_MASK |
-                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX_TYPE_MASK |
-                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_HOLD_MASK
-                        );
-        temp |= (XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_EN_MASK |
-                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_HOLD(7U) |
-                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX(0U) |
-                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX_TYPE(0U) |
-                        XCVR_TX_DIG_PA_CTRL_PA_RAMP_DIG_INTERP_EN(0U)
-                        );
+        temp                   = XCVR_TX_DIG->PA_CTRL;
+        tx_pa_ctrl_val         = temp; /* Backup for later restore upon disable request. */
+        temp &= ~(XCVR_TX_DIG_PA_CTRL_PA_RAMP_DIG_INTERP_EN_MASK | XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX_MASK |
+                  XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX_TYPE_MASK | XCVR_TX_DIG_PA_CTRL_PA_RAMP_HOLD_MASK);
+        temp |= (XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_EN_MASK | XCVR_TX_DIG_PA_CTRL_PA_RAMP_HOLD(7U) |
+                 XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX(0U) | XCVR_TX_DIG_PA_CTRL_PA_RAMP_ANA_IDX_TYPE(0U) |
+                 XCVR_TX_DIG_PA_CTRL_PA_RAMP_DIG_INTERP_EN(0U));
         XCVR_TX_DIG->PA_CTRL = temp;
-        
+
         status = gXcvrSuccess_c;
     }
 
@@ -2008,9 +2002,9 @@ void XCVR_DisableAnaPaRamp(void)
 {
     /* Return registers to prior settings */
     XCVR_ANALOG->TX_DAC_PA = tx_dac_pa_val;
-    XCVR_TX_DIG->PA_CTRL = tx_pa_ctrl_val;    
+    XCVR_TX_DIG->PA_CTRL   = tx_pa_ctrl_val;
 }
-#endif  /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
+#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
 uint16_t XCVR_ReadRadioVer(void)
 {
     uint16_t radio_id_gen = 0xFFFFU;
@@ -2074,92 +2068,92 @@ xcvrStatus_t XCVR_802p15p4_TxRegulatory(uint8_t level)
 {
     uint32_t temp;
     xcvrStatus_t status = gXcvrSuccess_c;
-        temp = XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL; /* Local copy of filter control register */
-        /* Clear any settings in the local copy */
-        temp &= ~(XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_CLK_SEL_MASK |
-                        XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_FILTER_OVRD_MASK |
-                        XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_CLK_SEL_MASK |
-                        XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_FILTER_OVRD_MASK |
-                        XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_IMAGE_FILTER_OVRD_EN_MASK);
-        switch (level) 
-        {
-            case 0U:
-                /* Relase all TX data filter sync clock by updating the filter control from the cleared register copy */
-                XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL = temp;
-                break;
-            case 1U:
-                /* Override TX data filter with Sync0 clk1 to reduce sideband power levels */
-                temp |= XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_CLK_SEL(1U) |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_FILTER_OVRD_MASK |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_IMAGE_FILTER_OVRD_EN_MASK;
-                XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL = temp;
-                break;
-            case 2U:
-                /* Override TX data filter with Sync0 clk2 to reduce sideband power levels */
-                temp |= XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_CLK_SEL(2U) |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_FILTER_OVRD_MASK |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_IMAGE_FILTER_OVRD_EN_MASK;
-                XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL = temp;
-                break;
-            case 3U:
-                /* Override TX data filter with Sync0 clk2 & Sync1 clk1 to reduce sideband power levels */
-                temp |= XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_CLK_SEL(2U) |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_FILTER_OVRD_MASK |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_CLK_SEL(1U) |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_FILTER_OVRD_MASK |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_IMAGE_FILTER_OVRD_EN_MASK;
-                XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL = temp;
-                break;
-            case 4U:
-                /* Override TX data filter with Sync0 clk2 & Sync1 clk2 to reduce sideband power levels */
-                temp |= XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_CLK_SEL(2U) |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_FILTER_OVRD_MASK |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_CLK_SEL(2U) |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_FILTER_OVRD_MASK |
-                             XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_IMAGE_FILTER_OVRD_EN_MASK;
-                XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL = temp;
-                break;
-            default:
-                /* Error state does not change filter settings */
-                status = gXcvrInvalidParameters_c;
-                break;
-        }
+    temp                = XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL; /* Local copy of filter control register */
+    /* Clear any settings in the local copy */
+    temp &= ~(XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_CLK_SEL_MASK |
+              XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_FILTER_OVRD_MASK |
+              XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_CLK_SEL_MASK |
+              XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_FILTER_OVRD_MASK |
+              XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_IMAGE_FILTER_OVRD_EN_MASK);
+    switch (level)
+    {
+        case 0U:
+            /* Relase all TX data filter sync clock by updating the filter control from the cleared register copy */
+            XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL = temp;
+            break;
+        case 1U:
+            /* Override TX data filter with Sync0 clk1 to reduce sideband power levels */
+            temp |= XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_CLK_SEL(1U) |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_FILTER_OVRD_MASK |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_IMAGE_FILTER_OVRD_EN_MASK;
+            XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL = temp;
+            break;
+        case 2U:
+            /* Override TX data filter with Sync0 clk2 to reduce sideband power levels */
+            temp |= XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_CLK_SEL(2U) |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_FILTER_OVRD_MASK |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_IMAGE_FILTER_OVRD_EN_MASK;
+            XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL = temp;
+            break;
+        case 3U:
+            /* Override TX data filter with Sync0 clk2 & Sync1 clk1 to reduce sideband power levels */
+            temp |= XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_CLK_SEL(2U) |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_FILTER_OVRD_MASK |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_CLK_SEL(1U) |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_FILTER_OVRD_MASK |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_IMAGE_FILTER_OVRD_EN_MASK;
+            XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL = temp;
+            break;
+        case 4U:
+            /* Override TX data filter with Sync0 clk2 & Sync1 clk2 to reduce sideband power levels */
+            temp |= XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_CLK_SEL(2U) |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC0_FILTER_OVRD_MASK |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_CLK_SEL(2U) |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_SYNC1_FILTER_OVRD_MASK |
+                    XCVR_TX_DIG_DATARATE_CONFIG_FILTER_CTRL_DATARATE_CONFIG_IMAGE_FILTER_OVRD_EN_MASK;
+            XCVR_TX_DIG->DATARATE_CONFIG_FILTER_CTRL = temp;
+            break;
+        default:
+            /* Error state does not change filter settings */
+            status = gXcvrInvalidParameters_c;
+            break;
+    }
 
-        return status;
+    return status;
 }
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 400)
 void XCVR_forceLdoAntEnable(void)
 {
     XCVR_TSM->OVRD1 |= (XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_EN_MASK | XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_MASK);
-    XCVR_ANALOG->LDO_1   &= ~(XCVR_ANALOG_LDO_1_LDO_ANT_HIZ_MASK);
+    XCVR_ANALOG->LDO_1 &= ~(XCVR_ANALOG_LDO_1_LDO_ANT_HIZ_MASK);
 }
 
 void XCVR_setLdoAntHiz(void)
 {
     XCVR_ANALOG->LDO_1 |= XCVR_ANALOG_LDO_1_LDO_ANT_HIZ_MASK;
-    XCVR_TSM->OVRD1  &= ~(XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_EN_MASK | XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_MASK);
+    XCVR_TSM->OVRD1 &= ~(XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_EN_MASK | XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_MASK);
 }
 
 void XCVR_releaseLdoAntAll(void)
 {
-    XCVR_ANALOG->LDO_1   &= ~(XCVR_ANALOG_LDO_1_LDO_ANT_HIZ_MASK);
-    XCVR_TSM->OVRD1  &= ~(XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_EN_MASK | XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_MASK);
+    XCVR_ANALOG->LDO_1 &= ~(XCVR_ANALOG_LDO_1_LDO_ANT_HIZ_MASK);
+    XCVR_TSM->OVRD1 &= ~(XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_EN_MASK | XCVR_TSM_OVRD1_SEQ_LDO_ANT_PUP_OVRD_MASK);
 }
 
 xcvrStatus_t XCVR_setLdoAntTrim(unsigned char ucLdoAntTrimValue)
 {
-xcvrStatus_t status = gXcvrInvalidParameters_c;
+    xcvrStatus_t status = gXcvrInvalidParameters_c;
 
     /* check if input parameters is a valid value ... i.e. between 0x00-0x0F according with ref manual */
-    if(ucLdoAntTrimValue <= (XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_MASK >> XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_SHIFT))
+    if (ucLdoAntTrimValue <= (XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_MASK >> XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_SHIFT))
     {
         uint32_t temp_trim;
         temp_trim = XCVR_ANALOG->LDO_1;
         temp_trim &= ~(XCVR_ANALOG_LDO_1_LDO_ANT_TRIM_MASK);
         temp_trim |= XCVR_ANALOG_LDO_1_LDO_ANT_TRIM(ucLdoAntTrimValue);
         XCVR_ANALOG->LDO_1 = temp_trim;
-        status = gXcvrSuccess_c;
+        status             = gXcvrSuccess_c;
     }
     return status;
 }
@@ -2177,57 +2171,59 @@ void XCVR_FastPeriphReg_UpDownload_Go(PKT_RAM_BANK_SEL_T pkt_ram_sel, uint32_t o
     /* Trigger the upload or download */
     uint8_t up_or_down_load;
     uint32_t temp;
-    up_or_down_load = (upload ? 0U : 1U); 
-    temp = RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_RAM_SEL((uint32_t)pkt_ram_sel) |
-            RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ADDR_SRC(offset_in_pkt_ram) |
-            RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_REGS2PKT(up_or_down_load); 
+    up_or_down_load = (upload ? 0U : 1U);
+    temp            = RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_RAM_SEL((uint32_t)pkt_ram_sel) |
+           RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ADDR_SRC(offset_in_pkt_ram) |
+           RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_REGS2PKT(up_or_down_load);
     RADIO_CTRL->PACKET_RAM_TO_IPS_CTRL = temp; /* Write everything else but clear ENA */
     RADIO_CTRL->PACKET_RAM_TO_IPS_CTRL = temp | RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK; /* write ENA */
-    
 }
 
+// TODO: Refactor to validate descriptor data structures in a separate routine so that it can be optional. Already
+// tested structures doesn't need revalidation.
 
-// TODO: Refactor to validate descriptor data structures in a separate routine so that it can be optional. Already tested structures doesn't need revalidation.
-
-uint32_t  XCVR_FastPeriphDescrip_WordCount(uint32_t * descriptor_list, uint16_t num_descrips, bool compressed_list)
+uint32_t XCVR_FastPeriphDescrip_WordCount(uint32_t *descriptor_list, uint16_t num_descrips, bool compressed_list)
 {
     uint32_t word_count = 0UL;
     uint32_t temp;
-    /* Check for NULLPTR */    
+    /* Check for NULLPTR */
     if (descriptor_list == NULLPTR)
     {
         word_count = 0UL;
     }
     else
     {
-        uint32_t * descriptor_ptr = descriptor_list;
+        uint32_t *descriptor_ptr = descriptor_list;
         uint32_t descriptor;
         uint16_t i;
         uint32_t index = 0UL;
-        for (i=0;i<num_descrips;i++)
+        for (i = 0; i < num_descrips; i++)
         {
             descriptor = descriptor_ptr[index]; /* Read the descriptor from the list; Use the pointer as an array */
-            temp = (uint8_t)((descriptor&PR2IPS_COUNT_MASK)>>PR2IPS_COUNT_SHIFT); /* Count of words for this specific descriptor */
-            word_count += temp+1UL;
+            temp       = (uint8_t)((descriptor & PR2IPS_COUNT_MASK) >>
+                             PR2IPS_COUNT_SHIFT); /* Count of words for this specific descriptor */
+            word_count += temp + 1UL;
             if (compressed_list)
             {
                 index++;
             }
             else
             {
-                index += temp+1UL;
+                index += temp + 1UL;
             }
         }
-      word_count++; /* Account for the all zeros descriptor that is needed to terminate the list */
+        word_count++; /* Account for the all zeros descriptor that is needed to terminate the list */
     }
-    
+
     return word_count;
 }
 
-xcvrStatus_t XCVR_FastPeriphDescrip_Load(uint32_t * descriptor_list, uint16_t num_descrips, volatile uint32_t * pkt_ram_mem_ptr)
+xcvrStatus_t XCVR_FastPeriphDescrip_Load(uint32_t *descriptor_list,
+                                         uint16_t num_descrips,
+                                         volatile uint32_t *pkt_ram_mem_ptr)
 {
     xcvrStatus_t status = gXcvrSuccess_c;
-        /* Check for NULLPTR */    
+    /* Check for NULLPTR */
     if ((descriptor_list == NULLPTR) || (pkt_ram_mem_ptr == NULLPTR))
     {
         status = gXcvrInvalidParameters_c;
@@ -2235,29 +2231,33 @@ xcvrStatus_t XCVR_FastPeriphDescrip_Load(uint32_t * descriptor_list, uint16_t nu
     else
     {
         uint16_t i;
-        uint32_t index = 0U; /* Track index into an array starting at offset_in_pkt_ram location */
-        uint32_t * descriptor_ptr = descriptor_list;
+        uint32_t index           = 0U; /* Track index into an array starting at offset_in_pkt_ram location */
+        uint32_t *descriptor_ptr = descriptor_list;
         uint32_t descriptor;
         uint32_t word_count;
         /* This loop moves descriptors to the proper, expanded locations in PKT RAM */
-        /* All zeros descriptor is detected and skipped in the input handling. The last descriptor written to ouptut in PKT RAM is always all zeros */
-        for (i=0;i<num_descrips;i++)
+        /* All zeros descriptor is detected and skipped in the input handling. The last descriptor written to ouptut in
+         * PKT RAM is always all zeros */
+        for (i = 0; i < num_descrips; i++)
         {
             descriptor = *descriptor_ptr++; /* Read the descriptor from the list */
-    // TODO: handle the all zeros descriptor in the input list other than at the end of the list (should an error be produced?)
-            if (descriptor != 0U) /* All zeros descriptor is the end of the descriptor list, no need to write any other words */
+            // TODO: handle the all zeros descriptor in the input list other than at the end of the list (should an
+            // error be produced?)
+            if (descriptor !=
+                0U) /* All zeros descriptor is the end of the descriptor list, no need to write any other words */
             {
-                word_count = (uint8_t)((descriptor&PR2IPS_COUNT_MASK)>>PR2IPS_COUNT_SHIFT); /* Count of words for this specific descriptor */
-                pkt_ram_mem_ptr[index] = descriptor; /* Write the descriptor */
+                word_count             = (uint8_t)((descriptor & PR2IPS_COUNT_MASK) >>
+                                       PR2IPS_COUNT_SHIFT); /* Count of words for this specific descriptor */
+                pkt_ram_mem_ptr[index] = descriptor;                    /* Write the descriptor */
 #if (0) /* clears PKT RAM memory during testing, not needed in normal usage */
-                index++; 
+                index++;
                 while (word_count > 0U)
                 {
                     pkt_ram_mem_ptr[index++] = 0UL;
                     word_count--;
                 }
 #else
-                index += word_count+1U;
+                index += word_count + 1U;
 #endif
             }
         }
@@ -2267,37 +2267,45 @@ xcvrStatus_t XCVR_FastPeriphDescrip_Load(uint32_t * descriptor_list, uint16_t nu
     return status;
 }
 
-xcvrStatus_t XCVR_FastPeriphDescripData_Load(uint32_t * descriptor_data_list, uint16_t total_words_to_load, volatile uint32_t * pkt_ram_mem_ptr)
+xcvrStatus_t XCVR_FastPeriphDescripData_Load(uint32_t *descriptor_data_list,
+                                             uint16_t total_words_to_load,
+                                             volatile uint32_t *pkt_ram_mem_ptr)
 {
     xcvrStatus_t status = gXcvrSuccess_c;
-    /* Check for NULLPTR */    
+    /* Check for NULLPTR */
     if ((descriptor_data_list == NULLPTR) || (pkt_ram_mem_ptr == NULLPTR))
     {
         status = gXcvrInvalidParameters_c;
     }
-//    if (status == gXcvrSuccess_c)
+    //    if (status == gXcvrSuccess_c)
     else
     {
         /* copy the list of descriptors and data into PKT_RAM */
-        uint32_t * desc_data_ptr = descriptor_data_list;
+        uint32_t *desc_data_ptr = descriptor_data_list;
         uint32_t index;
-        for (index=0U; index<total_words_to_load; index++)
+        for (index = 0U; index < total_words_to_load; index++)
         {
             pkt_ram_mem_ptr[index] = *desc_data_ptr++;
         }
         /* Write an all zero descriptor to terminate the list (it is assumed NOT to be in the original descriptors) */
         pkt_ram_mem_ptr[index] = 0UL;
-        // TODO: handle the all zeros descriptor in the input list or not by detecting the all zeros descriptor and not writing another...??
+        // TODO: handle the all zeros descriptor in the input list or not by detecting the all zeros descriptor and not
+        // writing another...??
     }
 
     return status;
 }
 
-xcvrStatus_t XCVR_ValidateFastPeriphDescrip(PKT_RAM_BANK_SEL_T pkt_ram_sel, uint32_t offset_in_pkt_ram, uint32_t * descriptor_data_list,  uint16_t num_descrips, bool compressed_list, volatile uint32_t ** pkt_ram_mem_ptr)
+xcvrStatus_t XCVR_ValidateFastPeriphDescrip(PKT_RAM_BANK_SEL_T pkt_ram_sel,
+                                            uint32_t offset_in_pkt_ram,
+                                            uint32_t *descriptor_data_list,
+                                            uint16_t num_descrips,
+                                            bool compressed_list,
+                                            volatile uint32_t **pkt_ram_mem_ptr)
 {
     xcvrStatus_t status = gXcvrSuccess_c;
     uint32_t temp;
-    /* Check for NULLPTR */    
+    /* Check for NULLPTR */
     if (descriptor_data_list == NULLPTR)
     {
         status = gXcvrInvalidParameters_c;
@@ -2313,20 +2321,20 @@ xcvrStatus_t XCVR_ValidateFastPeriphDescrip(PKT_RAM_BANK_SEL_T pkt_ram_sel, uint
         switch (pkt_ram_sel)
         {
             case TX_PKT_RAM_SEL:
-                if (offset_in_pkt_ram+temp >= TX_PACKET_RAM_PACKET_RAM_COUNT)
+                if (offset_in_pkt_ram + temp >= TX_PACKET_RAM_PACKET_RAM_COUNT)
                 {
                     status = gXcvrInvalidParameters_c;
-                 }
+                }
                 else
                 {
                     *pkt_ram_mem_ptr = &(TX_PACKET_RAM->PACKET_RAM[offset_in_pkt_ram]);
                 }
                 break;
             case RX_PKT_RAM_SEL:
-                if (offset_in_pkt_ram+temp >= RX_PACKET_RAM_PACKET_RAM_COUNT)
+                if (offset_in_pkt_ram + temp >= RX_PACKET_RAM_PACKET_RAM_COUNT)
                 {
                     status = gXcvrInvalidParameters_c;
-                 }
+                }
                 else
                 {
                     *pkt_ram_mem_ptr = &(RX_PACKET_RAM->PACKET_RAM[offset_in_pkt_ram]);
@@ -2347,34 +2355,35 @@ xcvrStatus_t XCVR_ValidateFastPeriphDescrip(PKT_RAM_BANK_SEL_T pkt_ram_sel, uint
 
 bool XCVR_FastPeriph_WaitComplete(void)
 {
-    bool status_ok = false;
+    bool status_ok         = false;
     volatile uint32_t temp = RADIO_CTRL->PACKET_RAM_TO_IPS_CTRL;
     /* wait while ENABLE bit is set and DONE bit is cleared */
-    while ((temp & (RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_STATUS_DONE_MASK | RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK)) ==
-        RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK)
+    while ((temp & (RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_STATUS_DONE_MASK |
+                    RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK)) ==
+           RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK)
     {
         temp = RADIO_CTRL->PACKET_RAM_TO_IPS_CTRL;
     }
-    status_ok = ((temp&RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_STATUS_ERROR_MASK) == 0U);
-    RADIO_CTRL->PACKET_RAM_TO_IPS_CTRL = temp&~(RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK); /* Clear the enable bit before returning */
-    
-    return status_ok;  /* True means no error, False indicates an error occurred */
+    status_ok = ((temp & RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_STATUS_ERROR_MASK) == 0U);
+    RADIO_CTRL->PACKET_RAM_TO_IPS_CTRL =
+        temp & ~(RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK); /* Clear the enable bit before returning */
+
+    return status_ok; /* True means no error, False indicates an error occurred */
 }
 bool XCVR_FastPeriph_CheckErrorComplete(void)
 {
     bool status_ok = false;
-    uint32_t temp = RADIO_CTRL->PACKET_RAM_TO_IPS_CTRL;
+    uint32_t temp  = RADIO_CTRL->PACKET_RAM_TO_IPS_CTRL;
     /* check that ENABLE bit is set and DONE bit is set */
-    if ((temp & (RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_STATUS_DONE_MASK | 
-        RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_STATUS_ERROR_MASK |
-        RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK)) ==
-                        (RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_STATUS_DONE_MASK | 
-                        RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK))
+    if ((temp & (RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_STATUS_DONE_MASK |
+                 RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_STATUS_ERROR_MASK |
+                 RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK)) ==
+        (RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_STATUS_DONE_MASK | RADIO_CTRL_PACKET_RAM_TO_IPS_CTRL_PR2IPS_ENA_MASK))
     {
         status_ok = true;
     }
-    
-    return status_ok;  /* True means no error, False indicates an error occurred */
+
+    return status_ok; /* True means no error, False indicates an error occurred */
 }
 
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
