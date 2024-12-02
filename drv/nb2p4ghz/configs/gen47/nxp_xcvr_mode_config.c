@@ -109,8 +109,14 @@ xcvrStatus_t XCVR_RadioGenRegSetup(const xcvr_config_t *xcvr_config)
         /* XCVR_MISC configs */
         /*********************/
         XCVR_MISC->IPS_FO_ADDR[0]      = mode_datarate_cfg->ips_fo_addr[0];
+        XCVR_MISC->IPS_FO_ADDR[1]      = mode_datarate_cfg->ips_fo_addr[1];
+        XCVR_MISC->IPS_FO_ADDR[2]      = mode_datarate_cfg->ips_fo_addr[2];
         XCVR_MISC->IPS_FO_DRS0_DATA[0] = mode_datarate_cfg->ips_fo_drs0_data[0];
+        XCVR_MISC->IPS_FO_DRS0_DATA[1] = mode_datarate_cfg->ips_fo_drs0_data[1];
+        XCVR_MISC->IPS_FO_DRS0_DATA[2] = mode_datarate_cfg->ips_fo_drs0_data[2];
         XCVR_MISC->IPS_FO_DRS1_DATA[0] = mode_datarate_cfg->ips_fo_drs1_data[0];
+        XCVR_MISC->IPS_FO_DRS1_DATA[1] = mode_datarate_cfg->ips_fo_drs1_data[1];
+        XCVR_MISC->IPS_FO_DRS1_DATA[2] = mode_datarate_cfg->ips_fo_drs1_data[2];
         XCVR_MISC->LDO_TRIM_0          = common_cfg->ldo_trim_0;
         XCVR_MISC->LDO_TRIM_1          = common_cfg->ldo_trim_1;
         XCVR_MISC->XCVR_CTRL           = common_cfg->xcvr_ctrl | mode_datarate_cfg->xcvr_ctrl;

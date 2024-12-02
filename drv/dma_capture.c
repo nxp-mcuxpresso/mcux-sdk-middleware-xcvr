@@ -14,7 +14,6 @@
  * Definitions
  ******************************************************************************/
 
-
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -140,7 +139,7 @@ dmaStatus_t dma_init(const dsb_config_t *dsb_configuration)
             /* Initialize DSB */
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 400)
             IPC->IPC_DATA_STREAM_2P4 = IPC_IPC_DATA_STREAM_2P4_RSTB_MASK | IPC_IPC_DATA_STREAM_2P4_CC(1U);
-#elif  defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)
+#elif defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)
             MRCC->MRCC_DATA_STREAM_2P4 = MRCC_MRCC_DATA_STREAM_2P4_RSTB_MASK | MRCC_MRCC_DATA_STREAM_2P4_CC(1U);
 #else
             SIM->SCGC5 |= SIM_SCGC5_DSB_MASK;
@@ -368,7 +367,8 @@ dmaStatus_t dma_start_capture(const dma_capture_config_t *dma_configuration)
             /* Configure DMA capture settings but not DMA_PAGE */
             XCVR_MISC->DMA_CTRL = XCVR_MISC_DMA_CTRL_DMA_EN(1) |
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN > 450)
-                                   XCVR_MISC_DMA_CTRL_DMA_SIGNAL_VALID_MASK_EN((dma_configuration->enable_dma_valid_mask == true ? 1U :0U)) |
+                                  XCVR_MISC_DMA_CTRL_DMA_SIGNAL_VALID_MASK_EN(
+                                      (dma_configuration->enable_dma_valid_mask == true ? 1U : 0U)) |
 #endif /*defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)  */
                                   XCVR_MISC_DMA_CTRL_DMA_DEC(dma_configuration->decimation) |
                                   XCVR_MISC_DMA_CTRL_DMA_START_DLY(dma_configuration->start_delay) |

@@ -44,7 +44,8 @@
 #if defined(RADIO_IS_GEN_3P5)
 #define XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_MASK    (0xF00U)
 #define XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_SHIFT   (8U)
-#define XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL(x)      (((uint32_t)(((uint32_t)(x)) << XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_SHIFT)) & XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_MASK)
+#define XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL(x) \
+    (((uint32_t)(((uint32_t)(x)) << XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_SHIFT)) & XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_MASK)
 #endif
 
 /* Workaround for not exposed HPMCAL_CTRL register in XCVR_PLL */
@@ -60,8 +61,10 @@
 #endif
 #endif /* defined(RADIO_IS_GEN_4P5) */
 
-/* defining only the first part of the XCVR_PLL_DIG structure to make a version with HPMCAL_CTRL available. Everything else is appended with dummy or deleted */
-typedef struct {
+/* defining only the first part of the XCVR_PLL_DIG structure to make a version with HPMCAL_CTRL available. Everything
+ * else is appended with dummy or deleted */
+typedef struct
+{
   __IO uint32_t HPM_BUMPdummy;                          /**< PLL HPM Analog Bump Control, offset: 0x0 */
   __IO uint32_t MOD_CTRLdummy;                          /**< PLL Modulation Control, offset: 0x4 */
   __IO uint32_t CHAN_MAPdummy;                          /**< PLL Channel Mapping, offset: 0x8 */
@@ -80,39 +83,53 @@ typedef struct {
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_SHIFT (0U)
 /*! HPM_CAL_FACTOR - High Port Modulation Calibration Factor
  */
-#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR(x) (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_SHIFT)) & XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_MASK)
+#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR(x)                                    \
+    (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_SHIFT)) & \
+     XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_MASK)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_BUMPED_MASK (0x2000U)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_BUMPED_SHIFT (13U)
 /*! HPM_CAL_BUMPED - HPM_CAL_BUMPED
  */
-#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_BUMPED(x) (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_BUMPED_SHIFT)) & XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_BUMPED_MASK)
+#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_BUMPED(x)                                    \
+    (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_BUMPED_SHIFT)) & \
+     XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_BUMPED_MASK)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_COUNT_SCALE_MASK (0x4000U)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_COUNT_SCALE_SHIFT (14U)
 /*! HPM_CAL_COUNT_SCALE - HPM_CAL_COUNT_SCALE
  */
-#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_COUNT_SCALE(x) (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_COUNT_SCALE_SHIFT)) & XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_COUNT_SCALE_MASK)
+#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_COUNT_SCALE(x)                                    \
+    (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_COUNT_SCALE_SHIFT)) & \
+     XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_COUNT_SCALE_MASK)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HP_CAL_DISABLE_MASK (0x8000U)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HP_CAL_DISABLE_SHIFT (15U)
 /*! HP_CAL_DISABLE - Disable HPM Manual Calibration
  */
-#define XCVR_PLL_DIG2_HPMCAL_CTRL_HP_CAL_DISABLE(x) (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HP_CAL_DISABLE_SHIFT)) & XCVR_PLL_DIG2_HPMCAL_CTRL_HP_CAL_DISABLE_MASK)
+#define XCVR_PLL_DIG2_HPMCAL_CTRL_HP_CAL_DISABLE(x)                                    \
+    (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HP_CAL_DISABLE_SHIFT)) & \
+     XCVR_PLL_DIG2_HPMCAL_CTRL_HP_CAL_DISABLE_MASK)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_MANUAL_MASK (0x1FFF0000U)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_MANUAL_SHIFT (16U)
 /*! HPM_CAL_FACTOR_MANUAL - Manual HPM Calibration Factor
  */
-#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_MANUAL(x) (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_MANUAL_SHIFT)) & XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_MANUAL_MASK)
+#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_MANUAL(x)                                    \
+    (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_MANUAL_SHIFT)) & \
+     XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_FACTOR_MANUAL_MASK)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_SKIP_MASK (0x20000000U)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_SKIP_SHIFT (29U)
 /*! HPM_CAL_SKIP - HPM_CAL_SKIP
  */
-#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_SKIP(x) (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_SKIP_SHIFT)) & XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_SKIP_MASK)
+#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_SKIP(x)                                    \
+    (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_SKIP_SHIFT)) & \
+     XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_SKIP_MASK)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_ARRAY_SIZE_MASK (0x40000000U)
 #define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_ARRAY_SIZE_SHIFT (30U)
 /*! HPM_CAL_ARRAY_SIZE - High Port Modulation Calibration Array Size
  *  0b0..128
  *  0b1..256
  */
-#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_ARRAY_SIZE(x) (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_ARRAY_SIZE_SHIFT)) & XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_ARRAY_SIZE_MASK)
+#define XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_ARRAY_SIZE(x)                                    \
+    (((uint32_t)(((uint32_t)(x)) << XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_ARRAY_SIZE_SHIFT)) & \
+     XCVR_PLL_DIG2_HPMCAL_CTRL_HPM_CAL_ARRAY_SIZE_MASK)
 /*! @} */
 
 #endif /* !defined(HPMCAL_CTRL) */
@@ -158,16 +175,21 @@ typedef struct {
 
 #define TX_PATH_DELAY_2MBPS    (0x1U)       /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for 1Mbps */
 #define TX_PATH_DELAY_1MBPS    (0x2U)       /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for 2Mbps */
-#define TX_PATH_DELAY_S2_CODED (0x2U)       /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for S2 coded */
-#define TX_PATH_DELAY_S8_CODED (0x2U)       /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for S8 coded */
+#define TX_PATH_DELAY_S2_CODED (0x2U) /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for S2 coded \
+                                       */
+#define TX_PATH_DELAY_S8_CODED (0x2U) /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for S8 coded \
+                                       */
 
 #define RX_PATH_DELAY_2MBPS    (0x7U)       /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for 1Mbps */
 #define RX_PATH_DELAY_1MBPS    (0xEU)       /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for 2Mbps */
-#define RX_PATH_DELAY_S2_CODED (0x10U)      /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for S2 coded */
-#define RX_PATH_DELAY_S8_CODED (0x10U)      /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for S8 coded */
+#define RX_PATH_DELAY_S2_CODED \
+    (0x10U) /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for S2 coded */
+#define RX_PATH_DELAY_S8_CODED \
+    (0x10U) /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for S8 coded */
 #else
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 400)
-#define TX_RX_ON_DELinit       (0x00009256UL) /* TX_ON_DELAY defined differently than prior radios, must be 86usec. Used for Mindtree BLE LL */
+#define TX_RX_ON_DELinit \
+    (0x00009256UL) /* TX_ON_DELAY defined differently than prior radios, must be 86usec. Used for Mindtree BLE LL */
 #if defined(HDI_MODE) && (HDI_MODE == 1)
 #define TX_RX_SYNTH_init       (0x00007056UL) /* HDI MODE tuning */
 #else
@@ -176,23 +198,31 @@ typedef struct {
 
 #define TX_PATH_DELAY_2MBPS    (0x1U)       /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for 1Mbps */
 #define TX_PATH_DELAY_1MBPS    (0x2U)       /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for 2Mbps */
-#define TX_PATH_DELAY_S2_CODED (0x2U)       /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for S2 coded */
-#define TX_PATH_DELAY_S8_CODED (0x2U)       /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for S8 coded */
+#define TX_PATH_DELAY_S2_CODED (0x2U) /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for S2 coded \
+                                       */
+#define TX_PATH_DELAY_S8_CODED (0x2U) /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for S8 coded \
+                                       */
 
 #define RX_PATH_DELAY_2MBPS    (0x7U)       /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for 1Mbps */
 #define RX_PATH_DELAY_1MBPS    (0xEU)       /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for 2Mbps */
-#define RX_PATH_DELAY_S2_CODED (0x10U)      /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for S2 coded */
-#define RX_PATH_DELAY_S8_CODED (0x10U)      /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for S8 coded */
+#define RX_PATH_DELAY_S2_CODED \
+    (0x10U) /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for S2 coded */
+#define RX_PATH_DELAY_S8_CODED \
+    (0x10U)                        /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for S8 coded */
 #else /* defined (RADIO_IS_GEN_4P5) */
 #define TX_PATH_DELAY_2MBPS    (0x1U)       /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for 1Mbps */
 #define TX_PATH_DELAY_1MBPS    (0x1U)       /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for 2Mbps */
-#define TX_PATH_DELAY_S2_CODED (0x1U)       /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for S2 coded */
-#define TX_PATH_DELAY_S8_CODED (0x1U)       /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for S8 coded */
+#define TX_PATH_DELAY_S2_CODED (0x1U) /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for S2 coded \
+                                       */
+#define TX_PATH_DELAY_S8_CODED (0x1U) /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for S8 coded \
+                                       */
 
 #define RX_PATH_DELAY_2MBPS    (0x7U)       /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for 1Mbps */
 #define RX_PATH_DELAY_1MBPS    (0xEU)       /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for 2Mbps */
-#define RX_PATH_DELAY_S2_CODED (0x12U)      /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for S2 coded */
-#define RX_PATH_DELAY_S8_CODED (0x17U)      /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for S8 coded */
+#define RX_PATH_DELAY_S2_CODED \
+    (0x12U) /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for S2 coded */
+#define RX_PATH_DELAY_S8_CODED \
+    (0x17U) /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for S8 coded */
 
 #endif /* defined(RADIO_IS_GEN_4P0) */
 
@@ -214,7 +244,8 @@ typedef struct {
 #endif
 
 #ifndef XTAL_TEMP_COMP_LUT_SIZE
-#define XTAL_TEMP_COMP_LUT_SIZE     (20)    /*!< Default LUT size for temp compensation of XTAL trim (signed, but must be positive) */
+#define XTAL_TEMP_COMP_LUT_SIZE \
+    (20) /*!< Default LUT size for temp compensation of XTAL trim (signed, but must be positive) */
 #endif
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
@@ -226,16 +257,15 @@ typedef struct {
 /* Count field for the Packet RAM to IPS register descriptor */
 #define PR2IPS_COUNT_MASK       (0x3F000000U)
 #define PR2IPS_COUNT_SHIFT      (24U)
-#define PR2IPS_COUNT(x)         (((uint32_t)(((uint32_t)(x)) << PR2IPS_COUNT_SHIFT)) & PR2IPS_COUNT_MASK)/* Address field for the Packet RAM to IPS register descriptor */
+#define PR2IPS_COUNT(x)                                    \
+    (((uint32_t)(((uint32_t)(x)) << PR2IPS_COUNT_SHIFT)) & \
+     PR2IPS_COUNT_MASK) /* Address field for the Packet RAM to IPS register descriptor */
 /* Type field for the Packet RAM to IPS register descriptor */
 #define PR2IPS_TYPE_MASK       (0xC0000000U)
 #define PR2IPS_TYPE_SHIFT      (30U)
 #define PR2IPS_TYPE(x)         (((uint32_t)(((uint32_t)(x)) << PR2IPS_TYPE_SHIFT)) & PR2IPS_TYPE_MASK)
 
-#define PR2IPS_DESCRIPTOR(type, reg_count, addr) \
-    PR2IPS_TYPE(type) | \
-    PR2IPS_COUNT(reg_count) | \
-    PR2IPS_ADDR(addr)
+#define PR2IPS_DESCRIPTOR(type, reg_count, addr) PR2IPS_TYPE(type) | PR2IPS_COUNT(reg_count) | PR2IPS_ADDR(addr)
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
 
 
@@ -500,7 +530,8 @@ typedef struct
     uint8_t trim_below_min_temp; /*!< The CDAC value to use when temp is below the min temp for the LUT */
     uint8_t trim_above_max_temp; /*!< The CDAC value to use when temp is above the max temp for the LUT */
     int8_t temp_step_degc;      /*!< The temperature step between each LUT entry, in deg C */
-    uint8_t xtal_trim_lut[XTAL_TEMP_COMP_LUT_SIZE];     /*!< The CDAC values for the LUT, stored in ascending temperature, from min to max with temp_step increments */
+    uint8_t xtal_trim_lut[XTAL_TEMP_COMP_LUT_SIZE]; /*!< The CDAC values for the LUT, stored in ascending temperature,
+                                                       from min to max with temp_step increments */
 } xcvr_temp_comp_lut_t;
 
 
@@ -531,10 +562,8 @@ typedef double float64_t;
 /* This include must be down here rather than up top due to references to structs defined above */
 #include "nxp_xcvr_mode_config.h"
 /* Packet RAM pointer function macro - References enums from above */
-#define GET_PKT_RAM_PTR(r,ofst)         ((r) == TX_PKT_RAM_SEL ? (volatile void *)(&(TX_PACKET_RAM->PACKET_RAM[(ofst)])) : (volatile void *)(&(RX_PACKET_RAM->PACKET_RAM[(ofst)])))
-
-
-
+#define GET_PKT_RAM_PTR(r, ofst) \
+    (r == TX_PKT_RAM_SEL ? (&(TX_PACKET_RAM->PACKET_RAM[ofst])) : (&(RX_PACKET_RAM->PACKET_RAM[ofst])))
 
 /* These exported values only apply to Gen 3.5 and Gen 4.0 */
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN <= 400)
@@ -562,31 +591,32 @@ extern "C" {
 /*!
  * @brief Initializes an XCVR instance.
  *
- * This function initializes the XCVR module according to the configuration structure settings. This the only function call required to
- * start up the XCVR in most situations. It includes a DCOC DAC trim step that is left out in the ::XCVR_InitNoDacTrim() version.
+ * This function initializes the XCVR module according to the configuration structure settings. This the only function
+ * call required to start up the XCVR in most situations. It includes a DCOC DAC trim step that is left out in the
+ * ::XCVR_InitNoDacTrim() version.
  *
  * @param[in] xcvr_config  Pointer to a pointer to the complete radio settings structure.
  * @param[in] rbme_config  Pointer to a pointer to the RBME settings structure for coding, CRC, whitening setup.
  * @return Status of the call.
- * @note This function encompasses the ::XCVR_RadioStartup(() and ::XCVR_RadioRegSetup() and XCVR_CalculateDcocDacTrims() functions.
+ * @note This function encompasses the ::XCVR_RadioStartup(() and ::XCVR_RadioRegSetup() and
+ * XCVR_CalculateDcocDacTrims() functions.
  */
-xcvrStatus_t XCVR_Init(const xcvr_config_t ** xcvr_config,
-                        const xcvr_coding_config_t ** rbme_config);
+xcvrStatus_t XCVR_Init(const xcvr_config_t **xcvr_config, const xcvr_coding_config_t **rbme_config);
 
 /*!
  * @brief Initializes an XCVR instance but omits DCOC DAC trim process.
  *
- * This function initializes the XCVR module according to the configuration structure settings. This function call must be combined with
- * the XCVR_SetDcocDacTrims() function to properly start up the XCVR. This allows a stored set of DCOC DAC trims to be used rather
- * than running the trim process during every startup.
+ * This function initializes the XCVR module according to the configuration structure settings. This function call must
+ * be combined with the XCVR_SetDcocDacTrims() function to properly start up the XCVR. This allows a stored set of DCOC
+ * DAC trims to be used rather than running the trim process during every startup.
  *
  * @param[in] xcvr_config  Pointer to a pointer to the complete radio settings structure.
  * @param[in] rbme_config  Pointer to a pointer to the RBME settings structure for coding, CRC, whitening setup.
  * @return Status of the call.
- * @note This function encompasses everything in the ::XCVR_Init() function but omits the call to XCVR_CalculateDcocDacTrims().
+ * @note This function encompasses everything in the ::XCVR_Init() function but omits the call to
+ * XCVR_CalculateDcocDacTrims().
  */
-xcvrStatus_t XCVR_InitNoDacTrim(const xcvr_config_t ** xcvr_config,
-                                    const xcvr_coding_config_t ** rbme_config);
+xcvrStatus_t XCVR_InitNoDacTrim(const xcvr_config_t **xcvr_config, const xcvr_coding_config_t **rbme_config);
 
 /*!
  * @brief Deinitializes an XCVR instance.
@@ -613,7 +643,8 @@ xcvrStatus_t XCVR_RadioRegSetup(const xcvr_config_t ** xcvr_config);
  *
  * @param[in] xcvr_config  Pointer to a pointer to the complete radio settings structure.
  * @param[in] rbme_config  Pointer to a pointer to the complete RBME settings structure.
- * @param[in]  first_init Indicates whether the call is to initialize (== XCVR_FIRST_INIT) or the call is to perform a mode change (== XCVR_MODE_CHANGE)
+ * @param[in]  first_init Indicates whether the call is to initialize (== XCVR_FIRST_INIT) or the call is to perform a
+ * mode change (== XCVR_MODE_CHANGE)
  * @return Status of the call.
  */
 xcvrStatus_t XCVR_Configure(const xcvr_config_t ** xcvr_config,
@@ -655,16 +686,17 @@ void XCVR_Reset(void);
  * @param[in] rbme_config  Pointer to a pointer to the complete RBME settings structure.
  * @return Status of the call.
  */
-xcvrStatus_t XCVR_ChangeMode (const xcvr_config_t ** xcvr_config,
-                                    const xcvr_coding_config_t ** rbme_config);
+xcvrStatus_t XCVR_ChangeMode(const xcvr_config_t **xcvr_config, const xcvr_coding_config_t **rbme_config);
 
 /*!
  * @brief Get the current configuration of the RBME CRC and Whitening.
  *
  * This function fetches the current configuration of the CRC and Whitening registers in the RBME
  *
- * @param[inout] crc_config  Pointer to a structure to be updated with the CRC configurations. NULLPTR if not fetching CRC settings.
- * @param[inout] whiten_config  Pointer to a structure to be updated with the Whitener configurations. NULLPTR if not fetching Whitener settings.
+ * @param[inout] crc_config  Pointer to a structure to be updated with the CRC configurations. NULLPTR if not fetching
+ * CRC settings.
+ * @param[inout] whiten_config  Pointer to a structure to be updated with the Whitener configurations. NULLPTR if not
+ * fetching Whitener settings.
  * @note This API will return meaningless results if called before the radio and RBME are initialized.
  */
 void XCVR_GetCRCWConfig(rbme_crc_config_t * crc_config, rbme_whiten_config_t * whiten_config );
@@ -674,8 +706,10 @@ void XCVR_GetCRCWConfig(rbme_crc_config_t * crc_config, rbme_whiten_config_t * w
  *
  * This function sets the register configuration of the CRC and Whitening registers in the RBME
  *
- * @param[inout] crc_config  Pointer to a structure containing the CRC configurations. NULLPTR if not setting CRC settings.
- * @param[inout] whiten_config  Pointer to a structure containing the Whitener configurations. NULLPTR if not setting Whitener settings.
+ * @param[inout] crc_config  Pointer to a structure containing the CRC configurations. NULLPTR if not setting CRC
+ * settings.
+ * @param[inout] whiten_config  Pointer to a structure containing the Whitener configurations. NULLPTR if not setting
+ * Whitener settings.
  * @note This API will return meaningless results if called before the radio and RBME are initialized.
  */
 void XCVR_SetCRCWConfig(const rbme_crc_config_t * crc_config, const rbme_whiten_config_t * whiten_config );
@@ -730,7 +764,8 @@ xcvrStatus_t XCVR_SetIRQMapping(radio_mode_t irq0_mapping, radio_mode_t irq1_map
 /*!
  * @brief Get the mapping of the one of the radio IRQs.
  *
- * This function reads the setting for the mapping of one of the radio LL IRQ signals to the 2.4G Radio INT0 and 2.4G Radio INT1 lines.
+ * This function reads the setting for the mapping of one of the radio LL IRQ signals to the 2.4G Radio INT0 and 2.4G
+ * Radio INT1 lines.
  *
  * @param[in] int_num  The number, 0 or 1, of the INT line to fetched.
  * @return The mapping setting of the specified line.
@@ -742,7 +777,8 @@ link_layer_t XCVR_GetIRQMapping(uint8_t int_num);
 /*!
  * @brief Get the current configuration of the XCVR.
  *
- * This function fetches the current configuration (radio mode and radio data rate) of the XCVR to allow LL to properly config data rates, etc
+ * This function fetches the current configuration (radio mode and radio data rate) of the XCVR to allow LL to properly
+ * config data rates, etc
  *
  * @param[inout] curr_config  Pointer to a structure to be updated with the current mode and data rate.
  *
@@ -828,7 +864,8 @@ xcvrStatus_t XCVR_SetMSKPreambleSeed(uint8_t last_preamble_bit);
  *
  * This function enables the upper layers set a crystal trim compensation facor
  *
- * @param[in] xtalTrim  The trim value to apply to the XTAL trimming register. Only the 7 LSB are valid, setting the 8th bit returns an error.
+ * @param[in] xtalTrim  The trim value to apply to the XTAL trimming register. Only the 7 LSB are valid, setting the 8th
+ * bit returns an error.
  * @return The status of the trim process.
  */
 xcvrStatus_t XCVR_SetXtalTrim(uint8_t xtalTrim);
@@ -861,7 +898,8 @@ xcvrStatus_t XCVR_SetXtalTempComp(const xcvr_temp_comp_lut_t * temp_comp_lut, in
  *
  * This function enables the upper layers to set an RSSI adjustment value.
  *
- * @param[in] adj  The adjustment value to apply to the RSSI adjustment register. The value must be a signed 8-bit value, in 1/4 dBm step.
+ * @param[in] adj  The adjustment value to apply to the RSSI adjustment register. The value must be a signed 8-bit
+ * value, in 1/4 dBm step.
  * @return The status of the RSSI adjustment.
  */
 xcvrStatus_t XCVR_SetRssiAdjustment(int8_t adj);
@@ -912,7 +950,8 @@ int16_t XCVR_GetRssiResult(void);
  * @brief  Performs the DCOC DAC trim process.
  *
  * This function enables the upper layers to perform the DCOC DAC trim process.
- * The routine stores the results of the trim process at the location pointed to by the input pointer. The contents are invalid in case of error return values.
+ * The routine stores the results of the trim process at the location pointed to by the input pointer. The contents are
+ * invalid in case of error return values.
  *
  * @param[inout] trim_values  Pointer to the location in memory where the routine should store the trim results.
  * @return The status of the trim routine.
@@ -922,10 +961,12 @@ xcvrStatus_t XCVR_CalculateDcocDacTrims(xcvr_DcocDacTrim_t * trim_values);
 /*!
  * @brief  Controls setting the DCOC DAC trim register contents.
  *
- * This function enables the upper layers to write the current DCOC DAC trim register contents from a structure for usage in initialization of the radio.
- * The routine reads the contents of memory pointed to by the input pointer and applies those values to the trim registers in the radio.
+ * This function enables the upper layers to write the current DCOC DAC trim register contents from a structure for
+ * usage in initialization of the radio. The routine reads the contents of memory pointed to by the input pointer and
+ * applies those values to the trim registers in the radio.
  *
- * @param[in] trim_values  Pointer to the location in memory where the routine should get the trim settngs to be programming into registers.
+ * @param[in] trim_values  Pointer to the location in memory where the routine should get the trim settngs to be
+ * programming into registers.
  * @return The status of the trim setting.
  */
 xcvrStatus_t XCVR_SetDcocDacTrims(const xcvr_DcocDacTrim_t * trim_values);
@@ -933,10 +974,12 @@ xcvrStatus_t XCVR_SetDcocDacTrims(const xcvr_DcocDacTrim_t * trim_values);
 /*!
  * @brief  Controls getting the DCOC DAC trim register contents.
  *
- * This function enables the upper layers to read the current DCOC DAC trim register contents into a structure for storage.
- * The routine reads the trim registers in the radio and writes them out to the location pointed to by the input pointer.
+ * This function enables the upper layers to read the current DCOC DAC trim register contents into a structure for
+ * storage. The routine reads the trim registers in the radio and writes them out to the location pointed to by the
+ * input pointer.
  *
- * @param[inout] trim_values  Pointer to the location in memory where the routine should leave the trim settngs that are read from registers.
+ * @param[inout] trim_values  Pointer to the location in memory where the routine should leave the trim settngs that are
+ * read from registers.
  * @return The status of the routine.
  */
 xcvrStatus_t XCVR_GetDcocDacTrims(xcvr_DcocDacTrim_t * trim_values);
@@ -945,24 +988,29 @@ xcvrStatus_t XCVR_GetDcocDacTrims(xcvr_DcocDacTrim_t * trim_values);
 /*!
  * @brief Controls setting the PLL to a particular channel using hardware tables.
  *
- * This function enables setting the radio channel for TX and RX. It allows setting the channel based on the hardware channel map tables.
+ * This function enables setting the radio channel for TX and RX. It allows setting the channel based on the hardware
+ * channel map tables.
  *
  * @param[in] channel The channel number to set based on protocol specific hardware channel tables.
  * @return The status of the channel over-ride.
-  * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this function. This must be done before
- * any other PLL channel or frequency over-ride function is used OR before the link layer channel control is used.
+ * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this
+ * function. This must be done before any other PLL channel or frequency over-ride function is used OR before the link
+ * layer channel control is used.
  */
 xcvrStatus_t XCVR_OverrideChannel (uint8_t channel);
 
 /*!
  * @brief Controls setting the PLL to a particular channel using external SW channel table entry.
  *
- * This function enables setting the radio channel for TX and RX. It allows setting the channel based on a software defined table.
+ * This function enables setting the radio channel for TX and RX. It allows setting the channel based on a software
+ * defined table.
  *
- * @param[in] customChannel  If not NULLPTR then this pointer points to a struct containing the integer and numerator values for setting a custom channel.
+ * @param[in] customChannel  If not NULLPTR then this pointer points to a struct containing the integer and numerator
+ * values for setting a custom channel.
  * @return The status of the channel over-ride.
-  * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this function. This must be done before
- * any other PLL channel or frequency over-ride function is used OR before the link layer channel control is used.
+ * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this
+ * function. This must be done before any other PLL channel or frequency over-ride function is used OR before the link
+ * layer channel control is used.
  */
 xcvrStatus_t XCVR_OverrideCustomChannel (const xcvr_pllChannel_t * customChannel);
 
@@ -974,36 +1022,41 @@ xcvrStatus_t XCVR_OverrideCustomChannel (const xcvr_pllChannel_t * customChannel
  *
  * @param[in] freq  Target frequency setting in Hz.
  * @return Status of the call.
- * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this function. This must be done before
- * any other PLL channel or frequency over-ride function is used OR before the link layer channel control is used.
+                               * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this
+                               * function. This must be done before                               any other PLL channel or frequency over-ride function is used OR before the link
+                               * layer channel control is used.
  */
     xcvrStatus_t XCVR_OverrideFrequency (uint32_t freq);
 #else
 /*!
  * @brief Set an arbitrary frequency for RX (only) for the radio.
  *
- * This function sets the radio frequency used for RX. It is required due to the use of a low-IF receiver design which requires
- * an offset from the target frequency to be programmed. This routine makes use of the ::XCVR_OverrideTxFrequency() routine for common functionality.
+ * This function sets the radio frequency used for RX. It is required due to the use of a low-IF receiver design which
+ * requires an offset from the target frequency to be programmed. This routine makes use of the
+ * ::XCVR_OverrideTxFrequency() routine for common functionality.
  *
  * @param[in] freq  Target frequency setting in Hz.
- * @param[in] offset_freq An offset to be applied to the target frequency to either set the RF Intermediate Frequency (IF) or, in special cases, to set both the
- * IF and a much larger offset. Typically this offset should be 1MHz or 1.5MHz. A value of zero will return an error because RX would fail.
+ * @param[in] offset_freq An offset to be applied to the target frequency to either set the RF Intermediate Frequency
+ * (IF) or, in special cases, to set both the IF and a much larger offset. Typically this offset should be 1MHz
+ * or 1.5MHz. A value of zero will return an error because RX would fail.
  * @return Status of the call.
- * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this function. This must be done before
- * any other PLL channel or frequency over-ride function is used OR before the link layer channel control is used.
+ * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this
+ * function. This must be done before any other PLL channel or frequency over-ride function is used OR before the link
+ * layer channel control is used.
  */
 xcvrStatus_t XCVR_OverrideRxFrequency (uint32_t freq, int32_t offset_freq);
 
 /*!
  * @brief Set an arbitrary frequency for TX (only) for the radio.
  *
- * This function sets the radio frequency used for TX. It does not work for RX frequency setting due to the use of a low-IF receiver design which requires
- * an offset from the target frequency to be programmed.
+ * This function sets the radio frequency used for TX. It does not work for RX frequency setting due to the use of a
+ * low-IF receiver design which requires an offset from the target frequency to be programmed.
  *
  * @param[in] freq  Target frequency setting in Hz.
  * @return Status of the call.
- * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this function. This must be done before
- * any other PLL channel or frequency over-ride function is used OR before the link layer channel control is used.
+ * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this
+ * function. This must be done before any other PLL channel or frequency over-ride function is used OR before the link
+ * layer channel control is used.
  */
 xcvrStatus_t XCVR_OverrideTxFrequency (uint32_t freq);
 #endif /* defined(RADIO_IS_GEN_3P5)*/
@@ -1011,11 +1064,13 @@ xcvrStatus_t XCVR_OverrideTxFrequency (uint32_t freq);
 /*!
  * @brief Releases any PLL channel/frequency over-rides.
  *
- * This function releases any over-rides controlling the PLL frequency and returns the PLL to Link Layer control. It releases the overrides set by
+ * This function releases any over-rides controlling the PLL frequency and returns the PLL to Link Layer control. It
+ * releases the overrides set by
  * ::XCVR_OverrideChannel, ::XCVR_OverrideCustomChannel, ::XCVR_OverrideRxFrequency, or ::XCVR_OverrideTxFrequency.
  *
- * @note This function must be called in between any mix of ::XCVR_OverrideChannel, ::XCVR_OverrideCustomChannel, ::XCVR_OverrideRxFrequency, ::XCVR_OverrideTxFrequency usages.
- * It must also be called in between any of these override functions and link layerchannel register usage.
+ * @note This function must be called in between any mix of ::XCVR_OverrideChannel, ::XCVR_OverrideCustomChannel,
+ * ::XCVR_OverrideRxFrequency, ::XCVR_OverrideTxFrequency usages. It must also be called in between any of these
+ * override functions and link layerchannel register usage.
  */
 void XCVR_ReleasePLLOverride(void);
 
@@ -1034,7 +1089,8 @@ void XCVR_ReleasePLLOverride(void);
   * This function reads the radio frequency used for RX and TX.
   *
   * @return Current radio frequency setting in Hz.
-  * @note If the frequency was set using ::XCVR_OverrideRxFrequency() then this routine returns the sum of the target and offset frequencies.
+ * @note If the frequency was set using ::XCVR_OverrideRxFrequency() then this routine returns the sum of the target and
+ * offset frequencies.
   */
 #endif /* defined(RADIO_IS_GEN_3P5)*/
 uint32_t XCVR_GetFreq ( void );
@@ -1104,29 +1160,38 @@ void XCVR_WaitRxTxWd(void);
  *
  * This function starts transmitting using the DFT pattern register mode.
  *
- * @param[in] channel_num  The protocol specific channel to transmit on. Valid values are defined in the CHANNEL_NUM register documentation.
+ * @param[in] channel_num  The protocol specific channel to transmit on. Valid values are defined in the CHANNEL_NUM
+ * register documentation.
  * @param[in] xcvr_config  Pointer to a pointer to the complete radio settings structure.
  * @param[in] rbme_config  Pointer to a pointer to the RBME settings structure for coding, CRC, whitening setup.
  * @param[in] tx_pattern   The data pattern to transmit.
  * @return The status of the pattern reg transmit.
- * @note The XCVR_DftTxOff() function must be called to turn off TX and revert all settings. This routine calls XCVR_ChangeMode() with the desired radio mode
- *   and data rate.
+ * @note The XCVR_DftTxOff() function must be called to turn off TX and revert all settings. This routine calls
+ * XCVR_ChangeMode() with the desired radio mode and data rate.
  */
-xcvrStatus_t XCVR_DftTxPatternReg(uint8_t channel_num, const xcvr_config_t ** xcvr_config, const xcvr_coding_config_t ** rbme_config, uint32_t tx_pattern);
+xcvrStatus_t XCVR_DftTxPatternReg(uint8_t channel_num,
+                                  const xcvr_config_t **xcvr_config,
+                                  const xcvr_coding_config_t **rbme_config,
+                                  uint32_t tx_pattern);
 
 /*!
  * @brief Starts transmit with a TX LFSR register data sequence.
  *
  * This function starts transmitting using the DFT LFSR register mode.
  *
- * @param[in] channel_num  The protocol specific channel to transmit on. Valid values are defined in the CHANNEL_NUM register documentation.
+ * @param[in] channel_num  The protocol specific channel to transmit on. Valid values are defined in the CHANNEL_NUM
+ * register documentation.
  * @param[in] xcvr_config  Pointer to a pointer to the complete radio settings structure.
  * @param[in] rbme_config  Pointer to a pointer to the RBME settings structure for coding, CRC, whitening setup.
  * @param[in] lfsr_length  The length of the LFSR sequence to use.
  * @return The status of the LFSR reg transmit.
- * @note The XCVR_DftTxOff() function must be called to turn off TX and revert all settings. This routine calls XCVR_ChangeMode() with the desired radio configuration.
+ * @note The XCVR_DftTxOff() function must be called to turn off TX and revert all settings. This routine calls
+ * XCVR_ChangeMode() with the desired radio configuration.
  */
-xcvrStatus_t XCVR_DftTxLfsrReg(uint8_t channel_num, const xcvr_config_t ** xcvr_config, const xcvr_coding_config_t ** rbme_config, uint8_t lfsr_length);
+xcvrStatus_t XCVR_DftTxLfsrReg(uint8_t channel_num,
+                               const xcvr_config_t **xcvr_config,
+                               const xcvr_coding_config_t **rbme_config,
+                               uint8_t lfsr_length);
 
 /*!
  * @brief Controls clearing all TX DFT settings.
@@ -1160,7 +1225,8 @@ void XCVR_ReleasePAPower(void);
  *
  * This function starts transmitting CW (no modulation).
  *
- * @param[in] rf_freq  The RF frequency to transmit on in Hz. Valid values are integer values from 2,360,000 to 2,487,000Hz, inclusive.
+ * @param[in] rf_freq  The RF frequency to transmit on in Hz. Valid values are integer values from 2,360,000 to
+ * 2,487,000Hz, inclusive.
  *
  * @return The status of the CW transmit.
  */
@@ -1255,7 +1321,8 @@ uint16_t XCVR_IdentifyRadioVer(uint32_t radio_ver);
  * This function overrides the TX filter settings for 802.15.4 mode and is intended to be used when transmitting on 
  * channel 11 or 26 at power levels > 0dB. It allows the system to meet regulatory lower/upper band power limits.
  *
- * @param[in] level  The level of filtering to apply 0 through 4 are valid; Zero means release all filtering, 1 - 4 are increasing levels of filtering.
+ * @param[in] level  The level of filtering to apply 0 through 4 are valid; Zero means release all filtering, 1 - 4 are
+ * increasing levels of filtering.
  *
  * @return The status of the filter configuration.
  *
@@ -1267,33 +1334,33 @@ xcvrStatus_t XCVR_802p15p4_TxRegulatory(uint8_t level);
 /*!
  * @brief Function to override the LDO ANT to force it enabled. It also clears the HiZ setting for LDO_ANT.
  *
- * This function overrides the LDO_ANT regulator to be enabled in order to reduce peaks in current drain for repeated on/off cycles
- * of the LDO_ANT.
+ * This function overrides the LDO_ANT regulator to be enabled in order to reduce peaks in current drain for repeated
+ * on/off cycles of the LDO_ANT.
  *
- * @note This routine also disables the HiZ mode of LDO_ANT. The XCVR_setLdoAntHiz() function is used to enable HiZ and disable
- * the LDO_ANT override settings.
+ * @note This routine also disables the HiZ mode of LDO_ANT. The XCVR_setLdoAntHiz() function is used to enable HiZ and
+ * disable the LDO_ANT override settings.
  */
 void XCVR_forceLdoAntEnable(void);
 
 /*!
  * @brief Function to release the overrides for the LDO ANT and enable the HiZ mode.
  *
- * This function releases the overrides the LDO_ANT regulator and enables the HiZ mode. This prevents the discharge of the large
- * capacitor connected to the ouputs of the LDO_ANT.
+ * This function releases the overrides the LDO_ANT regulator and enables the HiZ mode. This prevents the discharge of
+ * the large capacitor connected to the ouputs of the LDO_ANT.
  *
- * @note This routine also enables the HiZ mode of LDO_ANT. The XCVR_forceLdoAntEnable() function is used to disable HiZ and set
- * the LDO_ANT override settings.
+ * @note This routine also enables the HiZ mode of LDO_ANT. The XCVR_forceLdoAntEnable() function is used to disable HiZ
+ * and set the LDO_ANT override settings.
  */
 void XCVR_setLdoAntHiz(void);
 
 /*!
  * @brief Function to release the overrides for the LDO ANT *and* release the HiZ mode.
  *
- * This function releases the overrides the LDO_ANT regulator and releases the HiZ mode. This returns the state of the XCVR to it's
- * default state of neither LDO_ANT overridden nor HiZ mode enabled.
+ * This function releases the overrides the LDO_ANT regulator and releases the HiZ mode. This returns the state of the
+ * XCVR to it's default state of neither LDO_ANT overridden nor HiZ mode enabled.
  *
- * @note This routine is used to revert the effects of either of the XCVR_forceLdoAntEnable() or XCVR_setLdoAntHiz() APIs and
- * put the XCVR back to a default state for the override and HiZ settings.
+ * @note This routine is used to revert the effects of either of the XCVR_forceLdoAntEnable() or XCVR_setLdoAntHiz()
+ * APIs and put the XCVR back to a default state for the override and HiZ settings.
  */
 void XCVR_releaseLdoAntAll(void);
 
@@ -1310,7 +1377,7 @@ void XCVR_releaseLdoAntAll(void);
  *
  * @note This routine is used by Link Layers which needs to change LDO_ANT_TRIM value according with their needs
  */
-xcvrStatus_t XCVR_setLdoAntTrim(uint8_t ucLdoAntTrimValue);
+xcvrStatus_t XCVR_setLdoAntTrim(unsigned char ucLdoAntTrimValue);
 
 /*!
  * @brief Function to get actual LDO ANT TRIM value.
@@ -1321,21 +1388,23 @@ xcvrStatus_t XCVR_setLdoAntTrim(uint8_t ucLdoAntTrimValue);
  *
  * @note This routine is used by Link Layers which needs to check LDO_ANT_TRIM value
  */
-uint8_t XCVR_getLdoAntTrim(void);
+unsigned char XCVR_getLdoAntTrim(void);
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 400) */
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 /*!
  * @brief Function to trigger start of a fast DMA upload/download of peripheral registers.
  *
- * This function performs a fast DMA download from a set of peripheral registers, based on a descriptor, to an area of PKT RAM memory.
- * It is intended to support fast switchover between RSM (Chanel Sounding) operations and Bluetooth operations..
+ * This function performs a fast DMA download from a set of peripheral registers, based on a descriptor, to an area of
+ * PKT RAM memory. It is intended to support fast switchover between RSM (Chanel Sounding) operations and Bluetooth
+ * operations..
  *
  * @param[in] pkt_ram_sel  The bank of PKT RAM to use; Zero means use TX PKT_RAM; 1 means use RX PKT_RAM.
  * @param[in] offset_in_pkt_ram  The 32bit word offset within the chosen PKT_RAM bank where the descriptors start.
  * @param[in] upload  If true, the desired function is upload to registers, if false, then download.
  *
- * @pre The descriptors must be loaded into the desired PKT_RAM bank at the specified offset prior to running this routine.
+ * @pre The descriptors must be loaded into the desired PKT_RAM bank at the specified offset prior to running this
+ * routine.
  *
  * @warning This routine does NOT have the ability to check if the descriptors are configured correctly and can produce 
  * unexpected results if the descriptors overrun the targeted PKT_RAM space.
@@ -1356,24 +1425,26 @@ void XCVR_FastPeriphReg_UpDownload_Go(PKT_RAM_BANK_SEL_T pkt_ram_sel, uint32_t o
  *
  * @return The status of the descriptor load to PKT_RAM.
  *
- * @post The descriptors will be loaded into the desired PKT_RAM bank at the specified offset with spacing in between them
- * and with a single word of all zeros as the end to indicate the completion of the list.
+ * @post The descriptors will be loaded into the desired PKT_RAM bank at the specified offset with spacing in between
+ * them and with a single word of all zeros as the end to indicate the completion of the list.
  *
- * @note The XCVR_ValidateFastPeriphDescrip() or other means must be used to validate the input date before calling this routine because overflow protection
- * is not included. The intent is that static data structures can be checked once and then subsequent checks can be omitted. Dynamic descriptor structures must
- * be checked every time.
+ * @note The XCVR_ValidateFastPeriphDescrip() or other means must be used to validate the input date before calling this
+ * routine because overflow protection is not included. The intent is that static data structures can be checked once
+ * and then subsequent checks can be omitted. Dynamic descriptor structures must be checked every time.
  */
-xcvrStatus_t XCVR_FastPeriphDescrip_Load(uint32_t * descriptor_list, uint16_t num_descrips, volatile uint32_t * pkt_ram_mem_ptr);
+xcvrStatus_t XCVR_FastPeriphDescrip_Load(uint32_t *descriptor_list,
+                                         uint16_t num_descrips,
+                                         volatile uint32_t *pkt_ram_mem_ptr);
 
 /*!
  * @brief Function to load a list of descriptors and data for fast DMA upload of peripheral registers.
  *
- * This function loads a list of mixed descriptors and data to an area of PKT RAM memory for use with XCVR_FastPeriphReg_UpDownload()
- * when a fresh set of data is being uploaded to peripheral registers.
+ * This function loads a list of mixed descriptors and data to an area of PKT RAM memory for use with
+ * XCVR_FastPeriphReg_UpDownload() when a fresh set of data is being uploaded to peripheral registers.
  *
  * @param[in] descriptor_data_list  Pointer to the list of descriptors and data (mixed) to be placed into PKT_RAM.
- * @param[in] total_words_to_load  The number of words in the above mixed list to be loaded. Does not include the trailing zero required 
- * to end the list.
+ * @param[in] total_words_to_load  The number of words in the above mixed list to be loaded. Does not include the
+ * trailing zero required to end the list.
  * @param[in] pkt_ram_mem_ptr  Pointer to a location in one of the PKT RAM spaces where descriptors/data will be loaded.
  *
  * @return The status of the descriptor and data load to PKT_RAM.
@@ -1381,11 +1452,13 @@ xcvrStatus_t XCVR_FastPeriphDescrip_Load(uint32_t * descriptor_list, uint16_t nu
  * @post The descriptors and data will be loaded into the desired PKT_RAM bank at the specified offset 
  * and a single word of all zeros will be added to the end to indicate the completion of the list.
  *
- * @note The XCVR_ValidateFastPeriphDescrip() or other means must be used to validate the input date before calling this routine because overflow protection
- * is not included. The intent is that static data structures can be checked once and then subsequent checks can be omitted. Dynamic descriptor structures must
- * be checked every time.
+ * @note The XCVR_ValidateFastPeriphDescrip() or other means must be used to validate the input date before calling this
+ * routine because overflow protection is not included. The intent is that static data structures can be checked once
+ * and then subsequent checks can be omitted. Dynamic descriptor structures must be checked every time.
  */
-xcvrStatus_t XCVR_FastPeriphDescripData_Load(uint32_t * descriptor_data_list, uint16_t total_words_to_load, volatile uint32_t * pkt_ram_mem_ptr);
+xcvrStatus_t XCVR_FastPeriphDescripData_Load(uint32_t *descriptor_data_list,
+                                             uint16_t total_words_to_load,
+                                             volatile uint32_t *pkt_ram_mem_ptr);
 
 /*!
  * @brief Function to validate a descriptor list for fast DMA upload/download of peripheral registers.
@@ -1394,25 +1467,34 @@ xcvrStatus_t XCVR_FastPeriphDescripData_Load(uint32_t * descriptor_data_list, ui
  * requires that the  XCVR_FastPeriphDescrip_WordCount() routine first be used to calculate the word count.
  *
  * @param[in] pkt_ram_sel  The bank of PKT RAM to use; Zero means use TX PKT_RAM; 1 means use RX PKT_RAM.
- * @param[in] offset_in_pkt_ram  The 32bit word offset within the chosen PKT_RAM bank where the descriptors should start.
+ * @param[in] offset_in_pkt_ram  The 32bit word offset within the chosen PKT_RAM bank where the descriptors should
+ * start.
  * @param[in] descriptor_data_list  Pointer to the list of descriptors to be placed into PKT_RAM.
  * @param[in] num_descrips  The number of descriptors to be loaded..
- * @param[in] compressed_list  If true, the desired list only contains descriptors and not data. If false, list is both descriptors and register data.
- * @param[out] pkt_ram_mem_ptr  Pointer to a location in one of the PKT RAM spaces where subsequent routines will load descriptors/data. Invalid if status return is not success.
+ * @param[in] compressed_list  If true, the desired list only contains descriptors and not data. If false, list is both
+ * descriptors and register data.
+ * @param[out] pkt_ram_mem_ptr  Pointer to a location in one of the PKT RAM spaces where subsequent routines will load
+ * descriptors/data. Invalid if status return is not success.
  *
  * @return The status of the descriptor validation.
  */
-xcvrStatus_t XCVR_ValidateFastPeriphDescrip(PKT_RAM_BANK_SEL_T pkt_ram_sel, uint32_t offset_in_pkt_ram, uint32_t * descriptor_data_list,  uint16_t num_descrips, bool compressed_list, volatile uint32_t ** pkt_ram_mem_ptr);
+xcvrStatus_t XCVR_ValidateFastPeriphDescrip(PKT_RAM_BANK_SEL_T pkt_ram_sel,
+                                            uint32_t offset_in_pkt_ram,
+                                            uint32_t *descriptor_data_list,
+                                            uint16_t num_descrips,
+                                            bool compressed_list,
+                                            volatile uint32_t **pkt_ram_mem_ptr);
 
 /*!
  * @brief Function to count the number of words occupied by descriptors and register data.
  *
- * This function takes in a set of descriptors and counts the total number of words occupied by the set of descriptors and register 
- * data. It is used to verify sufficient PKT RAM is available..
+ * This function takes in a set of descriptors and counts the total number of words occupied by the set of descriptors
+ * and register data. It is used to verify sufficient PKT RAM is available..
  *
  * @param[in] descriptor_list  Pointer to the list of descriptors to be placed into PKT_RAM.
  * @param[in] num_descrips  The number of descriptors to be loaded..
- * @param[in] compressed_list  If true, the desired list only contains descriptors and not data. If false, list is both descriptors and register data.
+ * @param[in] compressed_list  If true, the desired list only contains descriptors and not data. If false, list is both
+ * descriptors and register data.
  *
  * @return Thenumber of words it will occupy in PKT RAM.
  */
@@ -1421,8 +1503,8 @@ xcvrStatus_t XCVR_ValidateFastPeriphDescrip(PKT_RAM_BANK_SEL_T pkt_ram_sel, uint
 /*!
  * @brief Function towait for completion of a FastPeriph to IPS upload or download.
  *
- * This function waits for completion of a Fast Peripheral to IPS upload or download. It completes if the function is not enabled or 
- * if the function is enabled AND the status bit indicates completion of the activities.
+ * This function waits for completion of a Fast Peripheral to IPS upload or download. It completes if the function is
+ * not enabled or if the function is enabled AND the status bit indicates completion of the activities.
  *
  * @return False if an error is asserted at completion of the transfer; True if the error bit is clear.
  *
@@ -1433,12 +1515,15 @@ bool XCVR_FastPeriph_WaitComplete(void);
 /*!
  * @brief Function to check for completion and no error of a FastPeriph to IPS upload or download.
  *
- * This function read status for completion of a Fast Peripheral to IPS upload or download. It simply indicates the state of the DONE and ERROR bits.
+ * This function read status for completion of a Fast Peripheral to IPS upload or download. It simply indicates the
+ * state of the DONE and ERROR bits.
  *
- * @return False if an error is asserted or the transfer has not completed; True if the error bit is clear and the transfer has completed.
+ * @return False if an error is asserted or the transfer has not completed; True if the error bit is clear and the
+ * transfer has completed.
  *
- * @warn The initial KW47 implementation does NOT support polling of the completion bits, the calling function must only call this routine AFTER the DMA backup is completed. If it is called during the DMA transfers
- * then there may be bus conflicts which can corrupt the transfer (and corruption must be assumed). 
+ * @warn The initial KW47 implementation does NOT support polling of the completion bits, the calling function must only
+ * call this routine AFTER the DMA backup is completed. If it is called during the DMA transfers then there may be bus
+ * conflicts which can corrupt the transfer (and corruption must be assumed).
  */
 bool XCVR_FastPeriph_CheckErrorComplete(void);
 

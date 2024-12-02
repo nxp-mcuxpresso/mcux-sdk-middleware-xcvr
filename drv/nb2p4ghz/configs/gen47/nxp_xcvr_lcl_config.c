@@ -29,7 +29,7 @@ const xcvr_lcl_tsm_config_t xcvr_lcl_tsm_generic_config = {
     /***********************************************/
     /* CTRL register value is not modified for RSM operation. */
     /* LPPS_CTRL register value is not modified for RSM operation. */
-    .END_OF_SEQ = 0xCDCBBFBDU,
+    .END_OF_SEQ    = 0xCDCBBFBDU,
     .WU_LATENCY    = (XCVR_TSM_WU_LATENCY_TX_DATAPATH_LATENCY(0U) | XCVR_TSM_WU_LATENCY_RX_SETTLING_LATENCY(4U)),
     .RECYCLE_COUNT = 0x002919C8U,
     .FAST_CTRL1    = XCVR_TSM_FAST_CTRL1_FAST_TX_WU_EN(1U) | XCVR_TSM_FAST_CTRL1_FAST_RX_WU_EN(1U) |
@@ -113,82 +113,52 @@ const xcvr_lcl_tsm_config_t xcvr_lcl_tsm_generic_config = {
     /***********************************************/
 };
 
-const xcvr_lcl_rsm_reg_config_t
-    xcvr_lcl_rsm_generic_config = { /*!<  RSM/TSM register configuration for the generic. Meant to overlay after applying
-                                     the  ::xcvr_lcl_tsm_generic_config settings */
+const xcvr_lcl_rsm_reg_config_t xcvr_lcl_rsm_generic_config = {
+/*!<  RSM/TSM register configuration for the generic. Meant to overlay after applying
+ the  ::xcvr_lcl_tsm_generic_config settings */
 
-    /***********************************************/
-    /*********** START OF GENERATED CODE ***********/
-    /*********** xcvr_lcl_rsm_generic_config *******/
-    /***********************************************/
+/***********************************************/
+/*********** START OF GENERATED CODE ***********/
+/*********** xcvr_lcl_rsm_generic_config *******/
+/***********************************************/
 #if (0)
     .RSM_CTRL0 = 0x050010F0U, /* Fast FC RX & TX WU enabled, Fast IP RX WU enabled, Fast IP TX WU enabled */
     .RSM_CTRL1 = 0x0a31f8e7U,
     .RSM_CTRL2 = 0x00000000U,
     .RSM_CTRL3 = 0x00000106U,
     .RSM_CTRL4 = 0x005a000aU,
-    .RSM_CTRL5 = 0x50U,       /* T_FM is always 80usec */
-    .RSM_CTRL6 = 0x20U,       /* Set XCVR_MISC_RSM_CTRL6_RSM_PKTRAM_EXTEND_MASK */
+    .RSM_CTRL5 = 0x50U, /* T_FM is always 80usec */
+    .RSM_CTRL6 = 0x20U, /* Set XCVR_MISC_RSM_CTRL6_RSM_PKTRAM_EXTEND_MASK */
     .RSM_CTRL7 = 0x0U,
 #else
-    .RSM_CTRL0 = 
-            XCVR_MISC_RSM_CTRL0_RSM_MODE(0x0U) |
-            XCVR_MISC_RSM_CTRL0_RSM_RATE(0x0U) |
-            XCVR_MISC_RSM_CTRL0_RSM_RX_EN(0x0U) |
-            XCVR_MISC_RSM_CTRL0_RSM_TX_EN(0x0U) |
-            XCVR_MISC_RSM_CTRL0_RSM_FAST_IP_RX_WU(0x1U) |
-            XCVR_MISC_RSM_CTRL0_RSM_FAST_IP_TX_WU(0x1U) |
-            XCVR_MISC_RSM_CTRL0_RSM_FAST_FC_RX_WU(0x1U) |
-            XCVR_MISC_RSM_CTRL0_RSM_FAST_FC_TX_WU(0x1U) |
-            XCVR_MISC_RSM_CTRL0_RSM_SW_ABORT(0x0U) |
-            XCVR_MISC_RSM_CTRL0_RSM_SN_EN(0x0U) |
-            XCVR_MISC_RSM_CTRL0_RSM_TRIG_SEL(0x6U) | /* NBU trigger */
-            XCVR_MISC_RSM_CTRL0_RSM_TRIG_DLY(0x0U) |
-            XCVR_MISC_RSM_CTRL0_RSM_STEPS(0x0U),
-    .RSM_CTRL1 = 
-            XCVR_MISC_RSM_CTRL1_RSM_T_FC(0x9BU) |
-            XCVR_MISC_RSM_CTRL1_RSM_T_IP1(0x96U) |
-            XCVR_MISC_RSM_CTRL1_RSM_T_IP2(0x96U) |
-            XCVR_MISC_RSM_CTRL1_RSM_T_S(0x0AU),
-    .RSM_CTRL2 = 
-            XCVR_MISC_RSM_CTRL2_RSM_T_PM0(0x0U) |
-            XCVR_MISC_RSM_CTRL2_RSM_T_PM1(0x0U) |
-            XCVR_MISC_RSM_CTRL2_RSM_RTT_TYPE(0x0U) |
-            XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_LCL(0x0U) |
-            XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_EN_LCL(0x0U) |
-            XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_TXDIG(0x0U) |
-            XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_EN_TXDIG(0x0U) |
-            XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_RXDIG(0x0U) |
-            XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_EN_RXDIG(0x0U),
-    .RSM_CTRL3 = 
-            XCVR_MISC_RSM_CTRL3_RSM_DT_RX_SYNC_DLY(0x6U) |
-            XCVR_MISC_RSM_CTRL3_RSM_DT_RX_SYNC_DIS(0x0U) |
-            XCVR_MISC_RSM_CTRL3_RSM_AA_HAMM(0x0U) |
-            XCVR_MISC_RSM_CTRL3_RSM_HPM_CAL(0x1U) |
-            XCVR_MISC_RSM_CTRL3_RSM_CTUNE(0x0U) |
-            XCVR_MISC_RSM_CTRL3_RSM_DMA_RX_EN(0x0U) |
-            XCVR_MISC_RSM_CTRL3_RSM_RX_PHY_EN_MASK_DIS(0x0U) |
-            XCVR_MISC_RSM_CTRL3_RSM_RX_SIGNALS_MASK_DIS(0x0U) |
-            XCVR_MISC_RSM_CTRL3_RSM_SEQ_RCCAL_PUP_MASK_DIS(0x0U) |
-            XCVR_MISC_RSM_CTRL3_RSM_DMA_DUR(0x0U),
-    .RSM_CTRL4 = 
-            XCVR_MISC_RSM_CTRL4_RSM_DMA_DLY0(0xAU) |
-            XCVR_MISC_RSM_CTRL4_RSM_DMA_DLY(0x0U) |
-            XCVR_MISC_RSM_CTRL4_RSM_DMA_DUR0(0x5AU),
-    .RSM_CTRL5 =    
-            XCVR_MISC_RSM_CTRL5_RSM_T_FM(0x50),  /* T_FM is always 80usec */
-    .RSM_CTRL6 = 
-            XCVR_MISC_RSM_CTRL6_RSM_RXLAT_DIG(0x0U) |
-            XCVR_MISC_RSM_CTRL6_RSM_SKIP_RECYCLE_R2R(0x0U) |
-            XCVR_MISC_RSM_CTRL6_RSM_PKTRAM_EXTEND(0x1U) |  /* Set XCVR_MISC_RSM_CTRL6_RSM_PKTRAM_EXTEND */
-            XCVR_MISC_RSM_CTRL6_RSM_EARLY_MOD_DIS(0x0U) |
-            XCVR_MISC_RSM_CTRL6_RSM_MODE0_TIMEOUT(0x0U),       
-    .RSM_CTRL7 = 
-            XCVR_MISC_RSM_CTRL7_RSM_TIME_CORR(0x0U) |
-            XCVR_MISC_RSM_CTRL7_RSM_TIME_CORR_DELTA(0x0U) |
-            XCVR_MISC_RSM_CTRL7_RSM_TIME_CORR_MODE(0x0U) |
-            XCVR_MISC_RSM_CTRL7_RSM_TIME_ALIGN_MODE(0x0U) |
-            XCVR_MISC_RSM_CTRL7_RSM_TIME_ALIGN_OFFSET(0x0U),
+    .RSM_CTRL0 = XCVR_MISC_RSM_CTRL0_RSM_MODE(0x0U) | XCVR_MISC_RSM_CTRL0_RSM_RATE(0x0U) |
+                 XCVR_MISC_RSM_CTRL0_RSM_RX_EN(0x0U) | XCVR_MISC_RSM_CTRL0_RSM_TX_EN(0x0U) |
+                 XCVR_MISC_RSM_CTRL0_RSM_FAST_IP_RX_WU(0x1U) | XCVR_MISC_RSM_CTRL0_RSM_FAST_IP_TX_WU(0x1U) |
+                 XCVR_MISC_RSM_CTRL0_RSM_FAST_FC_RX_WU(0x1U) | XCVR_MISC_RSM_CTRL0_RSM_FAST_FC_TX_WU(0x1U) |
+                 XCVR_MISC_RSM_CTRL0_RSM_SW_ABORT(0x0U) | XCVR_MISC_RSM_CTRL0_RSM_SN_EN(0x0U) |
+                 XCVR_MISC_RSM_CTRL0_RSM_TRIG_SEL(0x6U) | /* NBU trigger */
+                 XCVR_MISC_RSM_CTRL0_RSM_TRIG_DLY(0x0U) | XCVR_MISC_RSM_CTRL0_RSM_STEPS(0x0U),
+    .RSM_CTRL1 = XCVR_MISC_RSM_CTRL1_RSM_T_FC(0x9BU) | XCVR_MISC_RSM_CTRL1_RSM_T_IP1(0x96U) |
+                 XCVR_MISC_RSM_CTRL1_RSM_T_IP2(0x96U) | XCVR_MISC_RSM_CTRL1_RSM_T_S(0x0AU),
+    .RSM_CTRL2 = XCVR_MISC_RSM_CTRL2_RSM_T_PM0(0x0U) | XCVR_MISC_RSM_CTRL2_RSM_T_PM1(0x0U) |
+                 XCVR_MISC_RSM_CTRL2_RSM_RTT_TYPE(0x0U) | XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_LCL(0x0U) |
+                 XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_EN_LCL(0x0U) | XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_TXDIG(0x0U) |
+                 XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_EN_TXDIG(0x0U) | XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_RXDIG(0x0U) |
+                 XCVR_MISC_RSM_CTRL2_RSM_ACTIVE_OVRD_EN_RXDIG(0x0U),
+    .RSM_CTRL3 = XCVR_MISC_RSM_CTRL3_RSM_DT_RX_SYNC_DLY(0x6U) | XCVR_MISC_RSM_CTRL3_RSM_DT_RX_SYNC_DIS(0x0U) |
+                 XCVR_MISC_RSM_CTRL3_RSM_AA_HAMM(0x0U) | XCVR_MISC_RSM_CTRL3_RSM_HPM_CAL(0x1U) |
+                 XCVR_MISC_RSM_CTRL3_RSM_CTUNE(0x0U) | XCVR_MISC_RSM_CTRL3_RSM_DMA_RX_EN(0x0U) |
+                 XCVR_MISC_RSM_CTRL3_RSM_RX_PHY_EN_MASK_DIS(0x0U) | XCVR_MISC_RSM_CTRL3_RSM_RX_SIGNALS_MASK_DIS(0x0U) |
+                 XCVR_MISC_RSM_CTRL3_RSM_SEQ_RCCAL_PUP_MASK_DIS(0x0U) | XCVR_MISC_RSM_CTRL3_RSM_DMA_DUR(0x0U),
+    .RSM_CTRL4 = XCVR_MISC_RSM_CTRL4_RSM_DMA_DLY0(0xAU) | XCVR_MISC_RSM_CTRL4_RSM_DMA_DLY(0x0U) |
+                 XCVR_MISC_RSM_CTRL4_RSM_DMA_DUR0(0x5AU),
+    .RSM_CTRL5 = XCVR_MISC_RSM_CTRL5_RSM_T_FM(0x50), /* T_FM is always 80usec */
+    .RSM_CTRL6 = XCVR_MISC_RSM_CTRL6_RSM_RXLAT_DIG(0x0U) | XCVR_MISC_RSM_CTRL6_RSM_SKIP_RECYCLE_R2R(0x0U) |
+                 XCVR_MISC_RSM_CTRL6_RSM_PKTRAM_EXTEND(0x1U) | /* Set XCVR_MISC_RSM_CTRL6_RSM_PKTRAM_EXTEND */
+                 XCVR_MISC_RSM_CTRL6_RSM_EARLY_MOD_DIS(0x0U) | XCVR_MISC_RSM_CTRL6_RSM_MODE0_TIMEOUT(0x0U),
+    .RSM_CTRL7 = XCVR_MISC_RSM_CTRL7_RSM_TIME_CORR(0x0U) | XCVR_MISC_RSM_CTRL7_RSM_TIME_CORR_DELTA(0x0U) |
+                 XCVR_MISC_RSM_CTRL7_RSM_TIME_CORR_MODE(0x0U) | XCVR_MISC_RSM_CTRL7_RSM_TIME_ALIGN_MODE(0x0U) |
+                 XCVR_MISC_RSM_CTRL7_RSM_TIME_ALIGN_OFFSET(0x0U),
 
 #endif
     .do_rxdig_rccal = (bool)true

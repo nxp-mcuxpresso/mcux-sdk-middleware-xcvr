@@ -223,11 +223,31 @@ const xcvr_mode_datarate_config_t xcvr_gfsk_bt_2p0_h_0p5_1mbps_config = {
     .ips_fo_addr[0] =
         XCVR_MISC_IPS_FO_ADDR_ADDR(0x370) | XCVR_MISC_IPS_FO_ADDR_ENTRY_RX(0) | XCVR_MISC_IPS_FO_ADDR_ENTRY_TX(0),
 
+    /* IPS_FO_ADDR configuration, dependencies: ['MD+DR', 'MD+DR', 'MD+DR'] */
+    .ips_fo_addr[1] =
+        XCVR_MISC_IPS_FO_ADDR_ADDR(0x214) | XCVR_MISC_IPS_FO_ADDR_ENTRY_RX(0) | XCVR_MISC_IPS_FO_ADDR_ENTRY_TX(0),
+
+    /* IPS_FO_ADDR configuration, dependencies: ['MD+DR', 'MD+DR', 'MD+DR'] */
+    .ips_fo_addr[2] =
+        XCVR_MISC_IPS_FO_ADDR_ADDR(0x214) | XCVR_MISC_IPS_FO_ADDR_ENTRY_RX(0) | XCVR_MISC_IPS_FO_ADDR_ENTRY_TX(0),
+
     /* IPS_FO_DRS0_DATA configuration, dependencies: ['MD+DR'] */
     .ips_fo_drs0_data[0] = XCVR_MISC_IPS_FO_DRS0_DATA_DRS0_DATA(0x00000000),
 
+    /* IPS_FO_DRS0_DATA configuration, dependencies: ['MD+DR'] */
+    .ips_fo_drs0_data[1] = XCVR_MISC_IPS_FO_DRS0_DATA_DRS0_DATA(0x00000400),
+
+    /* IPS_FO_DRS0_DATA configuration, dependencies: ['MD+DR'] */
+    .ips_fo_drs0_data[2] = XCVR_MISC_IPS_FO_DRS0_DATA_DRS0_DATA(0x00000200),
+
     /* IPS_FO_DRS1_DATA configuration, dependencies: ['MD+DR'] */
     .ips_fo_drs1_data[0] = XCVR_MISC_IPS_FO_DRS1_DATA_DRS1_DATA(0x00000000),
+
+    /* IPS_FO_DRS1_DATA configuration, dependencies: ['MD+DR'] */
+    .ips_fo_drs1_data[1] = XCVR_MISC_IPS_FO_DRS1_DATA_DRS1_DATA(0x00000400),
+
+    /* IPS_FO_DRS1_DATA configuration, dependencies: ['MD+DR'] */
+    .ips_fo_drs1_data[2] = XCVR_MISC_IPS_FO_DRS1_DATA_DRS1_DATA(0x00000400),
 
     /* XCVR_CTRL configuration, dependencies: ['COM', 'MD+DR', 'MD+DR', 'COM', 'COM', 'MD+DR', 'COM', 'COM', 'COM',
        'COM', 'COM', 'COM'] */

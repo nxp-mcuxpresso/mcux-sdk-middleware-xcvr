@@ -176,10 +176,10 @@ dbgRamStatus_t dbg_ram_init(const dbg_ram_capture_config_t *dbg_ram_configuratio
 #endif
             /* Initialize desired starting and ending addresses in the debug RAM internal word-based offsets from zero
              */
-            uint32_t start_dbg_ram = 0U; /* Start offset within the combined TX and RX packet RAM space,  starting from zero
-                                            and counting words */
-            uint32_t stop_dbg_ram = 0U;  /* Stop offset within the combined TX and RX packet RAM space,  starting from zero
-                                            and counting words */
+            uint32_t start_dbg_ram = 0U; /* Start offset within the combined TX and RX packet RAM space,  starting from
+                                            zero and counting words */
+            uint32_t stop_dbg_ram = 0U;  /* Stop offset within the combined TX and RX packet RAM space,  starting from
+                                            zero  and counting words */
             /* TX RAM space is lower in memory and RX RAM is above it. Even if they are separate in the system RAM
              * memory map, they are */
             /* made adjacent in the view from the packet RAM. They are addressed in the packet RAM view by offsets

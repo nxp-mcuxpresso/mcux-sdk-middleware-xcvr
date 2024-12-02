@@ -94,7 +94,7 @@ static uint8_t PatternToLUT[32] = BLECTE_DEF_ANT_PIOS; /* table to convert anten
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)/* Only applies for Gen 4.5 */
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) /* Only applies for Gen 4.5 */
 static bool XCVR_COEX_VerifyTimingAdvance(uint8_t tx_advance,
                                           uint8_t rx_advance,
                                           uint8_t *tx_wu_time_ptr,
@@ -640,7 +640,7 @@ xcvrCoexStatus_t XCVR_COEX_RfActiveTsmInit(const coexRfActiveTsmConfig_t *config
 #elif defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN > 450)
             XCVR_TSM->CTRL &= ~(XCVR_TSM_CTRL_RF_ACTIVE_EXTEND_MASK);
             XCVR_TSM->CTRL |= XCVR_TSM_CTRL_RF_ACTIVE_EXTEND(config_ptr->rf_act_extend);
-#endif  /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450) */
+#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450) */
             /* Setup the TSM register for RF_ACTIVE */
             uint32_t temp =
                 XCVR_TSM->END_OF_SEQ; /* Start from the END_OF_SEQ register since warmdowns (LO) are from there */
@@ -1154,7 +1154,7 @@ void XCVR_ExtAntRelease(void)
     XCVR_MISC->FAD_CTRL &= ~XCVR_MISC_FAD_CTRL_ANTX_OVRD_EN_MASK;
 }
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN <= 400)/* Only applies for Gen 3.5 and Gen 4.0, not Gen 4.5 */
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN <= 400) /* Only applies for Gen 3.5 and Gen 4.0, not Gen 4.5 */
 xcvrStatus_t XCVR_FadPaFemOnCoexInit(xcvr_pa_fem_config_t *test_settings,
                                      tx_rx_coex_pin_func_t rf_status_func,
                                      tx_rx_coex_pin_func_t rf_priority_func)
@@ -1195,7 +1195,7 @@ xcvrStatus_t XCVR_FadPaFemOnCoexInit(xcvr_pa_fem_config_t *test_settings,
     /* Input checks have all passed */
     if (status == gXcvrSuccess_c)
     {
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN== 400)
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 400)
         RFMC->RF2P4GHZ_COEXT &=
             ~(RFMC_RF2P4GHZ_COEXT_RFPRI_OBE_MASK |
               RFMC_RF2P4GHZ_COEXT_RFSTAT_OBE_MASK); /* Ensure both enable bits are cleared to start out. */
@@ -1674,13 +1674,12 @@ xcvrLclStatus_t XCVR_LCL_AntennaSwitchRead(lclRxTxMode_t mode, lclAntennaSwitchi
 xcvrLclStatus_t XCVR_LCL_AntennaSwitchIntCalc();
 xcvrLclStatus_t XCVR_LCL_AntennaSwitchIntCalc(const lclAntennaSwitchingPatternConfig_t *pConfig,
                                               XCVR_RSM_SQTE_RATE_T rate,
-                                              uint8_t num_paths, 
-                                              uint8_t * pm_total_length_usec[LCL_NUM_HI_LO_INTERVALS] 
-                                              )
+                                              uint8_t num_paths,
+                                              uint8_t *pm_total_length_usec[LCL_NUM_HI_LO_INTERVALS])
 {
     xcvrLclStatus_t status = gXcvrLclStatusSuccess;
     /* NULLPTR check */
-    if ((pConfig == NULLPTR) || (pm_total_length_usec== NULLPTR))
+    if ((pConfig == NULLPTR) || (pm_total_length_usec == NULLPTR))
     {
         status = gXcvrLclStatusInvalidArgs;
     }
@@ -1688,26 +1687,24 @@ xcvrLclStatus_t XCVR_LCL_AntennaSwitchIntCalc(const lclAntennaSwitchingPatternCo
     if ((num_paths == 0U) || (num_paths > 5U))
     {
         status = gXcvrLclStatusInvalidArgs;
-    }    
-    
+    }
+
     if (status == gXcvrLclStatusSuccess)
     {
         uint8_t i;
         uint16_t max_duration = 0U;
         /* Find the longest interval */
-        for (i=0;i<LCL_NUM_HI_LO_INTERVALS;i++)
+        for (i = 0; i < LCL_NUM_HI_LO_INTERVALS; i++)
         {
             if (*pm_total_length_used[i] > max_duration)
             {
                 max_duration = *pm_total_length_used[i];
             }
         }
-        // TODO: 
+        // TODO:
         /* Determine how long SPINT should be for TX and RX - want the smallest SPINT that allows the  */
         /* Calculate SPINT and HI_PER/LO_PER and update pattern config */
-
     }
-
 }
 #endif
 
@@ -1718,7 +1715,8 @@ xcvrLclStatus_t XCVR_LCL_AntennaSwitchDmaMaskSet(uint16_t MaskDelay, uint8_t Mas
     if ((MaskDelay > ((uint32_t)XCVR_MISC_LCL_DMA_MASK_DELAY_DMA_MASK_DELAY_MASK >>
                       XCVR_MISC_LCL_DMA_MASK_DELAY_DMA_MASK_DELAY_SHIFT)) ||
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450)
-        /* Comparison only makes sense on KW45 when DMA_MASK_DELAY_OFF field is < 8 bits wide (since param is a uint8_t) */
+        /* Comparison only makes sense on KW45 when DMA_MASK_DELAY_OFF field is < 8 bits wide (since param is a uint8_t)
+         */
         (MaskDelayOff > ((uint8_t)XCVR_MISC_LCL_DMA_MASK_DELAY_DMA_MASK_DELAY_OFF_MASK >>
                          XCVR_MISC_LCL_DMA_MASK_DELAY_DMA_MASK_DELAY_OFF_SHIFT)) ||
 #endif

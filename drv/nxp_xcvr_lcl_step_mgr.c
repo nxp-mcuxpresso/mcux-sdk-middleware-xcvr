@@ -811,7 +811,6 @@ xcvrLclStatus_t XCVR_LCL_FinishFinalResults(void)
 {
     xcvrLclStatus_t status = gXcvrLclStatusSuccess;
     (void)total_step_count;
-
     return status;
 }
 

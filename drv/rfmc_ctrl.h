@@ -144,7 +144,8 @@ bool RFMC_check_radio_warmup_complete(bool wait_for_complete);
 /*!
  * @brief Function to reset the radio.
  *
- * This function resets the entire radio internal logic to it's POR state. It does not reset the registers, only the internal state.
+ * This function resets the entire radio internal logic to it's POR state. It does not reset the registers, only the
+ * internal state.
  *
  */
 void RFMC_radio_reset(void);
@@ -198,7 +199,8 @@ uint8_t RFMC_GetXtalTrim(void);
 void RFMC_DispatchIRQ(uint32_t temp_register_rf, uint32_t temp_register_xo);
 #endif /* !defined(GCOV_DO_COVERAGE) */
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN>=450) && !defined(KW45B41Z82_NBU_SERIES) && !defined(KW45B41Z83_NBU_SERIES)
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) && !defined(KW45B41Z82_NBU_SERIES) && \
+    !defined(KW45B41Z83_NBU_SERIES)
 /*!
  * @brief Function to put the NBU CPU into reset state.
  *

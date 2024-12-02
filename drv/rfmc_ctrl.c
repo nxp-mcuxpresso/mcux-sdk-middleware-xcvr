@@ -163,7 +163,8 @@ void RFMC_radio_reset(void)
     XCVR_MISC->XCVR_CTRL &= ~(XCVR_MISC_XCVR_CTRL_XCVR_SOFT_RESET_MASK);
 }
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) && !defined(KW45B41Z82_NBU_SERIES) && !defined(KW45B41Z83_NBU_SERIES)
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) && !defined(KW45B41Z82_NBU_SERIES) && \
+    !defined(KW45B41Z83_NBU_SERIES)
 void RFMC_nbu_enter_reset(void)
 {
     /* Hold NBU CPU in reset */
