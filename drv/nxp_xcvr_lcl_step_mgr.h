@@ -239,11 +239,12 @@ extern "C" {
  * case, it writes 1x (16bit) to the system RAM and a later macro (XCVR_LCL_WriteCommonHeader) needs to be used to
  * perform 3 writes to PKT RAM (32 bit each). The system RAM variable should be of type COM_MODE_CFG_HDR_UNION_Type.
  */
-#define XCVR_LCL_UpdateHeaderCfo(cfg_entry, step_cfo) do
-{
-    (cfg_entry)->header.STEP_CFO = (step_cfo);
-} /* Entry is full 16 bits wide so no need to mask/shift */
-while (0)
+#define XCVR_LCL_UpdateHeaderCfo(cfg_entry, step_cfo)           \
+    do                                                          \
+    {                                                           \
+        (cfg_entry)->header.STEP_CFO = (step_cfo);              \
+    } /* Entry is full 16 bits wide so no need to mask/shift */ \
+    while (0)
 
 /*!
  * @brief Macro to configure the Mode 0/1/3 step payload structure.
@@ -609,31 +610,31 @@ xcvrLclStatus_t XCVR_LCL_MakeMode2CfgHeader(xcvr_lcl_mode_2_cfg_t *cfg_entry,
                                             uint32_t step_cfg);
 #endif /* defined(USE_LCL_STEP_MACROS) && (USE_LCL_STEP_MACROS==1) */
 
-    /*!
-     * @brief Function to calculate config and result sizes for a single Channel Sounding step.
-     *
-     * This function takes in information about a single Channel Sounding step and calculates the number of 32bit words
-     * in both the config and the result steps. This information is used to update the PKT RAM index and determine when
-     * double buffers roll over.
-     *
-     * @param[in] step_format The format of the step.
-     * @param[in] rtt_type The RTT type for the step (must be constant throughout an entire sequence).
-     * @param[in] num_ap The number of antenna paths in use.
-     * @param[out] config_size_words The number of 32bit words in the config for the step.
-     * @param[out] result_size_words The number of 32bit words in the result for the step.
-     *
-     * @return The status of the calculation (not the result but any error in input values).
-     *
-     * @note For a particular RTT Type and number of antenna paths combination, this routine can be called once for each
-     * step_format (0, 1, 2, 3) and the results stored in arrays locally at the caller. This can optimize time when the
-     * same configuration is being used for a large number of steps.
-     *
-     */
-    xcvrLclStatus_t XCVR_LCL_CalcConfigResult_Size(XCVR_RSM_FSTEP_TYPE_T step_format,
-                                                   XCVR_RSM_RTT_TYPE_T rtt_type,
-                                                   uint8_t num_ap,
-                                                   uint8_t *config_size_words,
-                                                   uint8_t *result_size_words);
+/*!
+ * @brief Function to calculate config and result sizes for a single Channel Sounding step.
+ *
+ * This function takes in information about a single Channel Sounding step and calculates the number of 32bit words
+ * in both the config and the result steps. This information is used to update the PKT RAM index and determine when
+ * double buffers roll over.
+ *
+ * @param[in] step_format The format of the step.
+ * @param[in] rtt_type The RTT type for the step (must be constant throughout an entire sequence).
+ * @param[in] num_ap The number of antenna paths in use.
+ * @param[out] config_size_words The number of 32bit words in the config for the step.
+ * @param[out] result_size_words The number of 32bit words in the result for the step.
+ *
+ * @return The status of the calculation (not the result but any error in input values).
+ *
+ * @note For a particular RTT Type and number of antenna paths combination, this routine can be called once for each
+ * step_format (0, 1, 2, 3) and the results stored in arrays locally at the caller. This can optimize time when the
+ * same configuration is being used for a large number of steps.
+ *
+ */
+xcvrLclStatus_t XCVR_LCL_CalcConfigResult_Size(XCVR_RSM_FSTEP_TYPE_T step_format,
+                                               XCVR_RSM_RTT_TYPE_T rtt_type,
+                                               uint8_t num_ap,
+                                               uint8_t *config_size_words,
+                                               uint8_t *result_size_words);
 
 /*!
  * @brief Function to validate the information defined for a Channel Sounding subevent.

@@ -165,9 +165,9 @@ extern "C" {
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 #define TX_DATA_FLUSH_DLY_1MBPS (3U)
 #define TX_DATA_FLUSH_DLY_2MBPS (3U)
-#define RX_SYNC_DLY_1MBPS (5U) /* Must change when RX_SETTLING_LATENCY_1MBPS changes */
+#define RX_SYNC_DLY_1MBPS (6U) /* Must change when RX_SETTLING_LATENCY_1MBPS changes */
 #define RX_SYNC_DLY_2MBPS (4U) /* Must change when RX_SETTLING_LATENCY_2MBPS changes */
-#define RX_SETTLING_LATENCY_1MBPS (6U)
+#define RX_SETTLING_LATENCY_1MBPS (7U)
 #define RX_SETTLING_LATENCY_2MBPS (4U)
 #else
 #define TX_DATA_FLUSH_DLY_1MBPS (2U)
