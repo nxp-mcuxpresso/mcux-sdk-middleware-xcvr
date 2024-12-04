@@ -10,9 +10,9 @@
 
 #include "fsl_common.h"
 #include "nxp2p4_xcvr.h"
-#include "nxp_xcvr_ext_ctrl.h"      /* Include support for antenna control and pattern match */
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450 )
-#include "nxp_xcvr_lcl_config.h"    /* RSM timing configurations */
+#include "nxp_xcvr_ext_ctrl.h" /* Include support for antenna control and pattern match */
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)
+#include "nxp_xcvr_lcl_config.h" /* RSM timing configurations */
 #endif
 
 /*!
@@ -20,7 +20,7 @@
  * @{
  */
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470 )
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 #define CONNRF_1163_IF_COMP 1
 #else
 #define CONNRF_1163_IF_COMP 1
@@ -29,7 +29,7 @@
  * Definitions
  ******************************************************************************/
 #if defined(__cplusplus)
-    extern "C" {
+extern "C" {
 #endif
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450) && \
@@ -41,21 +41,21 @@
 
 /* Workaround for PKT RAM double buffering issue on KW47 at end of TX RAM. Last location is not usable */
 /* This symbol should be used in all double buffering related code to enforce not using the last location */
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 470) 
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 470)
 //#define TX_PACKET_RAM_PACKET_RAM_COUNT_DBL_BUFFER   (TX_PACKET_RAM_PACKET_RAM_COUNT-1U)
-#define TX_PACKET_RAM_PACKET_RAM_COUNT_DBL_BUFFER   (TX_PACKET_RAM_PACKET_RAM_COUNT-20U-1U)
+#define TX_PACKET_RAM_PACKET_RAM_COUNT_DBL_BUFFER (TX_PACKET_RAM_PACKET_RAM_COUNT - 20U - 1U)
 #else
-#define TX_PACKET_RAM_PACKET_RAM_COUNT_DBL_BUFFER   (TX_PACKET_RAM_PACKET_RAM_COUNT)
+#define TX_PACKET_RAM_PACKET_RAM_COUNT_DBL_BUFFER (TX_PACKET_RAM_PACKET_RAM_COUNT)
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 470) */
 
 /* Long (64 bit) PN support is disabled by default but can be enabled at project level */
- #ifndef SUPPORT_RSM_LONG_PN
- #define SUPPORT_RSM_LONG_PN        (0)
- #endif /* SUPPORT_RSM_LONG_PN */
+#ifndef SUPPORT_RSM_LONG_PN
+#define SUPPORT_RSM_LONG_PN (0)
+#endif /* SUPPORT_RSM_LONG_PN */
 
-#define NUM_TSM_U32_REGISTERS   (sizeof(XCVR_TSM_Type)/4U)
+#define NUM_TSM_U32_REGISTERS (sizeof(XCVR_TSM_Type) / 4U)
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) 
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 #define XCVR_RSM_OVERALL_MAX_SEQ_LEN                                                                                   \
     (160U) /*!< Maximum overall sequence length (inclusive) for RSM sequences. No sequence can be longer than this due \
               to Fstep RAM array size. */
@@ -71,57 +71,57 @@
               RAM array sizes. */
 #endif
 #ifndef XCVR_RSM_MIN_SEQ_LEN
-#define XCVR_RSM_MIN_SEQ_LEN             (1U)        /*!< Minimum sequence length (inclusive) for RSM sequences */
-#endif /* XCVR_RSM_MIN_SEQ_LEN */
+#define XCVR_RSM_MIN_SEQ_LEN (1U) /*!< Minimum sequence length (inclusive) for RSM sequences */
+#endif                            /* XCVR_RSM_MIN_SEQ_LEN */
 #define XCVR_RSM_MAX_NUM_ANT \
     (32U) /*!< Maximum number of antennae supported by LCL Antenna Control (assumes external decode logic).  */
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) 
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 /* Names kept the same as KW45 for re-use; values are defined with some defaults for test purposes */
 // TODO: remove these symbols, they only apply to KW45; KW47 needs a different mechanism.
-#define RSM_RTT_RAM         (RX_PACKET_RAM_BASE+0x80U)  /*!< Round Trip Time Buffer Base Address */
-#define RSM_RTT_RAM_ENTRY_SZ (4U)                        /*!< Size (bytes) of one entry in the Round Trip Time Buffer */
+#define RSM_RTT_RAM (RX_PACKET_RAM_BASE + 0x80U) /*!< Round Trip Time Buffer Base Address */
+#define RSM_RTT_RAM_ENTRY_SZ (4U)                /*!< Size (bytes) of one entry in the Round Trip Time Buffer */
 #define RSM_RTT_RAM_COUNT \
     (RX_PACKET_RAM_PACKET_RAM_COUNT * 4U / RSM_RTT_RAM_ENTRY_SZ) /*!< Round Trip Time Buffer count of elements */
 
-#else /* KW45 version */
-#define RSM_PCBD_RAM        (RX_PACKET_RAM_BASE)        /*!< Coarse Tune Best Diff Buffer Base Address */
-#define RSM_PCBD_ENTRY_SZ   (1U)                        /*!< Size (bytes) of one entry in the Coarse Tune Best Diff Buffer  */
-#define RSM_PCBD_RAM_COUNT  (128U)                      /*!< Coarse Tune Best Diff Buffer count of elements */
-#define RSM_RTT_RAM         (RX_PACKET_RAM_BASE+0x80U)  /*!< Round Trip Time Buffer Base Address */
-#define RSM_RTT_RAM_ENTRY_SZ (4U)                        /*!< Size (bytes) of one entry in the Round Trip Time Buffer */
-#define RSM_RTT_RAM_COUNT   (424U/RSM_RTT_RAM_ENTRY_SZ)  /*!< Round Trip Time Buffer count of elements */
-#define RSM_PN_RAM          (RX_PACKET_RAM_BASE+0x230U)  /*!< PN (both 32 and 64) Buffer Base Address */
-#define RSM_PN_RAM_32_ENTRY_SZ (8U)                      /*!< Size (bytes) of one entry in the PN  32  Buffer  */
-#define RSM_PN_RAM_32_COUNT (848U/RSM_PN_RAM_32_ENTRY_SZ) /*!< PN  32  Buffer count of elements */
+#else                                            /* KW45 version */
+#define RSM_PCBD_RAM (RX_PACKET_RAM_BASE)        /*!< Coarse Tune Best Diff Buffer Base Address */
+#define RSM_PCBD_ENTRY_SZ (1U)                   /*!< Size (bytes) of one entry in the Coarse Tune Best Diff Buffer  */
+#define RSM_PCBD_RAM_COUNT (128U)                /*!< Coarse Tune Best Diff Buffer count of elements */
+#define RSM_RTT_RAM (RX_PACKET_RAM_BASE + 0x80U) /*!< Round Trip Time Buffer Base Address */
+#define RSM_RTT_RAM_ENTRY_SZ (4U)                /*!< Size (bytes) of one entry in the Round Trip Time Buffer */
+#define RSM_RTT_RAM_COUNT (424U / RSM_RTT_RAM_ENTRY_SZ)     /*!< Round Trip Time Buffer count of elements */
+#define RSM_PN_RAM (RX_PACKET_RAM_BASE + 0x230U)            /*!< PN (both 32 and 64) Buffer Base Address */
+#define RSM_PN_RAM_32_ENTRY_SZ (8U)                         /*!< Size (bytes) of one entry in the PN  32  Buffer  */
+#define RSM_PN_RAM_32_COUNT (848U / RSM_PN_RAM_32_ENTRY_SZ) /*!< PN  32  Buffer count of elements */
 #if defined(SUPPORT_RSM_LONG_PN) && (SUPPORT_RSM_LONG_PN == 1)
-#define RSM_PN_RAM_64_ENTRY_SZ (16U)                     /*!< Size (bytes) of one entry in the PN  64  Buffer  */
-#define RSM_PN_RAM_64_COUNT (848U/RSM_PN_RAM_64_ENTRY_SZ) /*!< PN  64  Buffer count of elements */
-#endif /* defined(SUPPORT_RSM_LONG_PN) && (SUPPORT_RSM_LONG_PN == 1) */
-#define RSM_FSTEP_RAM       (RX_PACKET_RAM_BASE+0x580U)  /*!< Frequency Step Buffer Base Address */
-#define RSM_FSTEP_ENTRY_SZ  (5U)                         /*!< Size (bytes) of one entry in the  Frequency Step Buffer */
-#define RSM_FSTEP_RAM_COUNT (640U/RSM_FSTEP_ENTRY_SZ)    /*!< Frequency Step Buffer count of elements */
-#endif  /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  */
+#define RSM_PN_RAM_64_ENTRY_SZ (16U)                        /*!< Size (bytes) of one entry in the PN  64  Buffer  */
+#define RSM_PN_RAM_64_COUNT (848U / RSM_PN_RAM_64_ENTRY_SZ) /*!< PN  64  Buffer count of elements */
+#endif                                                  /* defined(SUPPORT_RSM_LONG_PN) && (SUPPORT_RSM_LONG_PN == 1) */
+#define RSM_FSTEP_RAM (RX_PACKET_RAM_BASE + 0x580U)     /*!< Frequency Step Buffer Base Address */
+#define RSM_FSTEP_ENTRY_SZ (5U)                         /*!< Size (bytes) of one entry in the  Frequency Step Buffer */
+#define RSM_FSTEP_RAM_COUNT (640U / RSM_FSTEP_ENTRY_SZ) /*!< Frequency Step Buffer count of elements */
+#endif                                                  /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  */
 
-#define GAMMA_ROWS          (6U)                         /*!< Number of rows in Gamma array for RTT fractional delay estimation */
-#define GAMMA_COLS          (4U)                         /*!< Number of columns in Gamma array for RTT fractional delay estimation */
+#define GAMMA_ROWS (6U) /*!< Number of rows in Gamma array for RTT fractional delay estimation */
+#define GAMMA_COLS (4U) /*!< Number of columns in Gamma array for RTT fractional delay estimation */
 
 #define BLE_MIN_FREQ 2402U
 #define BLE_MAX_FREQ 2480U
 #define RSM_HADM_MAX_CHAN_INDEX \
     78U /*!< HADM channel indexes run from 0 to 78 to represent frequencies 2402 to 2480MHz in 1MHz increments */
 
-#define T_RD                (5U)
-#define T_FM_USEC       (80U)  /*!< Channel Sounding spec only permits 80usec T_FM */
+#define T_RD (5U)
+#define T_FM_USEC (80U) /*!< Channel Sounding spec only permits 80usec T_FM */
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450)  
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450)
 /* KW45 increment settings for RSM timing registers (usec per LSB) */
-#define T_FM_INCMT  (10U)           /*!< 10usec per bit in T_FM field programming */
-#define T_PM_INCMT  (10U)           /*!< 10usec per bit in T_PM field programming */
-#define T_PM_REG_OFFSET (1U)       /*!< One increment offset. value 0 is 10us */
-#define T_IP_INCMT  (5U)           /*!< 5usec per bit in T_IP field programming */
-#define T_FC_INCMT  (5U)           /*!< 5usec per bit in T_FC field programming */
-#define T_S_INCMT  (5U)            /*!< 5usec per bit in T_S field programming */
+#define T_FM_INCMT (10U)     /*!< 10usec per bit in T_FM field programming */
+#define T_PM_INCMT (10U)     /*!< 10usec per bit in T_PM field programming */
+#define T_PM_REG_OFFSET (1U) /*!< One increment offset. value 0 is 10us */
+#define T_IP_INCMT (5U)      /*!< 5usec per bit in T_IP field programming */
+#define T_FC_INCMT (5U)      /*!< 5usec per bit in T_FC field programming */
+#define T_S_INCMT (5U)       /*!< 5usec per bit in T_S field programming */
 #define T_FC_MAX (155U)
 #define T_FC_MIN (50U)
 #define T_FC_MODULO (5U)
@@ -131,19 +131,19 @@
 #define T_PM_MAX (640U)
 #define T_PM_MIN (10U)
 #define T_PM_MODULO (10U)
-#define T_PM_FLD_COUNT (4U)  /*!< 4 T_PM register bitfields are present */
-#define T_FM_FLD_COUNT (4U)  /*!< 4 T_FM register bitfields are present */
-#define ZERO_BASIS (1U)          /*!< A zero value in this register actually means 1 of whatever timing is being programmed */
+#define T_PM_FLD_COUNT (4U) /*!< 4 T_PM register bitfields are present */
+#define T_FM_FLD_COUNT (4U) /*!< 4 T_FM register bitfields are present */
+#define ZERO_BASIS (1U) /*!< A zero value in this register actually means 1 of whatever timing is being programmed */
 #else
 /* KW47 switched to 1usec per LSB for all timings and widened many fields */
 /* KW47 timing registers do not have any cases where zero entry means 1 increment as KW45 had. Zero entry is never
  * allowed! */
-#define T_FM_INCMT  (1U)           /*!< 1usec per bit in T_FM field programming */
-#define T_PM_INCMT  (1U)           /*!< 1usec per bit in T_PM field programming */
-#define T_PM_REG_OFFSET (0U)       /*!< no offset. value 0 is 0us */
-#define T_IP_INCMT  (1U)            /*!< 1usec per bit in T_FM field programming */
-#define T_FC_INCMT  (1U)           /*!< 1usec per bit in T_FM field programming */
-#define T_S_INCMT  (1U)             /*!< 1usec per bit in T_S field programming */
+#define T_FM_INCMT (1U)      /*!< 1usec per bit in T_FM field programming */
+#define T_PM_INCMT (1U)      /*!< 1usec per bit in T_PM field programming */
+#define T_PM_REG_OFFSET (0U) /*!< no offset. value 0 is 0us */
+#define T_IP_INCMT (1U)      /*!< 1usec per bit in T_FM field programming */
+#define T_FC_INCMT (1U)      /*!< 1usec per bit in T_FM field programming */
+#define T_S_INCMT (1U)       /*!< 1usec per bit in T_S field programming */
 #define T_FC_MAX (255U)
 #define T_FC_MIN (30U)
 #define T_FC_MODULO (1U)
@@ -153,27 +153,27 @@
 #define T_PM_MAX (1023U)
 #define T_PM_MIN (10U)
 #define T_PM_MODULO (1U)
-#define T_PM_FLD_COUNT (2U)  /*!< 2 T_PM register bitfields are present */
-#define T_FM_FLD_COUNT (1U)  /*!< 1 T_FM register bitfields are present */
-#define ZERO_BASIS (0U)          /*!< A zero value in this register actually means 0 of whatever timing is being programmed */
-#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450)  */
+#define T_PM_FLD_COUNT (2U) /*!< 2 T_PM register bitfields are present */
+#define T_FM_FLD_COUNT (1U) /*!< 1 T_FM register bitfields are present */
+#define ZERO_BASIS (0U) /*!< A zero value in this register actually means 0 of whatever timing is being programmed */
+#endif                  /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450)  */
 
-#define SAMPLING_RATE_FACTOR_2MBPS (2U)      /* Sampling rate x 2 @2Mbps */
-#define RX_SAMPLING_RATE (4U)                /* 4 MHz @1Mbps */
-#define TX_SAMPLING_RATE (8U)                /* 8 MHz @1Mbps */
+#define SAMPLING_RATE_FACTOR_2MBPS (2U) /* Sampling rate x 2 @2Mbps */
+#define RX_SAMPLING_RATE (4U)           /* 4 MHz @1Mbps */
+#define TX_SAMPLING_RATE (8U)           /* 8 MHz @1Mbps */
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  
-#define TX_DATA_FLUSH_DLY_1MBPS     (3U)
-#define TX_DATA_FLUSH_DLY_2MBPS     (3U)
-#define RX_SYNC_DLY_1MBPS                  (5U) /* Must change when RX_SETTLING_LATENCY_1MBPS changes */
-#define RX_SYNC_DLY_2MBPS                  (4U) /* Must change when RX_SETTLING_LATENCY_2MBPS changes */
-#define RX_SETTLING_LATENCY_1MBPS  (6U)
-#define RX_SETTLING_LATENCY_2MBPS  (4U)
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
+#define TX_DATA_FLUSH_DLY_1MBPS (3U)
+#define TX_DATA_FLUSH_DLY_2MBPS (3U)
+#define RX_SYNC_DLY_1MBPS (6U) /* Must change when RX_SETTLING_LATENCY_1MBPS changes */
+#define RX_SYNC_DLY_2MBPS (4U) /* Must change when RX_SETTLING_LATENCY_2MBPS changes */
+#define RX_SETTLING_LATENCY_1MBPS (7U)
+#define RX_SETTLING_LATENCY_2MBPS (4U)
 #else
-#define TX_DATA_FLUSH_DLY_1MBPS     (2U)
-#define TX_DATA_FLUSH_DLY_2MBPS     (1U)
-#define RX_SYNC_DLY_1MBPS                  (6U)
-#define RX_SYNC_DLY_2MBPS                  (7U)
+#define TX_DATA_FLUSH_DLY_1MBPS (2U)
+#define TX_DATA_FLUSH_DLY_2MBPS (1U)
+#define RX_SYNC_DLY_1MBPS (6U)
+#define RX_SYNC_DLY_2MBPS (7U)
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN > 450)   */
 
 /* DMA_MASK_CTRL Signal valid mask sel options */
@@ -181,24 +181,24 @@
 #define RSM_DMA_SIGNAL_VALID_MASK_SEL_FM_RX (1U << 1U)    /*!< Enable full fm_rx state capture */
 #define RSM_DMA_SIGNAL_VALID_MASK_SEL_PM_RX (1U << 2U)    /*!< Enable full pm_rx state capture */
 #define RSM_DMA_SIGNAL_VALID_MASK_SEL_DT_RX (1U << 3U)    /*!< Enable full dt_rx state capture */
-      
+
 /* Channel Sounding Test Commands */
 #if (0)
-#define CS_TEST_AA_INIT     (0xCD31EF64U)
-#define CS_TEST_AA_REFL     (0xD6844E8EU)
+#define CS_TEST_AA_INIT (0xCD31EF64U)
+#define CS_TEST_AA_REFL (0xD6844E8EU)
 #else
-#define CS_TEST_AA_INIT     (0x36B25785U)
-#define CS_TEST_AA_REFL     (0xA1E16E78U)
+#define CS_TEST_AA_INIT (0x36B25785U)
+#define CS_TEST_AA_REFL (0xA1E16E78U)
 #endif
 /*! @brief  RSM control mode settings. */
 typedef enum
 {
-    XCVR_RSM_SQTE_MODE       = 0U, /*!< Secure Quick Tone Exchange mode (AKA HADM) */
-    XCVR_RSM_PDE_MODE        = 1U,  /*!< Phase Distance Estimation mode */
+    XCVR_RSM_SQTE_MODE = 0U, /*!< Secure Quick Tone Exchange mode (AKA HADM) */
+    XCVR_RSM_PDE_MODE  = 1U, /*!< Phase Distance Estimation mode */
     XCVR_RSM_SQTE_STABLE_PHASE_TEST_MODE =
-        2U,                  /*!< Secure Quick Tone Exchange mode with settings for stable phase testing */
+        2U,               /*!< Secure Quick Tone Exchange mode with settings for stable phase testing */
     XCVR_RSM_MODE_INVALID /* Must always be last! */
-}   XCVR_RSM_MODE_T;
+} XCVR_RSM_MODE_T;
 
 /*! @brief  RSM RX/TX mode settings. */
 typedef enum
@@ -208,32 +208,32 @@ typedef enum
     XCVR_RSM_TX_MODE =
         1U, /*!<  Configure RSM to start with Transmit. AKA the SQTE "Initiator" role or the PDE "MD" role */
     XCVR_RSM_RXTX_MODE_INVALID /* Must always be last! */
-}   XCVR_RSM_RXTX_MODE_T;
+} XCVR_RSM_RXTX_MODE_T;
 
 /*! @brief  RSM Trigger Selection  settings. */
 typedef enum
 {
-    XCVR_RSM_TRIG_SW            = 0U,  /*!< Trigger the RSM module immediately (software triggered). */
-    XCVR_RSM_TRIG_CRC_VLD       = 1U,  /*!<  Trigger the RSM module upon CRC Valid detection. */
-    XCVR_RSM_TRIG_AA_FND        = 2U,  /*!<  Trigger the RSM module upon Access Address detection from the PHY. */
-    XCVR_RSM_TRIG_TX_DIG_EN     = 3U,  /*!<  Trigger the RSM module upon TX digital enable from TSM. */
-    XCVR_RSM_TRIG_SEQ_SPARE3    = 4U,  /*!<  Trigger the RSM module upon seq_spare3 assertion from TSM. */
+    XCVR_RSM_TRIG_SW         = 0U, /*!< Trigger the RSM module immediately (software triggered). */
+    XCVR_RSM_TRIG_CRC_VLD    = 1U, /*!<  Trigger the RSM module upon CRC Valid detection. */
+    XCVR_RSM_TRIG_AA_FND     = 2U, /*!<  Trigger the RSM module upon Access Address detection from the PHY. */
+    XCVR_RSM_TRIG_TX_DIG_EN  = 3U, /*!<  Trigger the RSM module upon TX digital enable from TSM. */
+    XCVR_RSM_TRIG_SEQ_SPARE3 = 4U, /*!<  Trigger the RSM module upon seq_spare3 assertion from TSM. */
     XCVR_RSM_TRIG_PAT_MATCH =
         5U, /*!<  Trigger the RSM module upon pattern match detection from the localization module. */
-    XCVR_RSM_TRIG_NBU_TRIG        = 6U,   /*!<  Trigger the RSM module uby NBU signal from LL hardware. */
-    XCVR_RSM_TRIG_INVALID /* Must always be last! */
-}   XCVR_RSM_TRIG_T;
+    XCVR_RSM_TRIG_NBU_TRIG = 6U, /*!<  Trigger the RSM module uby NBU signal from LL hardware. */
+    XCVR_RSM_TRIG_INVALID        /* Must always be last! */
+} XCVR_RSM_TRIG_T;
 
 /*! @brief  RSM Calibration Configuration. Selects the calibrations to include in RSM TX and RX sequences. */
 typedef enum
 {
-    XCVR_RSM_TSM_DEFAULT        = 0U, /*!< Configure TSM settings programming to default settings */
+    XCVR_RSM_TSM_DEFAULT  = 0U, /*!< Configure TSM settings programming to default settings */
     XCVR_RSM_TSM_FULL_CAL = 1U, /*!<  Configure TSM settings programming to full calibration: perform HPM and RCCAL and
                                    DCOC cal in both RX and TX warmups for RSM (Requires T_FC=150usec!) */
     XCVR_RSM_TSM_PART_CAL = 2U, /*!<  ConfigureTSM settings programming to  assert seq_lo_pup_vlo_rx/tx in both TX and
                                    RX, and to enable HPM in RX (use for faster T_FC cases) */
-    XCVR_RSM_CAL_MODE_INVALID /* Must always be last! */
-}   XCVR_RSM_TSM_CAL_MODE_T;
+    XCVR_RSM_CAL_MODE_INVALID   /* Must always be last! */
+} XCVR_RSM_TSM_CAL_MODE_T;
 
 /*! @brief  RSM HPM Calibration Configuration. Selects the HPM calibrations time to include in RSM TX and RX sequences.
  */
@@ -245,16 +245,16 @@ typedef enum
         1U, /*!<  Configure TSM settings programming to 52usec HPM cal (default value, almost always used) */
     XCVR_RSM_TSM_HPM_102US_CAL = 2U, /*!<  ConfigureTSM settings programming to 102usec HPM cal (require PLL settings as
                                         well to go with this value). */
-    XCVR_RSM_cAL_TIME_INVALID /* Must always be last! */
-}   XCVR_RSM_TSM_HPM_CAL_TIME_T;
+    XCVR_RSM_cAL_TIME_INVALID        /* Must always be last! */
+} XCVR_RSM_TSM_HPM_CAL_TIME_T;
 
 /*! @brief  RSM SQTE RATE settings. */
 typedef enum
 {
-    XCVR_RSM_RATE_1MBPS       = 0U, /*!< RSM rate of 1Mbps. Must match how XCVR is configured! */
-    XCVR_RSM_RATE_2MBPS       = 1U,  /*!<  RSM rate of 2Mbps. Must match how XCVR is configured! */
-    XCVR_RSM_RATE_INVALID /* Must always be last! */
-}   XCVR_RSM_SQTE_RATE_T;
+    XCVR_RSM_RATE_1MBPS = 0U, /*!< RSM rate of 1Mbps. Must match how XCVR is configured! */
+    XCVR_RSM_RATE_2MBPS = 1U, /*!<  RSM rate of 2Mbps. Must match how XCVR is configured! */
+    XCVR_RSM_RATE_INVALID     /* Must always be last! */
+} XCVR_RSM_SQTE_RATE_T;
 
 #if defined(SUPPORT_RSM_LONG_PN) && (SUPPORT_RSM_LONG_PN == 1)
 /*! @brief  RSM SQTE PN length. */
@@ -265,22 +265,22 @@ typedef enum
     XCVR_RSM_SQTE_PN64 =
         1U, /*!< A 64 bit PN sequence is used in SQTE packets. THis setting is programmed in the PHY. */
     XCVR_RSM_RTT_LEN_INVALID /* Must always be last! */
-}   XCVR_RSM_SQTE_RTT_LEN_T;
+} XCVR_RSM_SQTE_RTT_LEN_T;
 #endif /* defined(SUPPORT_RSM_LONG_PN) && (SUPPORT_RSM_LONG_PN == 1) */
 
 /*! @brief RXDIG IQ/Phase averaging window enumeration type. */
 /* Must match the birfield programming for RX_IQ_PH_AVG_WIN in XCVR_RXDIG->CTRL1 regsiter */
 typedef enum
 {
-    XCVR_RSM_AVG_WIN_DISABLED    = 0U, /*!< No IQ/Phase averaging performed */
-    XCVR_RSM_AVG_WIN_4_SMPL      = 1U, /*!< 4 sample IQ/Phase averaging performed */
-    XCVR_RSM_AVG_WIN_8_SMPL      = 2U, /*!< 8 sample IQ/Phase averaging performed */
-    XCVR_RSM_AVG_WIN_16_SMPL     = 3U, /*!< 16 sample IQ/Phase averaging performed */
-    XCVR_RSM_AVG_WIN_32_SMPL     = 4U, /*!< 32 sample IQ/Phase averaging performed */
-    XCVR_RSM_AVG_WIN_64_SMPL     = 5U, /*!< 64 sample IQ/Phase averaging performed */
-    XCVR_RSM_AVG_WIN_128_SMPL    = 6U, /*!< 128 sample IQ/Phase averaging performed */
-    XCVR_RSM_AVG_WIN_256_SMPL    = 7U, /*!< 256 sample IQ/Phase averaging performed */
-}   XCVR_RSM_AVG_WIN_LEN_T;
+    XCVR_RSM_AVG_WIN_DISABLED = 0U, /*!< No IQ/Phase averaging performed */
+    XCVR_RSM_AVG_WIN_4_SMPL   = 1U, /*!< 4 sample IQ/Phase averaging performed */
+    XCVR_RSM_AVG_WIN_8_SMPL   = 2U, /*!< 8 sample IQ/Phase averaging performed */
+    XCVR_RSM_AVG_WIN_16_SMPL  = 3U, /*!< 16 sample IQ/Phase averaging performed */
+    XCVR_RSM_AVG_WIN_32_SMPL  = 4U, /*!< 32 sample IQ/Phase averaging performed */
+    XCVR_RSM_AVG_WIN_64_SMPL  = 5U, /*!< 64 sample IQ/Phase averaging performed */
+    XCVR_RSM_AVG_WIN_128_SMPL = 6U, /*!< 128 sample IQ/Phase averaging performed */
+    XCVR_RSM_AVG_WIN_256_SMPL = 7U, /*!< 256 sample IQ/Phase averaging performed */
+} XCVR_RSM_AVG_WIN_LEN_T;
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) /* Only applies to KW47 */
 /*! @brief RXDIG PCT averaging window enumeration type. This is a second stage, chained after the RX_IQ_PH_AVG_WIN
@@ -288,48 +288,48 @@ typedef enum
 /* Must match the bitfield programming for RX_IQ_AVG_WIN_PCT in XCVR_RXDIG->CTRL1 regsiter */
 typedef enum
 {
-    XCVR_RSM_PCT_AVG_WIN_DISABLED    = 0U, /*!< No averaging performed */
-    XCVR_RSM_PCT_AVG_WIN_4_SMPL      = 1U, /*!< 4 sample averaging performed */
-    XCVR_RSM_PCT_AVG_WIN_8_SMPL      = 2U, /*!< 8 sample averaging performed */
-    XCVR_RSM_PCT_AVG_WIN_16_SMPL     = 3U, /*!< 16 sample averaging performed */
-    XCVR_RSM_PCT_AVG_WIN_ERROR         = 4U, /*!< Error limit. */
-}   XCVR_RSM_PCT_AVG_WIN_LEN_T;
+    XCVR_RSM_PCT_AVG_WIN_DISABLED = 0U, /*!< No averaging performed */
+    XCVR_RSM_PCT_AVG_WIN_4_SMPL   = 1U, /*!< 4 sample averaging performed */
+    XCVR_RSM_PCT_AVG_WIN_8_SMPL   = 2U, /*!< 8 sample averaging performed */
+    XCVR_RSM_PCT_AVG_WIN_16_SMPL  = 3U, /*!< 16 sample averaging performed */
+    XCVR_RSM_PCT_AVG_WIN_ERROR    = 4U, /*!< Error limit. */
+} XCVR_RSM_PCT_AVG_WIN_LEN_T;
 
 /*! @brief  RSM RTT_TYPE enumeration type. */
 typedef enum
 {
-    XCVR_RSM_RTT_NO_PAYLOAD               = 0U, /*!< No payload in the RTT step. */
-    XCVR_RSM_RTT_32BIT_SOUNDING        = 1U, /*!< 32 bit sounding sequence */
-    XCVR_RSM_RTT_96BIT_SOUNDING        = 2U, /*!< 96 bit sounding sequence */
-    XCVR_RSM_RTT_32BIT_RANDOM           = 3U, /*!< 32 bit random sequence */
-    XCVR_RSM_RTT_64BIT_RANDOM           = 4U, /*!< 64 bit random sequence */
-    XCVR_RSM_RTT_96BIT_RANDOM           = 5U, /*!< 96 bit random sequence */
-    XCVR_RSM_RTT_128BIT_RANDOM         = 6U, /*!< 128 bit random sequence */
-    XCVR_RSM_RTT_ERROR                          = 7U, /*!< Error value */
-}   XCVR_RSM_RTT_TYPE_T;
+    XCVR_RSM_RTT_NO_PAYLOAD     = 0U, /*!< No payload in the RTT step. */
+    XCVR_RSM_RTT_32BIT_SOUNDING = 1U, /*!< 32 bit sounding sequence */
+    XCVR_RSM_RTT_96BIT_SOUNDING = 2U, /*!< 96 bit sounding sequence */
+    XCVR_RSM_RTT_32BIT_RANDOM   = 3U, /*!< 32 bit random sequence */
+    XCVR_RSM_RTT_64BIT_RANDOM   = 4U, /*!< 64 bit random sequence */
+    XCVR_RSM_RTT_96BIT_RANDOM   = 5U, /*!< 96 bit random sequence */
+    XCVR_RSM_RTT_128BIT_RANDOM  = 6U, /*!< 128 bit random sequence */
+    XCVR_RSM_RTT_ERROR          = 7U, /*!< Error value */
+} XCVR_RSM_RTT_TYPE_T;
 
 /*! @brief PA ramp time  */
 /*  @note The 3usec ramp time requires a reprogramming of the PA ramp table to reach max in 3 usec but the last usec is
  * at a single max power value. */
 typedef enum
 {
-    XCVR_RSM_PA_RAMP_0_USEC               = 0U, /*!< Zero PA ramp time. Maps directly the PA_RAMP_SEL bitfield. */
-    XCVR_RSM_PA_RAMP_1_USEC               = 1U, /*!< 1usec PA ramp time. Maps directly the PA_RAMP_SEL bitfield. */
-    XCVR_RSM_PA_RAMP_2_USEC               = 2U, /*!< 2usec PA ramp time. Maps directly the PA_RAMP_SEL bitfield. */
-    XCVR_RSM_PA_RAMP_4_USEC               = 3U, /*!< 4usec PA ramp time. Maps directly the PA_RAMP_SEL bitfield. */
+    XCVR_RSM_PA_RAMP_0_USEC = 0U, /*!< Zero PA ramp time. Maps directly the PA_RAMP_SEL bitfield. */
+    XCVR_RSM_PA_RAMP_1_USEC = 1U, /*!< 1usec PA ramp time. Maps directly the PA_RAMP_SEL bitfield. */
+    XCVR_RSM_PA_RAMP_2_USEC = 2U, /*!< 2usec PA ramp time. Maps directly the PA_RAMP_SEL bitfield. */
+    XCVR_RSM_PA_RAMP_4_USEC = 3U, /*!< 4usec PA ramp time. Maps directly the PA_RAMP_SEL bitfield. */
     XCVR_RSM_PA_RAMP_3_USEC = 4U, /*!< 4usec PA ramp time. Digital duration is still 4usec but ramp table must be
                                      reprogrammed to hit max by 3usec. */
-    XCVR_RSM_PA_RAMP_ERROR                 = 5U, /*!< Invalid PA ramp time.  */
-}   XCVR_RSM_PA_RAMP_TIME_T;
+    XCVR_RSM_PA_RAMP_ERROR = 5U,  /*!< Invalid PA ramp time.  */
+} XCVR_RSM_PA_RAMP_TIME_T;
 
 /*! @brief  PLL PIC mode enumeration type. */
 typedef enum
 {
-    XCVR_RSM_PIC_DISABLED               = 0U, /*!< Legacy mode for PLL PIC, not enabled. */
-    XCVR_RSM_PIC_FAST_ONLY            = 1U, /*!< PIC Fast mode only */
-    XCVR_RSM_PIC_FAST_SLOW            = 2U, /*!< PIC Fast plus Slow mode */
-    XCVR_RSM_PIC_ERROR                      = 3U, /*!< Error value */
-}   XCVR_RSM_PIC_MODE_TYPE_T;
+    XCVR_RSM_PIC_DISABLED  = 0U, /*!< Legacy mode for PLL PIC, not enabled. */
+    XCVR_RSM_PIC_FAST_ONLY = 1U, /*!< PIC Fast mode only */
+    XCVR_RSM_PIC_FAST_SLOW = 2U, /*!< PIC Fast plus Slow mode */
+    XCVR_RSM_PIC_ERROR     = 3U, /*!< Error value */
+} XCVR_RSM_PIC_MODE_TYPE_T;
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  */
 
 /*! @brief PA ramp time  */
@@ -337,45 +337,44 @@ typedef enum
  * at a single max power value. */
 typedef enum
 {
-    XCVR_RSM_IQ_OUT_DIS                        = 0U, /*!< Disabled. */
-    XCVR_RSM_IQ_OUT_IF_MIXER              = 1U, /*!< Select the IF mixer output for IQ capture point. */
-    XCVR_RSM_IQ_OUT_CIC                        = 2U, /*!< Select the CIC filter output for IQ capture point. */
-    XCVR_RSM_IQ_OUT_ACQ_CHF               = 3U, /*!< Select the acquisition channel filter output for IQ capture point. */
-    XCVR_RSM_IQ_OUT_SRC                        = 4U, /*!< Select the SRC output for IQ capture point. */
-    XCVR_RSM_IQ_OUT_CFO_MIXER            = 5U, /*!< Select the CFO mixer output for IQ capture point. */
-    XCVR_RSM_IQ_OUT_FRAC_CORR            = 6U, /*!< Select the Fractional Correction output for IQ capture point. */
-    XCVR_RSM_IQ_OUT_DC_RESID               = 7U, /*!< Select the DC residual output for IQ capture point. */
-    XCVR_RSM_IQ_OUT_ERROR                    = 8U, /*!< Error value. */
-}   XCVR_RSM_IQ_OUT_SEL_T;
-
+    XCVR_RSM_IQ_OUT_DIS       = 0U, /*!< Disabled. */
+    XCVR_RSM_IQ_OUT_IF_MIXER  = 1U, /*!< Select the IF mixer output for IQ capture point. */
+    XCVR_RSM_IQ_OUT_CIC       = 2U, /*!< Select the CIC filter output for IQ capture point. */
+    XCVR_RSM_IQ_OUT_ACQ_CHF   = 3U, /*!< Select the acquisition channel filter output for IQ capture point. */
+    XCVR_RSM_IQ_OUT_SRC       = 4U, /*!< Select the SRC output for IQ capture point. */
+    XCVR_RSM_IQ_OUT_CFO_MIXER = 5U, /*!< Select the CFO mixer output for IQ capture point. */
+    XCVR_RSM_IQ_OUT_FRAC_CORR = 6U, /*!< Select the Fractional Correction output for IQ capture point. */
+    XCVR_RSM_IQ_OUT_DC_RESID  = 7U, /*!< Select the DC residual output for IQ capture point. */
+    XCVR_RSM_IQ_OUT_ERROR     = 8U, /*!< Error value. */
+} XCVR_RSM_IQ_OUT_SEL_T;
 
 /* Define callback function for RSM interrupt. */
 /*! *********************************************************************************
-* \brief  This callback is a pointer to a user routine to be called when RSM interrtupt happens.
-*
-*  This function is the user callback for DSB interrupts.
-*
-* \param[in] userData - pointer to user data to be passed to the callback function
-* \param[in] abort - boolean indicating if an abort flag was asserted.
-* \param[in] rsm_csr - the contents of the RSM Control and Status register for identifying interrupt type.
-*
+ * \brief  This callback is a pointer to a user routine to be called when RSM interrtupt happens.
+ *
+ *  This function is the user callback for DSB interrupts.
+ *
+ * \param[in] userData - pointer to user data to be passed to the callback function
+ * \param[in] abort - boolean indicating if an abort flag was asserted.
+ * \param[in] rsm_csr - the contents of the RSM Control and Status register for identifying interrupt type.
+ *
  * \note This callback is called for any RSM interrupt, whether an abort flag was raised, an intermediate interrupt was
  *triggered, or the end-of-sequence interrupt was asserted.
-***********************************************************************************/
+ ***********************************************************************************/
 typedef void (*rsm_int_callback)(void *userData, bool abort, uint32_t rsm_csr);
 
 /*! @brief RSM main configuration structure. This structure covers common configurations and some PDE configurations. A
  * child structure contains SQTE only configurations. */
 typedef struct
 {
-    XCVR_RSM_MODE_T op_mode;                 /*!< Operating mode for the RSM */
+    XCVR_RSM_MODE_T op_mode; /*!< Operating mode for the RSM */
     bool sniffer_mode_en;    /*!< Sniffer mode enable; Only permits RX, not TX. Receives both roles (init and refl) to
                                 monitor exchanges. Only applies to KW47, error is generated if set to true for KW45. */
     uint8_t num_steps; /*!< Number of steps for the RSM sequence, including FCS for the SQTE case. Max is 128 but the PN
                           sequence storage may also limit the number of steps. A value of 0 is not valid. */
-    uint8_t t_fc;                            /*!< T_FC timing value in usec */
-    uint8_t t_ip1;                           /*!< T_IP1 timing value in usec */
-    uint8_t t_ip2;                           /*!< T_IP2 timing value in usec */
+    uint8_t t_fc;      /*!< T_FC timing value in usec */
+    uint8_t t_ip1;     /*!< T_IP1 timing value in usec */
+    uint8_t t_ip2;     /*!< T_IP2 timing value in usec */
     uint16_t t_pm0; /*!< T_PM0 timing value in usec. The T_PM1 field will be set to T_PM0+10. Valid range is 10usec to
                        630usec (accounting for T_PM1 will be 10 usec longer). This value represents the entire T_PM
                        period, covering one or more antenna slots and also any required tone extension slot. */
@@ -386,16 +385,16 @@ typedef struct
     uint8_t txdig_dly; /*!< Used in longer sequences to optimize enable of the TX digital. Can cause a problem in warmup
                           if this is incorrect. Compensating for first T_FC per the standard since RSM triggers on TSM
                           warmup. */
-    XCVR_RSM_TRIG_T trig_sel;                /*!< Selects the trigger mode for the RSM module. */
+    XCVR_RSM_TRIG_T trig_sel; /*!< Selects the trigger mode for the RSM module. */
     uint16_t trig_delay;  /*!< Max value = 2047. SQTE mode: delay from trigger to when rx_en or tx_en is asserted. PDE
                              mode: delay from trigger to when the first rx2tx or tx2rx occurs. */
-    uint8_t num_ant_path;                    /*!< Number of antenna paths, must range from 1 to 4. */
+    uint8_t num_ant_path; /*!< Number of antenna paths, must range from 1 to 4. */
     lclTSw_t
         t_sw; /*!< The antenna switching time to be used when num_ant_path > 1. Zero is used when num_ant_path ==1 */
-    rsm_int_callback user_callback;          /*!< User defined callback to be called to handle interrupts. */
+    rsm_int_callback user_callback; /*!< User defined callback to be called to handle interrupts. */
 #if defined(SUPPORT_RSM_LONG_PN) && (SUPPORT_RSM_LONG_PN == 1)
-    XCVR_RSM_SQTE_RTT_LEN_T rtt_len;         /*!< SQTE ONLY: Choose the length of PN packets used in SQTE packet exchanges.  */
-#endif /* defined(SUPPORT_RSM_LONG_PN) && (SUPPORT_RSM_LONG_PN == 1) */
+    XCVR_RSM_SQTE_RTT_LEN_T rtt_len; /*!< SQTE ONLY: Choose the length of PN packets used in SQTE packet exchanges.  */
+#endif                               /* defined(SUPPORT_RSM_LONG_PN) && (SUPPORT_RSM_LONG_PN == 1) */
     XCVR_RSM_SQTE_RATE_T rate; /*!< SQTE ONLY: Indicates to the RSM the data rate being used by the XCVR. Must match the
                                   XCVR configuration.  */
     XCVR_RSM_AVG_WIN_LEN_T
@@ -407,12 +406,12 @@ typedef struct
     uint8_t rsm_dma_dly_fm_ext; /*!< DMA delay from end of RX warmup to assertion of DMA mask signal in usec. Applies to
                                    FM_RX or EXT_RX states only. RSM_DMA_DLY0 field. Active even if RSM is not providing
                                    the DMA mask for PM states.*/
-    uint16_t rsm_dma_dur_pm;                /*!< DMA mask duration in usec. Applies to PM_RX state only. RSM_DMA_DUR field. */
+    uint16_t rsm_dma_dur_pm;    /*!< DMA mask duration in usec. Applies to PM_RX state only. RSM_DMA_DUR field. */
     uint16_t rsm_dma_dur_fm_ext; /*!< DMA mask duration in usec. Applies to FM_RX or EXT_RX states only. RSM_DMA_DUR0
                                     field. Active even if RSM is not providing the DMA mask for PM states. */
     bool disable_rx_sync; /*!< Choose whether RX SYNC feature should be disabled. Allows reflector role full sequence
                              execution without an initiator. */
-    XCVR_RSM_IQ_OUT_SEL_T iq_out_sel;  /*!< Choose the point in the RX chain where IQ samples are captured. */
+    XCVR_RSM_IQ_OUT_SEL_T iq_out_sel; /*!< Choose the point in the RX chain where IQ samples are captured. */
     XCVR_RSM_RXTX_MODE_T
         role; /*!< Role to be used for RSM operation. Interacts with the trig_sel field because the role cannot be
                  applied in XCVR_LCL_RsmInit() if the trig_sel is set to software triggered. */
@@ -422,19 +421,19 @@ typedef struct
     XCVR_RSM_PCT_AVG_WIN_LEN_T
         pct_averaging_win; /*!< The second stage of averaging to produce one output sample. First stage of averaging is
                               in averaging_win and corresponds to RX_IQ_PH_AVG_WIN bitfield. */
-    XCVR_RSM_RTT_TYPE_T rtt_type;    /*!< RTT Type, determines payload size for RTT steps. */
+    XCVR_RSM_RTT_TYPE_T rtt_type;         /*!< RTT Type, determines payload size for RTT steps. */
     XCVR_RSM_PA_RAMP_TIME_T pa_ramp_time; /*!< PA ramp time in usec, 0, 1, 2, 4, & 3 are valid values */
-    bool enable_inpr;                       /*!< Choose whether Inline Phase Return feature should be enabled. */
-#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  */
+    bool enable_inpr;                     /*!< Choose whether Inline Phase Return feature should be enabled. */
+#endif                                    /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  */
 } xcvr_lcl_rsm_config_t;
 
 /*! @brief RSM Frequency Step configuration structure. */
 typedef struct
 {
-    uint8_t ext_channel_num_ovrd_lsb;            /*!< Channel number override LSB for this Frequency Step */
-    uint8_t ext_channel_num_ovrd_msb;            /*!< Channel number override LSB for this Frequency Step */
-    uint8_t ext_ctune;                           /*!< CTUNE factor for this Frequency Step */
-    uint8_t ext_hmp_cal_factor_lsb;              /*!< HPM_CAL factor LSB for this Frequency Step */
+    uint8_t ext_channel_num_ovrd_lsb;           /*!< Channel number override LSB for this Frequency Step */
+    uint8_t ext_channel_num_ovrd_msb;           /*!< Channel number override LSB for this Frequency Step */
+    uint8_t ext_ctune;                          /*!< CTUNE factor for this Frequency Step */
+    uint8_t ext_hmp_cal_factor_lsb;             /*!< HPM_CAL factor LSB for this Frequency Step */
     uint8_t tpm_step_format_hmp_cal_factor_msb; /*!< Mixed field with T_PM_SEL, STEP_FORMAT, and HPM_CAL factor MSB for
                                                    this Frequency Step */
 } xcvr_lcl_fstep_t;
@@ -442,7 +441,7 @@ typedef struct
 /*! @brief RSM HPM CAL interpolation structure. */
 typedef struct
 {
-    uint16_t hpm_cal_factor_2442;   /*!< HPM_CAL_FACTOR used to calculate Kcal_2442, used in other algorithms */
+    uint16_t hpm_cal_factor_2442; /*!< HPM_CAL_FACTOR used to calculate Kcal_2442, used in other algorithms */
     uint16_t eff_cal_freq; /*!< The effective frequency for the HPM cal, based on COUNT1 and COUNT2 values. Used in
                               other algorithms */
 } xcvr_lcl_hpm_cal_interp_t;
@@ -451,108 +450,108 @@ typedef struct
 /*! @brief  RSM Step Format enumeration type. */
 typedef enum
 {
-    XCVR_RSM_STEP_FCS           = 0U,  /*!< Frequency Check Sequence step type */
-    XCVR_RSM_STEP_PK_PK         = 1U,  /*!<  Pk-Pk step type */
-    XCVR_RSM_STEP_TN_TN         = 2U,  /*!<  Tn-Tn step type */
-    XCVR_RSM_STEP_PK_TN_TN_PK   = 3U,   /*!<  Pk-Tn-Tn-Pk step type */
-    XCVR_RSM_STEP_ERROR = 4U    /*!<  Error check enumeration */
-}   XCVR_RSM_FSTEP_TYPE_T;
+    XCVR_RSM_STEP_FCS         = 0U, /*!< Frequency Check Sequence step type */
+    XCVR_RSM_STEP_PK_PK       = 1U, /*!<  Pk-Pk step type */
+    XCVR_RSM_STEP_TN_TN       = 2U, /*!<  Tn-Tn step type */
+    XCVR_RSM_STEP_PK_TN_TN_PK = 3U, /*!<  Pk-Tn-Tn-Pk step type */
+    XCVR_RSM_STEP_ERROR       = 4U  /*!<  Error check enumeration */
+} XCVR_RSM_FSTEP_TYPE_T;
 
 /*! @brief  RSM T_PM & T_FM selection enumeration type. */
 typedef enum
 {
-    XCVR_RSM_T_PM0_SEL           = 0U, /*!< T_PM0 selected */
-    XCVR_RSM_T_PM1_SEL           = 1U, /*!< T_PM1 selected */
-    XCVR_RSM_T_PM2_SEL           = 2U, /*!< T_PM2 selected */
-    XCVR_RSM_T_PM3_SEL           = 3U, /*!< T_PM3 selected */
-    XCVR_RSM_T_FM0_SEL           = 0U, /*!< T_FM0 selected (when step is FCS type) */
-    XCVR_RSM_T_FM1_SEL           = 1U, /*!< T_FM0 selected (when step is FCS type) */
-}   XCVR_RSM_T_PM_FM_SEL_T;
+    XCVR_RSM_T_PM0_SEL = 0U, /*!< T_PM0 selected */
+    XCVR_RSM_T_PM1_SEL = 1U, /*!< T_PM1 selected */
+    XCVR_RSM_T_PM2_SEL = 2U, /*!< T_PM2 selected */
+    XCVR_RSM_T_PM3_SEL = 3U, /*!< T_PM3 selected */
+    XCVR_RSM_T_FM0_SEL = 0U, /*!< T_FM0 selected (when step is FCS type) */
+    XCVR_RSM_T_FM1_SEL = 1U, /*!< T_FM0 selected (when step is FCS type) */
+} XCVR_RSM_T_PM_FM_SEL_T;
 
 /*! @brief  RSM antenna slot capture time selection enumeration type. */
 typedef enum
 {
-    XCVR_RSM_T_CAPTURE_10_SEL           = 10U, /*!< 10usec slot time per antenna/TONE_EXT slot */
-    XCVR_RSM_T_CAPTURE_20_SEL           = 20U, /*!< 20usec slot time per antenna/TONE_EXT slot */
-    XCVR_RSM_T_CAPTURE_40_SEL           = 40U, /*!< 40usec slot time per antenna/TONE_EXT slot */
-    XCVR_RSM_T_CAPTURE_80_SEL           = 80U, /*!< 80usec slot time per antenna/TONE_EXT slot */
-    XCVR_RSM_T_CAPTURE_652_SEL         = 652U, /*!< 652usec slot time for special case of stable phase test */
-    XCVR_RSM_T_CAPTURE_INVALID           /*!< Invalid setting */
-}   XCVR_RSM_T_CAPTURE_SEL_T;
+    XCVR_RSM_T_CAPTURE_10_SEL  = 10U,  /*!< 10usec slot time per antenna/TONE_EXT slot */
+    XCVR_RSM_T_CAPTURE_20_SEL  = 20U,  /*!< 20usec slot time per antenna/TONE_EXT slot */
+    XCVR_RSM_T_CAPTURE_40_SEL  = 40U,  /*!< 40usec slot time per antenna/TONE_EXT slot */
+    XCVR_RSM_T_CAPTURE_80_SEL  = 80U,  /*!< 80usec slot time per antenna/TONE_EXT slot */
+    XCVR_RSM_T_CAPTURE_652_SEL = 652U, /*!< 652usec slot time for special case of stable phase test */
+    XCVR_RSM_T_CAPTURE_INVALID         /*!< Invalid setting */
+} XCVR_RSM_T_CAPTURE_SEL_T;
 
 /* Fstep defines */
-#define XCVR_RSM_HPM_CAL_MSB_MASK   (0xFU)
-#define XCVR_RSM_HPM_CAL_MSB_SHIFT  (0U)
-#define XCVR_RSM_HPM_CAL_MSB(x)     (((uint8_t)(((uint8_t)(x)) << XCVR_RSM_HPM_CAL_MSB_SHIFT)) & XCVR_RSM_HPM_CAL_MSB_MASK)
-#define XCVR_RSM_STEP_FORMAT_MASK   (0x30U)
-#define XCVR_RSM_STEP_FORMAT_SHIFT  (4U)
-#define XCVR_RSM_STEP_FORMAT(x)     (((uint8_t)(((uint8_t)(x)) << XCVR_RSM_STEP_FORMAT_SHIFT)) & XCVR_RSM_STEP_FORMAT_MASK)
-#define XCVR_RSM_T_PM_FM_SEL_MASK   (0xC0U)
-#define XCVR_RSM_T_PM_FM_SEL_SHIFT  (6U)
-#define XCVR_RSM_T_PM_FM_SEL(x)     (((uint8_t)(((uint8_t)(x)) << XCVR_RSM_T_PM_FM_SEL_SHIFT)) & XCVR_RSM_T_PM_FM_SEL_MASK)
+#define XCVR_RSM_HPM_CAL_MSB_MASK (0xFU)
+#define XCVR_RSM_HPM_CAL_MSB_SHIFT (0U)
+#define XCVR_RSM_HPM_CAL_MSB(x) (((uint8_t)(((uint8_t)(x)) << XCVR_RSM_HPM_CAL_MSB_SHIFT)) & XCVR_RSM_HPM_CAL_MSB_MASK)
+#define XCVR_RSM_STEP_FORMAT_MASK (0x30U)
+#define XCVR_RSM_STEP_FORMAT_SHIFT (4U)
+#define XCVR_RSM_STEP_FORMAT(x) (((uint8_t)(((uint8_t)(x)) << XCVR_RSM_STEP_FORMAT_SHIFT)) & XCVR_RSM_STEP_FORMAT_MASK)
+#define XCVR_RSM_T_PM_FM_SEL_MASK (0xC0U)
+#define XCVR_RSM_T_PM_FM_SEL_SHIFT (6U)
+#define XCVR_RSM_T_PM_FM_SEL(x) (((uint8_t)(((uint8_t)(x)) << XCVR_RSM_T_PM_FM_SEL_SHIFT)) & XCVR_RSM_T_PM_FM_SEL_MASK)
 /* RTT defines; All should be applied to the 4 octets of RTT data assembled to a uint32_t */
-#define XCVR_RSM_RTT_VALID_MASK         (0x00000001U)
-#define XCVR_RSM_RTT_VALID_SHIFT        (0U)
-#define XCVR_RSM_RTT_FOUND_MASK         (0x00000002U)
-#define XCVR_RSM_RTT_FOUND_SHIFT        (1U)
-#define XCVR_RSM_RTT_CFO_MASK           (0x0003FFFCU)
-#define XCVR_RSM_RTT_CFO_SHIFT          (2U)
-#define XCVR_RSM_RTT_INT_ADJ_MASK       (0x000C0000U)
-#define XCVR_RSM_RTT_INT_ADJ_SHIFT      (18U)
-#define XCVR_RSM_RTT_HAM_DIST_SAT_MASK  (0x00300000U)
+#define XCVR_RSM_RTT_VALID_MASK (0x00000001U)
+#define XCVR_RSM_RTT_VALID_SHIFT (0U)
+#define XCVR_RSM_RTT_FOUND_MASK (0x00000002U)
+#define XCVR_RSM_RTT_FOUND_SHIFT (1U)
+#define XCVR_RSM_RTT_CFO_MASK (0x0003FFFCU)
+#define XCVR_RSM_RTT_CFO_SHIFT (2U)
+#define XCVR_RSM_RTT_INT_ADJ_MASK (0x000C0000U)
+#define XCVR_RSM_RTT_INT_ADJ_SHIFT (18U)
+#define XCVR_RSM_RTT_HAM_DIST_SAT_MASK (0x00300000U)
 #define XCVR_RSM_RTT_HAM_DIST_SAT_SHIFT (20U)
-#define XCVR_RSM_RTT_P_DELTA_MASK       (0xFFC00000U)
-#define XCVR_RSM_RTT_P_DELTA_SHIFT      (22U)
+#define XCVR_RSM_RTT_P_DELTA_MASK (0xFFC00000U)
+#define XCVR_RSM_RTT_P_DELTA_SHIFT (22U)
 
 /*! @brief PN short configuration storage structure. */
 typedef struct
 {
-    uint32_t init_to_reflect_pn;                                /*!< PN for Initiator-to-Reflector packet */
-    uint32_t reflect_to_init_pn;                                /*!< PN for Reflector-to-Initiator packet */
+    uint32_t init_to_reflect_pn; /*!< PN for Initiator-to-Reflector packet */
+    uint32_t reflect_to_init_pn; /*!< PN for Reflector-to-Initiator packet */
 } xcvr_lcl_pn32_config_t;
 
 /*! @brief PN long configuration storage structure. */
 typedef struct
 {
-    uint32_t init_to_reflect_pn_lsb;                                /*!< PN for Initiator-to-Reflector packet least significant portion */
-    uint32_t init_to_reflect_pn_msb;                                /*!< PN for Initiator-to-Reflector packet most significant portion */
-    uint32_t reflect_to_init_pn_lsb;                                /*!< PN for Reflector-to-Initiator packet least significant portion */
-    uint32_t reflect_to_init_pn_msb;                                /*!< PN for Reflector-to-Initiator packet most significant portion */
+    uint32_t init_to_reflect_pn_lsb; /*!< PN for Initiator-to-Reflector packet least significant portion */
+    uint32_t init_to_reflect_pn_msb; /*!< PN for Initiator-to-Reflector packet most significant portion */
+    uint32_t reflect_to_init_pn_lsb; /*!< PN for Reflector-to-Initiator packet least significant portion */
+    uint32_t reflect_to_init_pn_msb; /*!< PN for Reflector-to-Initiator packet most significant portion */
 } xcvr_lcl_pn64_config_t;
 
 /*! @brief Round Trip Time rawresults structure (data is packed together). */
 typedef struct
 {
-    uint8_t rtt_data_b0_success;                                   /*!< LSB (7 bits of byte 0) of RTT data plus success bit in bit 0 */
-    uint8_t rtt_data_b1;                                           /*!< Byte 1, next 8 bits of RTT data  */
-    uint8_t rtt_data_b2;                                           /*!< Byte 2, next 8 bits of RTT data  */
-    uint8_t rtt_data_b3;                                           /*!< Byte 3, next 8 bits of RTT data  */
+    uint8_t rtt_data_b0_success; /*!< LSB (7 bits of byte 0) of RTT data plus success bit in bit 0 */
+    uint8_t rtt_data_b1;         /*!< Byte 1, next 8 bits of RTT data  */
+    uint8_t rtt_data_b2;         /*!< Byte 2, next 8 bits of RTT data  */
+    uint8_t rtt_data_b3;         /*!< Byte 3, next 8 bits of RTT data  */
 } xcvr_lcl_rtt_data_raw_t;
 
 /*! @brief Round Trip Time unpacked results structure  */
 typedef struct
 {
-    bool rtt_vld;                                                   /*!<  */
-    bool rtt_found;                                                 /*!< HARTT operation is done and a valid PN pattern was detected */
+    bool rtt_vld;   /*!<  */
+    bool rtt_found; /*!< HARTT operation is done and a valid PN pattern was detected */
     int32_t cfo; /*!< The high accuracy CFO computed by the HARTT block through the CORDIC algorithm. Signed, reported
                     in Hz. */
     uint8_t int_adj; /*!< An integer adjustment of the timing which takes a value different of 0 when the early-late
                         mechanism in the HARTT block chooses a peak different of the one chosen in the acquisition
                         module (possible values are {-1,0,+1}).  */
-    uint8_t ham_dist_sat;                                           /*!<  Computed Hamming distance saturated to 2 bits, format is ufix2.*/
+    uint8_t ham_dist_sat; /*!<  Computed Hamming distance saturated to 2 bits, format is ufix2.*/
     uint16_t p_delta;     /*!<  Difference between the squared correlation magnitude values, pm-pp provided by the HARTT
                              block, format is sfix10En9.*/
 } xcvr_lcl_rtt_data_t;
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  /*KW47 specific defines */
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) /*KW47 specific defines */
 /*! @brief NADM unpacked results structure  */
 typedef struct
 {
     uint8_t rssi_nb;
     uint8_t fm_corr_value;
-    bool fm_corr_vld; 
+    bool fm_corr_vld;
     uint8_t fm_symb_err_value;
-    bool fm_symb_err_vld;                                                 
+    bool fm_symb_err_vld;
     uint16_t nadm_pdelta;
 } xcvr_lcl_nadm_data_t;
 #endif
@@ -560,10 +559,10 @@ typedef struct
 /*! @brief PLL Calibration results storage for HPM CAL. */
 typedef struct
 {
-    uint16_t hpm_cal_val;                                           /*!< External HPM CAL value is uint16_t. */
+    uint16_t hpm_cal_val; /*!< External HPM CAL value is uint16_t. */
 #if (defined(CTUNE_MANUAL_CAL) && (CTUNE_MANUAL_CAL == 1))
-    uint8_t ctune_cal_val;                                          /*!< External CTUNE value is uint8_t. */
-#endif /* (defined(CTUNE_MANUAL_CAL) && (CTUNE_MANUAL_CAL == 1)) */
+    uint8_t ctune_cal_val; /*!< External CTUNE value is uint8_t. */
+#endif                     /* (defined(CTUNE_MANUAL_CAL) && (CTUNE_MANUAL_CAL == 1)) */
 } xcvr_lcl_pll_cal_data_t;
 
 /*! @brief Channel number type to specify frequency (according to the setting of the PLL's CHAN_MAP[HOP_TBL_CFG_OVRD]
@@ -574,19 +573,19 @@ typedef uint16_t channel_num_t;
 /*! @brief Structure for 1 set of TQI register settings (since different values apply for different capture slots)  */
 typedef struct
 {
-    uint8_t iq_depth;                /*!< IQ_DEPTH register setting for TQI */
-    uint8_t mag_depth;            /*!< MAG_DEPTH register setting for TQI */
-    uint16_t t1;                        /*!< T1 threshold register setting for TQI */
-    uint16_t t2;                        /*!< T2 threshold register setting for TQI */
+    uint8_t iq_depth;  /*!< IQ_DEPTH register setting for TQI */
+    uint8_t mag_depth; /*!< MAG_DEPTH register setting for TQI */
+    uint16_t t1;       /*!< T1 threshold register setting for TQI */
+    uint16_t t2;       /*!< T2 threshold register setting for TQI */
 } xcvr_lcl_tqi_entry_t;
 
 /*! @brief Structure for storing register settings for TQI registers for a single data rate (values vary between 1Mbps
  * and 2Mbps)  */
 typedef struct
 {
-    xcvr_lcl_tqi_entry_t t_slot_10usec_tqi;  /*<! TQI register settings values for 10usec capture slot (per antenna) */
-    xcvr_lcl_tqi_entry_t t_slot_20usec_tqi;  /*<! TQI register settings values for 20usec capture slot (per antenna) */
-    xcvr_lcl_tqi_entry_t t_slot_40usec_tqi;  /*<! TQI register settings values for 40usec capture slot (per antenna) */
+    xcvr_lcl_tqi_entry_t t_slot_10usec_tqi; /*<! TQI register settings values for 10usec capture slot (per antenna) */
+    xcvr_lcl_tqi_entry_t t_slot_20usec_tqi; /*<! TQI register settings values for 20usec capture slot (per antenna) */
+    xcvr_lcl_tqi_entry_t t_slot_40usec_tqi; /*<! TQI register settings values for 40usec capture slot (per antenna) */
 } xcvr_lcl_tqi_setting_tbl_t;
 #endif
 
@@ -624,7 +623,7 @@ typedef struct
  * work. */
 typedef struct
 {
-#if (defined(BACKUP_RSM_LCL) && (BACKUP_RSM_LCL==1))        
+#if (defined(BACKUP_RSM_LCL) && (BACKUP_RSM_LCL == 1))
     /* XCVR_MISC */
     uint32_t XCVR_MISC_DMA_CTRL;
     uint32_t XCVR_MISC_LCL_CFG0;
@@ -659,7 +658,7 @@ typedef struct
     uint32_t XCVR_MISC_RSM_CTRL7;
     uint32_t XCVR_MISC_RSM_INT_ENABLE;
 #endif
-#endif /* (defined(BACKUP_RSM_LCL) && (BACKUP_RSM_LCL==1)) */
+#endif                                /* (defined(BACKUP_RSM_LCL) && (BACKUP_RSM_LCL==1)) */
     uint32_t XCVR_MISC_IPS_FO_ADDR_1; /* Supporting NADM 1Mbps GFSK FDEV */
     uint32_t XCVR_MISC_IPS_FO_ADDR_2; /* Supporting NADM 1Mbps GFSK FDEV */
     uint32_t XCVR_MISC_IPS_FO_ADDR_3; /* Supporting KW47 per-step CFO  */
@@ -674,9 +673,9 @@ typedef struct
     /* XCVR_TXDIG */
     uint32_t XCVR_TX_DIG_DATA_PADDING_CTRL;
     uint32_t XCVR_TX_DIG_DATA_PADDING_CTRL1;
-    
+
     uint32_t XCVR_TX_DIG_GFSK_CTRL;
-    
+
     uint32_t XCVR_TX_DIG_PA_CTRL;
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
     uint32_t PA_RAMP_TBL0;
@@ -690,16 +689,16 @@ typedef struct
     uint32_t XCVR_PLL_DIG_CHAN_MAP;
 
     uint32_t XCVR_PLL_DIG_HPM_CTRL;
-    
+
     uint32_t XCVR_PLL_DIG_HPM_SDM_RES;
     uint32_t XCVR_PLL_DIG_LPM_CTRL;
     uint32_t XCVR_PLL_DIG_LPM_SDM_CTRL1;
     uint32_t XCVR_PLL_DIG_DELAY_MATCH;
     uint32_t XCVR_PLL_DIG_TUNING_CAP_TX_CTRL;
     uint32_t XCVR_PLL_DIG_TUNING_CAP_RX_CTRL;
-    
+
     uint32_t XCVR_PLL_OFFSET_CTRL;
-    
+
     /* XCVR_TSM (used in PLL overrides) */
     uint32_t XCVR_TSM_OVRD0;
     uint32_t XCVR_TSM_OVRD1;
@@ -708,7 +707,7 @@ typedef struct
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
     uint32_t XCVR_TSM_OVRD4;
 #endif
-    
+
     /* XCVR_RXDIG */
     uint32_t XCVR_RX_DIG_CTRL1;
     uint32_t XCVR_RX_DIG_DFT_CTRL;
@@ -716,9 +715,9 @@ typedef struct
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
     uint32_t XCVR_RX_DIG_AGC_CTRL;
 #endif
-    
+
     uint32_t XCVR_RX_DIG_RCCAL_CTRL1;
-        
+
     /* RADIO_CTRL */
     uint32_t RADIO_CTRL_RF_CTRL;
 } rsm_reg_backup_t;
@@ -750,7 +749,7 @@ typedef struct
  * time. */
 #define XCVR_LCL_RSM_IRQ_EN_ALL_BITS                                                                                \
     (XCVR_MISC_RSM_CSR_RSM_IRQ_IP1_EN_MASK | XCVR_MISC_RSM_CSR_RSM_IRQ_IP2_EN_MASK |                                \
-                                XCVR_MISC_RSM_CSR_RSM_IRQ_FC_EN_MASK | XCVR_MISC_RSM_CSR_RSM_IRQ_EOS_EN_MASK | \
+     XCVR_MISC_RSM_CSR_RSM_IRQ_FC_EN_MASK | XCVR_MISC_RSM_CSR_RSM_IRQ_EOS_EN_MASK |                                 \
      XCVR_MISC_RSM_CSR_RSM_IRQ_ABORT_EN_MASK) /* all of the interrupt ENABLE bits. Useful also in creating an error \
                                                  check mask */
 #define XCVR_LCL_RSM_IRQ_STAT_ALL_BITS                                                                                 \
@@ -762,14 +761,14 @@ typedef struct
 #endif /* defined(KW45B41Z82_NBU_SERIES) || defined(KW45B41Z83_NBU_SERIES)) */
 
 #define OFFSET_NEG_1MHZ 0x100U /* HOP_TBL_CFG_OVRD format #2 numerator offset for -1MHz */
-#define MAKE_MAPPED_CHAN_OVRD2(hadm_chan, output) \
+#define MAKE_MAPPED_CHAN_OVRD2(hadm_chan, output)                                                             \
     uint16_t mapped_chan_num = (uint16_t)(hadm_chan);                                                                  \
     mapped_chan_num          = (mapped_chan_num) >> 1U;                                                                \
     if (((hadm_chan)&0x1U) == 0x1U) /* original HADM channel was an odd number */                                      \
-        { \
-            mapped_chan_num++; /* go to next channel up (2MHz higher) to allow -1MHz to hit the target channel */ \
-            mapped_chan_num |= (uint16_t)(OFFSET_NEG_1MHZ << 7U); /* Apply -1MHz */ \
-        } \
+    {                                                                                                         \
+        mapped_chan_num++; /* go to next channel up (2MHz higher) to allow -1MHz to hit the target channel */ \
+        mapped_chan_num |= (uint16_t)(OFFSET_NEG_1MHZ << 7U); /* Apply -1MHz */                               \
+    }                                                                                                         \
     (output) = mapped_chan_num;
 
 extern xcvr_lcl_hpm_cal_interp_t hpm_cal_2442_data;
@@ -780,7 +779,7 @@ extern xcvr_lcl_hpm_cal_interp_t hpm_cal_2442_data;
 #ifdef GCOV_DO_COVERAGE /* local except when testing code coverage */
 xcvrLclStatus_t XCVR_LCL_RsmCheckSeqLen(uint16_t length, uint16_t maxlen);
 bool XCVR_LCL_RsmCheckDmaDuration(uint16_t dma_duration, XCVR_RSM_SQTE_RATE_T rate, XCVR_RSM_AVG_WIN_LEN_T avg_win);
-xcvrLclStatus_t XCVR_LCL_RsmCheckDmaMask(const xcvr_lcl_rsm_config_t * rsm_settings_ptr, xcvrLclStatus_t status_in);
+xcvrLclStatus_t XCVR_LCL_RsmCheckDmaMask(const xcvr_lcl_rsm_config_t *rsm_settings_ptr, xcvrLclStatus_t status_in);
 uint8_t XCVR_LCL_CalcAdcOffset(uint8_t adc_offset_s7, uint8_t dig_corr_s8);
 xcvrLclStatus_t XCVR_LCL_GetRsmStateTimings(XCVR_RSM_RXTX_MODE_T role, xcvr_lcl_rsmstate_duration_t *state_duration);
 xcvrLclStatus_t XCVR_LCL_GetRsmDmaConfig(xcvr_lcl_rsmdma_config_t *rsm_dma_config);
@@ -797,8 +796,7 @@ xcvrLclStatus_t XCVR_LCL_GetRsmDmaConfig(xcvr_lcl_rsmdma_config_t *rsm_dma_confi
  *
  * @note This function is only available for the NBU CPU as the CM33 CPU does not have connection to RSM interrupt line
  */
-void XCVR_LCL_RsmRegisterCb (const rsm_sw_handler_t * user_rsm_handler); /* allow upper layers to provide RSM callback */
-
+void XCVR_LCL_RsmRegisterCb(const rsm_sw_handler_t *user_rsm_handler); /* allow upper layers to provide RSM callback */
 
 /*!
  * @brief Enable or disable the RSM interrupts.
@@ -811,10 +809,9 @@ void XCVR_LCL_RsmRegisterCb (const rsm_sw_handler_t * user_rsm_handler); /* allo
  *
  * @note This function is only available for the NBU CPU as the CM33 CPU does not have connection to RSM interrupt line
  */
-bool XCVR_LCL_RsmIrqEnDis (uint32_t mask, bool irq_enabled);
+bool XCVR_LCL_RsmIrqEnDis(uint32_t mask, bool irq_enabled);
 
 #endif /* defined(KW45B41Z82_NBU_SERIES) || defined(KW45B41Z83_NBU_SERIES)) */
-
 
 /*!
  * @brief Function to validate the settings structure for Ranging State Machine prior to calling initialization.
@@ -828,7 +825,7 @@ bool XCVR_LCL_RsmIrqEnDis (uint32_t mask, bool irq_enabled);
  * @return The status of the validation.
  *
  */
-xcvrLclStatus_t XCVR_LCL_ValidateRsmSettings(const xcvr_lcl_rsm_config_t * rsm_settings_ptr);
+xcvrLclStatus_t XCVR_LCL_ValidateRsmSettings(const xcvr_lcl_rsm_config_t *rsm_settings_ptr);
 
 /*!
  * @brief Function to initialize the PLL for RSM ranging operation.
@@ -846,7 +843,7 @@ xcvrLclStatus_t XCVR_LCL_ValidateRsmSettings(const xcvr_lcl_rsm_config_t * rsm_s
  * operation. If interim restoration is needed then ::XCVR_LCL_RsmPLLBackup() and ::XCVR_LCL_RsmPLLRestore() can be
  * used.
  */
- void XCVR_LCL_RsmPLLInit(XCVR_RSM_SQTE_RATE_T rate);
+void XCVR_LCL_RsmPLLInit(XCVR_RSM_SQTE_RATE_T rate);
 
 /*!
  * @brief Function to backup  the PLL settings modified by XCVR_LCL_RsmPLLInit.
@@ -857,7 +854,7 @@ xcvrLclStatus_t XCVR_LCL_ValidateRsmSettings(const xcvr_lcl_rsm_config_t * rsm_s
  *
  * @note This routine backs up the registers modified by ::XCVR_LCL_RsmPLLInit().
  */
-xcvrLclStatus_t XCVR_LCL_RsmPLLBackup(rsm_reg_backup_t * reg_backup_ptr);
+xcvrLclStatus_t XCVR_LCL_RsmPLLBackup(rsm_reg_backup_t *reg_backup_ptr);
 
 /*!
  * @brief Function to restore the PLL to prior settings after overrides are no longer needed.
@@ -868,7 +865,7 @@ xcvrLclStatus_t XCVR_LCL_RsmPLLBackup(rsm_reg_backup_t * reg_backup_ptr);
  *
  * @note This routine restores the registers modified by ::XCVR_LCL_RsmPLLInit().
  */
-xcvrLclStatus_t XCVR_LCL_RsmPLLRestore(const rsm_reg_backup_t * reg_backup_ptr);
+xcvrLclStatus_t XCVR_LCL_RsmPLLRestore(const rsm_reg_backup_t *reg_backup_ptr);
 
 /*!
  * @brief Function to initialize support for Ranging State Machine.
@@ -883,8 +880,7 @@ xcvrLclStatus_t XCVR_LCL_RsmPLLRestore(const rsm_reg_backup_t * reg_backup_ptr);
  * @note This routine modifies a number of registers which must be restored before changing back to normal operation.
  * The ::XCVR_LCL_RsmDeInit() function is intended to return to the prior settings.
  */
-xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t * rsm_settings_ptr);
-
+xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr);
 
 /*!
  * @brief Function to de-initialize support for Ranging State Machine.
@@ -933,7 +929,7 @@ void XCVR_LCL_RsmStopAbort(bool abort_rsm);
  * ::XCVR_LCL_RsmStopAbort() must be used to perform the stop or abort (as needed) for every execution of the go
  * routine.
  */
-xcvrLclStatus_t XCVR_LCL_RsmGo(XCVR_RSM_RXTX_MODE_T role, const xcvr_lcl_rsm_config_t * rsm_settings_ptr);
+xcvrLclStatus_t XCVR_LCL_RsmGo(XCVR_RSM_RXTX_MODE_T role, const xcvr_lcl_rsm_config_t *rsm_settings_ptr);
 
 /*!
  * @brief Function to snapshot the TSM timing registers to a storage structure.
@@ -951,8 +947,7 @@ xcvrLclStatus_t XCVR_LCL_RsmGo(XCVR_RSM_RXTX_MODE_T role, const xcvr_lcl_rsm_con
 
 xcvrLclStatus_t XCVR_LCL_GetTsmTimings(xcvr_lcl_tsm_config_t *backup_tsm_timings);
 
-
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 /*!
  * @brief Function to snapshot or restore  the TSM timing registers to a storage structure in PKT RAM using fast IPS
  * DMA.
@@ -961,9 +956,9 @@ xcvrLclStatus_t XCVR_LCL_GetTsmTimings(xcvr_lcl_tsm_config_t *backup_tsm_timings
  * PKT RAM banks. It is used to quickly backup and restore TSM registers without the slow access time penalty for normal
  * XCVR register accesses.
  *
- * @param desc_ptr pointer to the descriptor structure describing the sequences of registers to backup to PKT RAM. 
- * @param num_entries Number of entries in the desciptor structure, not including the zero ending descriptor. 
- * @param pkt_ram_bank Selects the TX or RX packet RAM bank to use for storage of the download. 
+ * @param desc_ptr pointer to the descriptor structure describing the sequences of registers to backup to PKT RAM.
+ * @param num_entries Number of entries in the desciptor structure, not including the zero ending descriptor.
+ * @param pkt_ram_bank Selects the TX or RX packet RAM bank to use for storage of the download.
  * @param pkt_ram_index_offset The word offset into the PKT RAM bank where the descriptors should be loaded and the
  * register backup stored.
  * @param restore If set to true then restore from PKT RAM is done. Otherwise, backup is to PKT RAM done.
@@ -981,16 +976,15 @@ xcvrLclStatus_t XCVR_LCL_FastBackupRestore(uint32_t *desc_ptr,
                                            uint16_t pkt_ram_index_offset,
                                            bool restore);
 #define TSM_DESCRIP_COUNT (2)
-extern const uint32_t tsm_fast_descrip_comp[TSM_DESCRIP_COUNT] ; /* Make descriptor visible extenally for validation */
-#if (defined(BACKUP_RSM_LCL) && (BACKUP_RSM_LCL==1))        
+extern const uint32_t tsm_fast_descrip_comp[TSM_DESCRIP_COUNT]; /* Make descriptor visible extenally for validation */
+#if (defined(BACKUP_RSM_LCL) && (BACKUP_RSM_LCL == 1))
 #define PLL_DESCRIP_COUNT (18)
 #else
 #define PLL_DESCRIP_COUNT (15)
 #endif /* (defined(BACKUP_RSM_LCL) && (BACKUP_RSM_LCL==1))         */
 extern const uint32_t
     pll_rsm_fast_descrip_comp[PLL_DESCRIP_COUNT]; /* Make descriptor visible extenally for validation */
-#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  */
-
+#endif                                            /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  */
 
 /*!
  * @brief Function to apply the new (pre-calculated) TSM timing values or restore timings from backup for RSM operations
@@ -1005,7 +999,7 @@ extern const uint32_t
  * @return The status of the TSM timings update process.
  *
  */
-xcvrLclStatus_t XCVR_LCL_ReprogramTsmTimings(const xcvr_lcl_tsm_config_t * new_tsm_timings);
+xcvrLclStatus_t XCVR_LCL_ReprogramTsmTimings(const xcvr_lcl_tsm_config_t *new_tsm_timings);
 
 /*!
  * @brief Function to compute FAST Start rx and tx jump point to achieve desired T_FC/T_IP.
@@ -1020,7 +1014,7 @@ xcvrLclStatus_t XCVR_LCL_ReprogramTsmTimings(const xcvr_lcl_tsm_config_t * new_t
  * @return The status of the function (xcvrLclStatus_t).
  *
  */
-xcvrLclStatus_t XCVR_LCL_Set_TSM_FastStart( XCVR_RSM_RXTX_MODE_T role, const xcvr_lcl_rsm_config_t * rsm_settings_ptr);
+xcvrLclStatus_t XCVR_LCL_Set_TSM_FastStart(XCVR_RSM_RXTX_MODE_T role, const xcvr_lcl_rsm_config_t *rsm_settings_ptr);
 
 /*!
  * @brief Function to backup the state of various XCVR registers changed by RSM init.
@@ -1033,7 +1027,7 @@ xcvrLclStatus_t XCVR_LCL_Set_TSM_FastStart( XCVR_RSM_RXTX_MODE_T role, const xcv
  * @return The status of the backup.
  *
  */
-xcvrLclStatus_t XCVR_LCL_RsmRegBackup(rsm_reg_backup_t * reg_backup_ptr);
+xcvrLclStatus_t XCVR_LCL_RsmRegBackup(rsm_reg_backup_t *reg_backup_ptr);
 
 /*!
  * @brief Function to restore the state of various XCVR registers changed by RSM init.
@@ -1046,7 +1040,7 @@ xcvrLclStatus_t XCVR_LCL_RsmRegBackup(rsm_reg_backup_t * reg_backup_ptr);
  * @return The status of the restore.
  *
  */
-xcvrLclStatus_t XCVR_LCL_RsmRegRestore(const rsm_reg_backup_t * reg_backup_ptr);
+xcvrLclStatus_t XCVR_LCL_RsmRegRestore(const rsm_reg_backup_t *reg_backup_ptr);
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450)
 /*!
@@ -1061,7 +1055,7 @@ xcvrLclStatus_t XCVR_LCL_RsmRegRestore(const rsm_reg_backup_t * reg_backup_ptr);
  * @return The status of the frequency step programming process.
  *
  */
-xcvrLclStatus_t XCVR_LCL_SetFstepRam(const xcvr_lcl_fstep_t * fstep_settings, uint16_t num_steps);
+xcvrLclStatus_t XCVR_LCL_SetFstepRam(const xcvr_lcl_fstep_t *fstep_settings, uint16_t num_steps);
 
 /*!
  * @brief Function to program the Short PseudoNoise structure in Packet RAM for RSM operations.
@@ -1074,7 +1068,7 @@ xcvrLclStatus_t XCVR_LCL_SetFstepRam(const xcvr_lcl_fstep_t * fstep_settings, ui
  * @return The status of the pseudonoise step programming process.
  *
  */
-xcvrLclStatus_t XCVR_LCL_SetPnRamShort(const xcvr_lcl_pn32_config_t * pn_values, uint16_t num_steps);
+xcvrLclStatus_t XCVR_LCL_SetPnRamShort(const xcvr_lcl_pn32_config_t *pn_values, uint16_t num_steps);
 
 #if defined(SUPPORT_RSM_LONG_PN) && (SUPPORT_RSM_LONG_PN == 1)
 /*!
@@ -1088,7 +1082,7 @@ xcvrLclStatus_t XCVR_LCL_SetPnRamShort(const xcvr_lcl_pn32_config_t * pn_values,
  * @return The status of the pseudonoise step programming process.
  *
  */
-xcvrLclStatus_t XCVR_LCL_SetPnRamLong(const xcvr_lcl_pn64_config_t * pn_values, uint16_t num_steps);
+xcvrLclStatus_t XCVR_LCL_SetPnRamLong(const xcvr_lcl_pn64_config_t *pn_values, uint16_t num_steps);
 #endif /* defined(SUPPORT_RSM_LONG_PN) && (SUPPORT_RSM_LONG_PN == 1) */
 
 /*!
@@ -1102,7 +1096,7 @@ xcvrLclStatus_t XCVR_LCL_SetPnRamLong(const xcvr_lcl_pn64_config_t * pn_values, 
  * @return The status of the CTUNE_BEST_DIFF values read process.
  *
  */
-xcvrLclStatus_t XCVR_LCL_GetCtuneResults(uint8_t * ctune_results, uint16_t num_steps);
+xcvrLclStatus_t XCVR_LCL_GetCtuneResults(uint8_t *ctune_results, uint16_t num_steps);
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN == 450) */
 
 /*!
@@ -1133,7 +1127,7 @@ xcvrLclStatus_t XCVR_LCL_UnpackRttResult(const xcvr_lcl_rtt_data_raw_t *rtt_resu
  * @return The status of the Round Trip Time values read process.
  *
  */
-xcvrLclStatus_t XCVR_LCL_GetRttResults(xcvr_lcl_rtt_data_raw_t * rtt_results, uint16_t num_steps);
+xcvrLclStatus_t XCVR_LCL_GetRttResults(xcvr_lcl_rtt_data_raw_t *rtt_results, uint16_t num_steps);
 
 /*!
  * @brief Function to format the input parameters into a single Fstep structure.
@@ -1151,20 +1145,18 @@ xcvrLclStatus_t XCVR_LCL_GetRttResults(xcvr_lcl_rtt_data_raw_t * rtt_results, ui
  * @return The status of the function, success or error.
  *
  */
-xcvrLclStatus_t XCVR_LCL_MakeFstep(xcvr_lcl_fstep_t * fstep_entry,
-                                        uint16_t channel_num,
-                                        uint8_t ctune,
-                                        uint16_t hpm_cal,
-                                        XCVR_RSM_FSTEP_TYPE_T step_format,
-                                        XCVR_RSM_T_PM_FM_SEL_T t_pm_sel);
+xcvrLclStatus_t XCVR_LCL_MakeFstep(xcvr_lcl_fstep_t *fstep_entry,
+                                   uint16_t channel_num,
+                                   uint8_t ctune,
+                                   uint16_t hpm_cal,
+                                   XCVR_RSM_FSTEP_TYPE_T step_format,
+                                   XCVR_RSM_T_PM_FM_SEL_T t_pm_sel);
 
-
-
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 /*!
  * @brief Function to validate the settings for the LCL block before configuration of that block.
  *
- * This function initializes the LCL block for Channel Sounding for KW47. 
+ * This function initializes the LCL block for Channel Sounding for KW47.
  *
  * @param rsm_settings_ptr the pointer to a settings structure for RSM initialization.
  * @param t_capture the selection of the capture time for a single antenna slot.
@@ -1178,7 +1170,7 @@ xcvrLclStatus_t XCVR_LCL_ValidateLclSettings(xcvr_lcl_rsm_config_t *rsm_settings
 /*!
  * @brief Function to initialize the LCL block for Channel Sounding use cases.
  *
- * This function initializes the LCL block for Channel Sounding. 
+ * This function initializes the LCL block for Channel Sounding.
  *
  * @param rsm_settings_ptr the pointer to a settings structure for RSM initialization.
  * @param t_capture the selection of the capture time for a single antenna slot.
@@ -1196,7 +1188,7 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t *rsm_settings_ptr,
 /*!
  * @brief Function to initialize the LCL block for Channel Sounding use cases.
  *
- * This function initializes the LCL block for Channel Sounding. 
+ * This function initializes the LCL block for Channel Sounding.
  *
  * @param rsm_settings_ptr the pointer to a settings structure for RSM initialization.
  * @param ant_slot_time the selection of the capture time for a single antenna slot.
@@ -1206,7 +1198,7 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t *rsm_settings_ptr,
  */
 xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t *rsm_settings_ptr,
                                         XCVR_RSM_T_CAPTURE_SEL_T ant_slot_time);
-#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */    
+#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
 
 /*!
  * @brief Function to perform PLL calibrations to capture CTUNE and HPM data for later use.
@@ -1287,7 +1279,7 @@ void XCVR_LCL_CalibrateDcocStart(XCVR_RSM_SQTE_RATE_T rate);
  * @note This routine implements a wait for completion of the DCOC process to ensure the calibration works properly. The
  * DCOC is configured to happen within the TSM sequence so a wait for RX WU is ensuring calibration completed. Other
  * code can be run in between the XCVR_LCL_CalibrateDcocStart() and XCVR_LCL_CalibrateDcocComplete() in order to
- * optimize system timing. In this case, the wait for RX WU should fall through immediately. 
+ * optimize system timing. In this case, the wait for RX WU should fall through immediately.
  */
 xcvrLclStatus_t XCVR_LCL_CalibrateDcocComplete(void);
 
@@ -1317,7 +1309,7 @@ void XCVR_LCL_AllPhaseRelease(void);
  * of the resulting phase measurement.
  *
  * @return returns the value for DCOC_CTRL2 to be used to override the ADC and DAC for DCOC
- * 
+ *
  * @note This routine requires a valid DCOC calibration prior be completed and the status results still available. This
 function
  * should be called only once before a calling XCVR_LCL_EnablePhaseMeasure(void). It returns a uint32_t value that is to
@@ -1427,7 +1419,7 @@ void XCVR_LCL_EnablePhaseMeasure(void);
  * routine, a new DCOC calibration must be triggered in order to restore the state of the DCOC for subsequent
  * operations.
  */
-xcvrLclStatus_t XCVR_LCL_ProcessPhaseMeasure(int8_t * i_resid, int8_t * q_resid, uint32_t dc_resid_val);
+xcvrLclStatus_t XCVR_LCL_ProcessPhaseMeasure(int8_t *i_resid, int8_t *q_resid, uint32_t dc_resid_val);
 
 /*!
  * @brief Function to apply a Carrier Frequency Offset compensation to the PLL for RSM operations.
@@ -1457,7 +1449,6 @@ xcvrLclStatus_t XCVR_LCL_RsmCompCfo(int32_t cfo_in_hz);
  */
 int32_t XCVR_LCL_RsmReadCfoComp(void); /* Read back current CFO compensation value (Hz) */
 
-
 /*!
  * @brief Function to map from a HADM channel index to the channel number value to use for FSTEP programming.
  *
@@ -1471,7 +1462,7 @@ int32_t XCVR_LCL_RsmReadCfoComp(void); /* Read back current CFO compensation val
  * @return The status of mapping process.
  *
  */
-xcvrLclStatus_t XCVR_LCL_MakeChanNumFromHadmIndex(uint8_t hadm_chan_index, uint16_t * fstep_chan_num);
+xcvrLclStatus_t XCVR_LCL_MakeChanNumFromHadmIndex(uint8_t hadm_chan_index, uint16_t *fstep_chan_num);
 
 /*!
  * @brief Function to return the dma buffer size and dma sequence length (us) of a configured rsm sequence.
@@ -1492,11 +1483,11 @@ xcvrLclStatus_t XCVR_LCL_MakeChanNumFromHadmIndex(uint8_t hadm_chan_index, uint1
  * @return The status of the function (xcvrLclStatus_t).
  *
  */
-xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t * fstep_settings,
+xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t *fstep_settings,
                                                  uint8_t num_steps,
                                                  XCVR_RSM_RXTX_MODE_T role,
-                                                 uint16_t * dma_buffer_size,
-                                                 uint16_t * dma_seq_length_us,
+                                                 uint16_t *dma_buffer_size,
+                                                 uint16_t *dma_seq_length_us,
                                                  uint8_t ant_cnt);
 
 /*!
@@ -1513,9 +1504,9 @@ xcvrLclStatus_t XCVR_LCL_GetRSMCaptureBufferSize(const xcvr_lcl_fstep_t * fstep_
  * returned in error cases.
  *
  */
-uint8_t XCVR_LCL_CountPnRttSteps(const xcvr_lcl_fstep_t * fstep_settings, uint16_t num_steps);
+uint8_t XCVR_LCL_CountPnRttSteps(const xcvr_lcl_fstep_t *fstep_settings, uint16_t num_steps);
 
-#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)  
+#if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 /*!
  * @brief Function to enable PLL clock switching for semi-coherent PLL functions.
  *
