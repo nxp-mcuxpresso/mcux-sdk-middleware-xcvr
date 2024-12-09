@@ -27,7 +27,7 @@
 /*******************************************************************************
  * Definitions
  *******************************************************************************/
-#if !defined(RADIO_IS_GEN_3P5) && !defined(NXP_RADIO_GEN)
+#if !defined(RADIO_IS_GEN_3P5) && !defined(NXP_RADIO_GEN) 
 #error "XCVR compilation requires a valid radio generation flag to be defined."
 #endif
 
@@ -42,8 +42,8 @@
 
 /* Workaround for not exposed DFT register in DBGRAM/DMA */
 #if defined(RADIO_IS_GEN_3P5)
-#define XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_MASK (0xF00U)
-#define XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_SHIFT (8U)
+#define XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_MASK    (0xF00U)
+#define XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_SHIFT   (8U)
 #define XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL(x) \
     (((uint32_t)(((uint32_t)(x)) << XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_SHIFT)) & XCVR_RX_DIG_RXDIG_DFT_IQ_MUX_SEL_MASK)
 #endif
@@ -52,12 +52,12 @@
 #if !defined(HPMCAL_CTRL)
 
 /** Peripheral XCVR_PLL_DIG base pointer */
-#define XCVR_PLL_DIG2 ((XCVR_PLL_DIG2_Type *)XCVR_PLL_DIG_BASE)
+#define XCVR_PLL_DIG2                             ((XCVR_PLL_DIG2_Type *)XCVR_PLL_DIG_BASE)
 
 /* Workaround for missing Zigbee/802.15.4 interrupt in CM33 */
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)
 #ifndef RF_Zigbee_IRQn
-#define RF_Zigbee_IRQn 53 /**< Radio Frequency 2.4GHz - Zigbee Link Layer interrupt */
+#define RF_Zigbee_IRQn              53               /**< Radio Frequency 2.4GHz - Zigbee Link Layer interrupt */
 #endif
 #endif /* defined(RADIO_IS_GEN_4P5) */
 
@@ -65,16 +65,17 @@
  * else is appended with dummy or deleted */
 typedef struct
 {
-    __IO uint32_t HPM_BUMPdummy; /**< PLL HPM Analog Bump Control, offset: 0x0 */
-    __IO uint32_t MOD_CTRLdummy; /**< PLL Modulation Control, offset: 0x4 */
-    __IO uint32_t CHAN_MAPdummy; /**< PLL Channel Mapping, offset: 0x8 */
-    uint8_t RESERVED_0dummy[4];
-    __IO uint32_t CHAN_MAP_EXTdummy; /**< PLL Channel Mapping Extended, offset: 0x10 */
-    uint8_t RESERVED_1dummy[4];
-    __IO uint32_t LOCK_DETECTdummy; /**< PLL Lock Detect Control, offset: 0x18 */
-    __IO uint32_t HPM_CTRLdummy;    /**< PLL High Port Modulator Control, offset: 0x1C */
-    __IO uint32_t HPMCAL_CTRL;      /**< PLL High Port Calibration Control, offset: 0x20 */
+  __IO uint32_t HPM_BUMPdummy;                          /**< PLL HPM Analog Bump Control, offset: 0x0 */
+  __IO uint32_t MOD_CTRLdummy;                          /**< PLL Modulation Control, offset: 0x4 */
+  __IO uint32_t CHAN_MAPdummy;                          /**< PLL Channel Mapping, offset: 0x8 */
+       uint8_t RESERVED_0dummy[4];
+  __IO uint32_t CHAN_MAP_EXTdummy;                      /**< PLL Channel Mapping Extended, offset: 0x10 */
+       uint8_t RESERVED_1dummy[4];
+  __IO uint32_t LOCK_DETECTdummy;                       /**< PLL Lock Detect Control, offset: 0x18 */
+  __IO uint32_t HPM_CTRLdummy;                          /**< PLL High Port Modulator Control, offset: 0x1C */
+  __IO uint32_t HPMCAL_CTRL;                       /**< PLL High Port Calibration Control, offset: 0x20 */
 } XCVR_PLL_DIG2_Type;
+
 
 /*! @name HPMCAL_CTRL - PLL High Port Calibration Control */
 /*! @{ */
@@ -140,9 +141,9 @@ typedef struct
 #endif /* RF_OSC_26MHZ > 1 */
 /**************************************/
 
-#define NULLPTR ((void *)(0x0)) /* MISRA safe definition for NULL */
+#define NULLPTR ((void *)(0x0))  /* MISRA safe definition for NULL */
 
-/* Default RF OSC definition. Allows for compile time clock frequency definition */
+ /* Default RF OSC definition. Allows for compile time clock frequency definition */
 #ifdef CLOCK_MAIN
 
 #else
@@ -150,37 +151,37 @@ typedef struct
 #define CLOCK_MAIN (EXT_CLK_26_MHZ) /* See ext_clock_config_t for this value */
 #else
 #define CLOCK_MAIN (EXT_CLK_32_MHZ) /* See ext_clock_config_t for this value */
-#endif                              /* RF_OSC_26MHZ == 1 */
-#endif                              /* CLOCK_MAIN */
+#endif /* RF_OSC_26MHZ == 1 */
+#endif /* CLOCK_MAIN */
 
 #ifndef FPGA_TARGET /* make sure the FPGA_TARGET flag is defined to support XCVR compilation */
 #define FPGA_TARGET (0)
 #endif /* FPGA_TARGET */
 
-#define B0(x) (((uint32_t)(((uint32_t)(x)) << 0)) & 0xFFU)
-#define B1(x) (((uint32_t)(((uint32_t)(x)) << 8)) & 0xFF00U)
-#define B2(x) (((uint32_t)(((uint32_t)(x)) << 16)) & 0xFF0000U)
-#define B3(x) (((uint32_t)(((uint32_t)(x)) << 24)) & 0xFF000000U)
-#define TSM_TX_HI(x) (((uint32_t)(((uint32_t)(x)) << 0)) & 0xFFU)
-#define TSM_TX_LO(x) (((uint32_t)(((uint32_t)(x)) << 8)) & 0xFF00U)
-#define TSM_RX_HI(x) (((uint32_t)(((uint32_t)(x)) << 16)) & 0xFF0000U)
-#define TSM_RX_LO(x) (((uint32_t)(((uint32_t)(x)) << 24)) & 0xFF000000U)
+#define B0(x)   (((uint32_t)(((uint32_t)(x)) << 0)) & 0xFFU)
+#define B1(x)   (((uint32_t)(((uint32_t)(x)) << 8)) & 0xFF00U)
+#define B2(x)   (((uint32_t)(((uint32_t)(x)) << 16)) & 0xFF0000U)
+#define B3(x)   (((uint32_t)(((uint32_t)(x)) << 24)) & 0xFF000000U)
+#define TSM_TX_HI(x)   (((uint32_t)(((uint32_t)(x)) << 0)) & 0xFFU)
+#define TSM_TX_LO(x)   (((uint32_t)(((uint32_t)(x)) << 8)) & 0xFF00U)
+#define TSM_RX_HI(x)   (((uint32_t)(((uint32_t)(x)) << 16)) & 0xFF0000U)
+#define TSM_RX_LO(x)   (((uint32_t)(((uint32_t)(x)) << 24)) & 0xFF000000U)
 
 /* TSM and LL related delay values */
 #if defined(RADIO_IS_GEN_3P5)
-#define TX_RX_ON_DELinit (0x00009686UL)    /* TX_ON_DELAY defined differently than prior radios, must be 150usec. */
-#define TX_RX_SYNTH_init_A0 (0x00002318UL) /* TX_RX_SYNTH initialization for KW37 A0 silicon */
-#define TX_RX_SYNTH_init_B0 (0x00006918UL) /* TX_RX_SYNTH initialization for KW37 B0 silicon */
+#define TX_RX_ON_DELinit       (0x00009686UL) /* TX_ON_DELAY defined differently than prior radios, must be 150usec. */
+#define TX_RX_SYNTH_init_A0    (0x00002318UL) /* TX_RX_SYNTH initialization for KW37 A0 silicon */
+#define TX_RX_SYNTH_init_B0    (0x00006918UL) /* TX_RX_SYNTH initialization for KW37 B0 silicon */
 
-#define TX_PATH_DELAY_2MBPS (0x1U)    /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for 1Mbps */
-#define TX_PATH_DELAY_1MBPS (0x2U)    /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for 2Mbps */
+#define TX_PATH_DELAY_2MBPS    (0x1U)       /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for 1Mbps */
+#define TX_PATH_DELAY_1MBPS    (0x2U)       /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for 2Mbps */
 #define TX_PATH_DELAY_S2_CODED (0x2U) /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for S2 coded \
                                        */
 #define TX_PATH_DELAY_S8_CODED (0x2U) /*!<  Gen 3.5 - TX Path delay for bits from controller to antenna for S8 coded \
                                        */
 
-#define RX_PATH_DELAY_2MBPS (0x7U) /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for 1Mbps */
-#define RX_PATH_DELAY_1MBPS (0xEU) /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for 2Mbps */
+#define RX_PATH_DELAY_2MBPS    (0x7U)       /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for 1Mbps */
+#define RX_PATH_DELAY_1MBPS    (0xEU)       /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for 2Mbps */
 #define RX_PATH_DELAY_S2_CODED \
     (0x10U) /*!<  Gen 3.5 - RX Path delay for last bit from antenna to controller for S2 coded */
 #define RX_PATH_DELAY_S8_CODED \
@@ -190,34 +191,34 @@ typedef struct
 #define TX_RX_ON_DELinit \
     (0x00009256UL) /* TX_ON_DELAY defined differently than prior radios, must be 86usec. Used for Mindtree BLE LL */
 #if defined(HDI_MODE) && (HDI_MODE == 1)
-#define TX_RX_SYNTH_init (0x00007056UL) /* HDI MODE tuning */
+#define TX_RX_SYNTH_init       (0x00007056UL) /* HDI MODE tuning */
 #else
-#define TX_RX_SYNTH_init (0x0000745BUL) /* Used for Mindtree BLE LL */
-#endif                                  /* HDI_MODE */
+#define TX_RX_SYNTH_init       (0x0000745BUL) /* Used for Mindtree BLE LL */
+#endif /* HDI_MODE */
 
-#define TX_PATH_DELAY_2MBPS (0x1U)    /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for 1Mbps */
-#define TX_PATH_DELAY_1MBPS (0x2U)    /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for 2Mbps */
+#define TX_PATH_DELAY_2MBPS    (0x1U)       /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for 1Mbps */
+#define TX_PATH_DELAY_1MBPS    (0x2U)       /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for 2Mbps */
 #define TX_PATH_DELAY_S2_CODED (0x2U) /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for S2 coded \
                                        */
 #define TX_PATH_DELAY_S8_CODED (0x2U) /*!<  Gen 4.0 - TX Path delay for bits from controller to antenna for S8 coded \
                                        */
 
-#define RX_PATH_DELAY_2MBPS (0x7U) /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for 1Mbps */
-#define RX_PATH_DELAY_1MBPS (0xEU) /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for 2Mbps */
+#define RX_PATH_DELAY_2MBPS    (0x7U)       /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for 1Mbps */
+#define RX_PATH_DELAY_1MBPS    (0xEU)       /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for 2Mbps */
 #define RX_PATH_DELAY_S2_CODED \
     (0x10U) /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for S2 coded */
 #define RX_PATH_DELAY_S8_CODED \
     (0x10U)                        /*!<  Gen 4.0 - RX Path delay for last bit from antenna to controller for S8 coded */
-#else                              /* defined (RADIO_IS_GEN_4P5) */
-#define TX_PATH_DELAY_2MBPS (0x1U) /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for 1Mbps */
-#define TX_PATH_DELAY_1MBPS (0x1U) /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for 2Mbps */
+#else /* defined (RADIO_IS_GEN_4P5) */
+#define TX_PATH_DELAY_2MBPS    (0x1U)       /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for 1Mbps */
+#define TX_PATH_DELAY_1MBPS    (0x1U)       /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for 2Mbps */
 #define TX_PATH_DELAY_S2_CODED (0x1U) /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for S2 coded \
                                        */
 #define TX_PATH_DELAY_S8_CODED (0x1U) /*!<  Gen 4.5 - TX Path delay for bits from controller to antenna for S8 coded \
                                        */
 
-#define RX_PATH_DELAY_2MBPS (0x7U) /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for 1Mbps */
-#define RX_PATH_DELAY_1MBPS (0xEU) /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for 2Mbps */
+#define RX_PATH_DELAY_2MBPS    (0x7U)       /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for 1Mbps */
+#define RX_PATH_DELAY_1MBPS    (0xEU)       /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for 2Mbps */
 #define RX_PATH_DELAY_S2_CODED \
     (0x12U) /*!<  Gen 4.5 - RX Path delay for last bit from antenna to controller for S2 coded */
 #define RX_PATH_DELAY_S8_CODED \
@@ -227,18 +228,19 @@ typedef struct
 
 #endif /* defined(RADIO_IS_GEN_3P5) */
 
-#define PA_SETTLING_TIME (0x4U) /*!< Time for PA to settle after ramp up and before on-the-air time. */
-#define PHY_EN_DELAY (28U)      /* Additional delay to add to PHY_EN signal to account for DC settling after RX_WU */
-#ifdef gXcvrAddTxOffset_d       /* allow higher level software to control whether offset is added or not */
-#define tx_ofst_usec (36U) /* offset value for TX warmup to extend TSM sequence on A0 KW37 silicon for Bluetooth LE */
+#define PA_SETTLING_TIME       (0x4U)       /*!< Time for PA to settle after ramp up and before on-the-air time. */
+#define PHY_EN_DELAY           (28U)        /* Additional delay to add to PHY_EN signal to account for DC settling after RX_WU */
+#ifdef gXcvrAddTxOffset_d /* allow higher level software to control whether offset is added or not */
+#define tx_ofst_usec           (36U)        /* offset value for TX warmup to extend TSM sequence on A0 KW37 silicon for Bluetooth LE */
 #else
-#define tx_ofst_usec (0U)     /* zero offset value for TX warmup for GENFSK only use cases */
-#endif                        /* ifdef gXcvrAddTxOffset_d */
-#define RX_WD_TIME_TGT (0x8U) /*!< Mid point value for the RX warmdown time register */
-#define TX_WD_TIME_TGT (0x8U) /*!< Mid point value for the TX warmdown time register */
+#define tx_ofst_usec           (0U)         /* zero offset value for TX warmup for GENFSK only use cases */
+#endif /* ifdef gXcvrAddTxOffset_d */
+#define RX_WD_TIME_TGT         (0x8U)       /*!< Mid point value for the RX warmdown time register */
+#define TX_WD_TIME_TGT         (0x8U)       /*!< Mid point value for the TX warmdown time register */
+
 
 #ifndef XCVR_DAC_TRIM_RETRY_COUNT
-#define XCVR_DAC_TRIM_RETRY_COUNT (1U) /*!< Default retry count for DCOC DAC trim process to 1 */
+#define XCVR_DAC_TRIM_RETRY_COUNT   (1U)     /*!< Default retry count for DCOC DAC trim process to 1 */
 #endif
 
 #ifndef XTAL_TEMP_COMP_LUT_SIZE
@@ -249,98 +251,99 @@ typedef struct
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
 /* Packet RAM to IPS register descriptor access macros */
 /* Address field for the Packet RAM to IPS register descriptor */
-#define PR2IPS_ADDR_MASK (0x00FFFFFFU)
-#define PR2IPS_ADDR_SHIFT (0U)
-#define PR2IPS_ADDR(x) (((uint32_t)(((uint32_t)(x)) << PR2IPS_ADDR_SHIFT)) & PR2IPS_ADDR_MASK)
+#define PR2IPS_ADDR_MASK       (0x00FFFFFFU)
+#define PR2IPS_ADDR_SHIFT      (0U)
+#define PR2IPS_ADDR(x)         (((uint32_t)(((uint32_t)(x)) << PR2IPS_ADDR_SHIFT)) & PR2IPS_ADDR_MASK)
 /* Count field for the Packet RAM to IPS register descriptor */
-#define PR2IPS_COUNT_MASK (0x3F000000U)
-#define PR2IPS_COUNT_SHIFT (24U)
+#define PR2IPS_COUNT_MASK       (0x3F000000U)
+#define PR2IPS_COUNT_SHIFT      (24U)
 #define PR2IPS_COUNT(x)                                    \
     (((uint32_t)(((uint32_t)(x)) << PR2IPS_COUNT_SHIFT)) & \
      PR2IPS_COUNT_MASK) /* Address field for the Packet RAM to IPS register descriptor */
 /* Type field for the Packet RAM to IPS register descriptor */
-#define PR2IPS_TYPE_MASK (0xC0000000U)
-#define PR2IPS_TYPE_SHIFT (30U)
-#define PR2IPS_TYPE(x) (((uint32_t)(((uint32_t)(x)) << PR2IPS_TYPE_SHIFT)) & PR2IPS_TYPE_MASK)
+#define PR2IPS_TYPE_MASK       (0xC0000000U)
+#define PR2IPS_TYPE_SHIFT      (30U)
+#define PR2IPS_TYPE(x)         (((uint32_t)(((uint32_t)(x)) << PR2IPS_TYPE_SHIFT)) & PR2IPS_TYPE_MASK)
 
 #define PR2IPS_DESCRIPTOR(type, reg_count, addr) PR2IPS_TYPE(type) | PR2IPS_COUNT(reg_count) | PR2IPS_ADDR(addr)
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
 
+
 /*! @brief Error codes for the XCVR driver. */
 typedef enum
 {
-    gXcvrSuccess_c = 0,
-    gXcvrInvalidParameters_c,
-    gXcvrUnsupportedOperation_c,
-    gXcvrTrimFailure_c,
-    gXcvrInvalidConfiguration_c,
-    gXcvrConfigurationFailure_c,
+  gXcvrSuccess_c = 0,
+  gXcvrInvalidParameters_c,
+  gXcvrUnsupportedOperation_c,
+  gXcvrTrimFailure_c,
+  gXcvrInvalidConfiguration_c,
+  gXcvrConfigurationFailure_c,
 } xcvrStatus_t;
 
 /*! @brief  Clock configuration enum type. */
 typedef enum
 {
-    EXT_CLK_32_MHZ = 0,
-    EXT_CLK_26_MHZ = 1,
+  EXT_CLK_32_MHZ = 0,
+  EXT_CLK_26_MHZ = 1,
 } ext_clock_config_t;
 
 /*! @brief  Radio operating mode setting types. */
 typedef enum
 {
-    BLE_MODE = 0,
+  BLE_MODE = 0,
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 400)
     OQPSK_802P15P4 = 1,
 #else
-    RESERVED1_MODE          = 1,  /*!< Reserved  */
-#endif                  /* defined(RADIO_IS_GEN_4P5) */
-    RESERVED2_MODE = 2, /*!< Reserved  */
+    RESERVED1_MODE = 1, /*!< Reserved  */
+#endif /* defined(RADIO_IS_GEN_4P5) */
+  RESERVED2_MODE = 2, /*!< Reserved  */
 
-    /* BT=0.5, h=** */
-    GFSK_BT_0p5_h_0p5  = 3, /*!< BT=0.5, h=0.5  */
-    GFSK_BT_0p5_h_0p32 = 4, /*!< BT=0.5, h=0.32 */
-    GFSK_BT_0p5_h_0p7  = 5, /*!< BT=0.5, h=0.7  */
-    GFSK_BT_0p5_h_1p0  = 6, /*!< BT=0.5, h=1.0  */
+  /* BT=0.5, h=** */
+  GFSK_BT_0p5_h_0p5  = 3, /*!< BT=0.5, h=0.5  */
+  GFSK_BT_0p5_h_0p32 = 4, /*!< BT=0.5, h=0.32 */
+  GFSK_BT_0p5_h_0p7  = 5, /*!< BT=0.5, h=0.7  */
+  GFSK_BT_0p5_h_1p0  = 6, /*!< BT=0.5, h=1.0  */
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 400)
-    /* BT=** h=0.5 */
-    GFSK_BT_0p3_h_0p5 = 7, /*!< BT=0.3, h=0.5  */
-    GFSK_BT_0p7_h_0p5 = 8, /*!< BT=0.7, h=0.5  */
+  /* BT=** h=0.5 */
+  GFSK_BT_0p3_h_0p5  = 7, /*!< BT=0.3, h=0.5  */
+  GFSK_BT_0p7_h_0p5  = 8, /*!< BT=0.7, h=0.5  */
 #else
-    RESERVED3_MODE          = 7,  /*!< Reserved  */
-    RESERVED4_MODE          = 8,  /*!< Reserved  */
+  RESERVED3_MODE  = 7, /*!< Reserved  */
+  RESERVED4_MODE  = 8, /*!< Reserved  */
 #endif /* defined(RADIO_IS_GEN_4P0) */
 
-    MSK       = 9,
-    BLE_LR    = 10,
-    FSK_H_0p5 = 11,
+  MSK = 9,
+  BLE_LR = 10,
+  FSK_H_0p5 = 11,
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 400)
-    GFSK_BT_1p0_h_0p5 = 12, /*!< BT=1.0, h=0.5  */
-    GFSK_BT_2p0_h_0p5 = 13, /*!< BT=2.0, h=0.32 */
+  GFSK_BT_1p0_h_0p5  = 12, /*!< BT=1.0, h=0.5  */
+  GFSK_BT_2p0_h_0p5 = 13, /*!< BT=2.0, h=0.32 */
 #else
-    RESERVED5_MODE          = 12, /*!< Reserved  */
-    RESERVED6_MODE          = 13, /*!< Reserved  */
+  RESERVED5_MODE  = 12, /*!< Reserved  */
+  RESERVED6_MODE  = 13, /*!< Reserved  */
 #endif /* defined(RADIO_IS_GEN_4P5) */
-    NUM_RADIO_MODES = 14,
+  NUM_RADIO_MODES = 14,
 } radio_mode_t;
 
 /*! @brief  Coding rate selections. */
 typedef enum
 {
-    BLE_UNCODED       = 0, /*!< Bluetooth LE Uncoded */
-    BLE_CODED_S2      = 1, /*!< Bluetooth LE Long Range  S=2 */
-    BLE_CODED_S8      = 2, /*!< Bluetooth LE Long Range  S=8 */
-    ANT_UNCODED       = 3, /*!< ANT emulation */
+    BLE_UNCODED = 0, /*!< Bluetooth LE Uncoded */
+    BLE_CODED_S2 = 1, /*!< Bluetooth LE Long Range  S=2 */
+    BLE_CODED_S8 = 2, /*!< Bluetooth LE Long Range  S=8 */
+    ANT_UNCODED = 3, /*!< ANT emulation */
     CODING_UNASSIGNED = 4, /* Unassigned Data Rate. Must match bit assignment in BITRATE field */
 } coding_t;
 
 /*! @brief  Data rate selections. */
 typedef enum
 {
-    DR_1MBPS      = 0, /*!< 1Mbps Data Rate. Must match bit assignment in BITRATE field */
-    DR_500KBPS    = 1, /*!< 500Kbps Data Rate. Must match bit assignment in BITRATE field */
-    DR_250KBPS    = 2, /*!< 250Kbps Data Rate. Must match bit assignment in BITRATE field */
-    DR_2MBPS      = 3, /*!< 2Mbps Data Rate. Must match bit assignment in BITRATE field */
+    DR_1MBPS = 0, /*!< 1Mbps Data Rate. Must match bit assignment in BITRATE field */
+    DR_500KBPS = 1, /*!< 500Kbps Data Rate. Must match bit assignment in BITRATE field */
+    DR_250KBPS = 2, /*!< 250Kbps Data Rate. Must match bit assignment in BITRATE field */
+    DR_2MBPS = 3, /*!< 2Mbps Data Rate. Must match bit assignment in BITRATE field */
     DR_UNASSIGNED = 4, /* Unassigned Data Rate. Must match bit assignment in BITRATE field */
 } data_rate_t;
 
@@ -351,95 +354,95 @@ typedef enum
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)
     ZIGBEE_LL = 1, /*!< 802.15.4/Zigbee Link Layer */
 #else
-    RESERVED1_LL            = 1,  /*!< Reserved */
-#endif                 /* defined(RADIO_IS_GEN_4P5) */
-    RESERVED2_LL  = 2, /*!< Reserved */
-    GENFSK_LL     = 3, /*!< Generic FSK Link Layer. Must match bit assignment in RADIO1_IRQ_SEL */
+    RESERVED1_LL = 1, /*!< Reserved */
+#endif /* defined(RADIO_IS_GEN_4P5) */
+    RESERVED2_LL = 2, /*!< Reserved */
+    GENFSK_LL = 3, /*!< Generic FSK Link Layer. Must match bit assignment in RADIO1_IRQ_SEL */
     UNASSIGNED_LL = 4, /*!< No Link Layer Assigned.  Must match bit assignment in RADIO1_IRQ_SEL */
 } link_layer_t;
 
 /*! @brief  Control settings for Fast Antenna Diversity */
 typedef enum
 {
-    NONE         = 0,
-    FAD_ENABLED  = 1,
-    LPPS_ENABLED = 2
+  NONE = 0,
+  FAD_ENABLED = 1,
+  LPPS_ENABLED = 2
 } FAD_LPPS_CTRL_T;
 
 /*! @brief  XCVR Panic codes for indicating panic reason. */
 typedef enum
 {
-    WRONG_RADIO_ID_DETECTED = 1,
-    CALIBRATION_INVALID     = 2,
-    RADIO_INIT_FAILURE      = 3,
+  WRONG_RADIO_ID_DETECTED = 1,
+  CALIBRATION_INVALID = 2,
+  RADIO_INIT_FAILURE = 3,
 } XCVR_PANIC_ID_T;
 
 /*! @brief  Initialization or mode change selection for config routine. */
 typedef enum
 {
-    XCVR_MODE_CHANGE = 0,
-    XCVR_FIRST_INIT  = 1,
+  XCVR_MODE_CHANGE = 0,
+  XCVR_FIRST_INIT = 1,
 } XCVR_INIT_MODE_CHG_T;
 
 /*! @brief  ACTIVE_LL field settings. */
 typedef enum
 {
-    XCVR_ACTIVE_LL_BTLE = 0, /*!<  BTLE Link Layer active. */
+    XCVR_ACTIVE_LL_BTLE = 0,         /*!<  BTLE Link Layer active. */
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)
-    XCVR_ACTIVE_LL_ZIGBEE_LL = 1, /*!< 802.15.4/Zigbee Link Layer active */
+    XCVR_ACTIVE_LL_ZIGBEE_LL = 1,    /*!< 802.15.4/Zigbee Link Layer active */
 #else
-    XCVR_ACTIVE_LL_RESERVED = 1,  /*!< Reserved, do not use. */
-#endif                               /* defined(RADIO_IS_GEN_4P5) */
-    XCVR_ACTIVE_LL_GENFSK       = 2, /*!<  Generic FSK Link Layer active. */
+    XCVR_ACTIVE_LL_RESERVED = 1,     /*!< Reserved, do not use. */
+#endif /* defined(RADIO_IS_GEN_4P5) */
+    XCVR_ACTIVE_LL_GENFSK = 2,       /*!<  Generic FSK Link Layer active. */
     XCVR_ACTIVE_LL_ALL_DISABLED = 3, /*!<  Disable all Link Layers, none active. */
-    XCVR_ACTIVE_LL_MAX          = 4  /*!<  Error. */
-} XCVR_ACTIVE_LL_SEL_T;
+    XCVR_ACTIVE_LL_MAX = 4           /*!<  Error. */
+}   XCVR_ACTIVE_LL_SEL_T;
 
 /*! @brief  BAND_SELECT field settings. */
 typedef enum
 {
-    XCVR_BAND_SEL_BTLE           = 0, /*!<  BTLE normal band selected in PLL. */
-    XCVR_BAND_SEL_BTLE_IN_MBAN   = 1, /*!<  BTLE in MBAN band selected in PLL. */
-    XCVR_BAND_SEL_BTLE_OVLP_MBAN = 2, /*!<  BTLE overlap MBAN band selected in PLL. */
-    XCVR_BAND_SEL_RESERVED1      = 3, /*!<  Reserved band selection */
+    XCVR_BAND_SEL_BTLE = 0,          /*!<  BTLE normal band selected in PLL. */
+    XCVR_BAND_SEL_BTLE_IN_MBAN = 1,  /*!<  BTLE in MBAN band selected in PLL. */
+    XCVR_BAND_SEL_BTLE_OVLP_MBAN = 2,/*!<  BTLE overlap MBAN band selected in PLL. */
+    XCVR_BAND_SEL_RESERVED1 = 3,     /*!<  Reserved band selection */
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 450)
-    XCVR_BAND_SEL_802_15_4_ISM = 4, /*!<  802.15.4 ISM band selection */
+    XCVR_BAND_SEL_802_15_4_ISM = 4,  /*!<  802.15.4 ISM band selection */
 #else
-    XCVR_BAND_SEL_RESERVED2 = 4,  /*!<  Reserved band selection */
-#endif                            /* defined(RADIO_IS_GEN_4P5) */
-    XCVR_BAND_SEL_802_15_4_J = 5, /*!<  802.15.4jband selection */
-    XCVR_BAND_SEL_DFT        = 6, /*!<  DFT band selection */
-    XCVR_BAND_SEL_GENERIC    = 7, /*!<  Generic band selection */
-    XCVR_BAND_SEL_MAX        = 8  /*!<  Error. */
-} XCVR_BAND_SEL_T;
+    XCVR_BAND_SEL_RESERVED2 = 4,     /*!<  Reserved band selection */
+#endif /* defined(RADIO_IS_GEN_4P5) */
+    XCVR_BAND_SEL_802_15_4_J = 5,    /*!<  802.15.4jband selection */
+    XCVR_BAND_SEL_DFT = 6,           /*!<  DFT band selection */
+    XCVR_BAND_SEL_GENERIC = 7,       /*!<  Generic band selection */
+    XCVR_BAND_SEL_MAX = 8            /*!<  Error. */
+}   XCVR_BAND_SEL_T;
 
 /*! @brief  RADIO_VER field settings. */
 typedef enum
 {
-    XCVR_RADIO_GEN_2P0     = 0xBU,    /*!<  2.4GHz Radio 2.0 . */
-    XCVR_RADIO_GEN_2P1     = 0x8U,    /*!<  2.4GHz Radio 2.1 . */
-    XCVR_RADIO_GEN_3P0     = 0x4U,    /*!<  2.4GHz Radio 3.0 . */
-    XCVR_RADIO_GEN_3P1     = 0x5U,    /*!<  2.4GHz Radio 3.1 . */
-    XCVR_RADIO_GEN_3P5     = 0xCU,    /*!<  2.4GHz Radio 3.5 . */
-    XCVR_RADIO_GEN_3P5_B0  = 0x6U,    /*!<  2.4GHz Radio 3.5, B0 silicon revision. */
-    XCVR_RADIO_GEN_4P0     = 0x4000U, /*!<  2.4GHz Radio 4.0 . */
-    XCVR_RADIO_GEN_4P5     = 0x4500U, /*!<  2.4GHz Radio 4.5 . */
-    XCVR_RADIO_GEN_INVALID = 0xFFFFU  /*!<  Error. */
-} XCVR_RADIO_GEN_T;
+    XCVR_RADIO_GEN_2P0 = 0xBU,         /*!<  2.4GHz Radio 2.0 . */
+    XCVR_RADIO_GEN_2P1 = 0x8U,         /*!<  2.4GHz Radio 2.1 . */
+    XCVR_RADIO_GEN_3P0 = 0x4U,         /*!<  2.4GHz Radio 3.0 . */
+    XCVR_RADIO_GEN_3P1 = 0x5U,         /*!<  2.4GHz Radio 3.1 . */
+    XCVR_RADIO_GEN_3P5 = 0xCU,         /*!<  2.4GHz Radio 3.5 . */
+    XCVR_RADIO_GEN_3P5_B0 = 0x6U,      /*!<  2.4GHz Radio 3.5, B0 silicon revision. */
+    XCVR_RADIO_GEN_4P0 = 0x4000U,      /*!<  2.4GHz Radio 4.0 . */
+    XCVR_RADIO_GEN_4P5 = 0x4500U,      /*!<  2.4GHz Radio 4.5 . */
+    XCVR_RADIO_GEN_INVALID = 0xFFFFU   /*!<  Error. */
+}   XCVR_RADIO_GEN_T;
 
 /*! @brief  Packet RAM selection (TX or RX) enum type for PR2IPS usage. */
 typedef enum
 {
-    TX_PKT_RAM_SEL = 0U, /*!<  Select the TX PKT_RAM bank for usage for Fast Peripheral Reg upload/download. */
-    RX_PKT_RAM_SEL = 1U, /*!<  Select the RX PKT_RAM bank for usage for Fast Peripheral Reg upload/download. */
+  TX_PKT_RAM_SEL = 0U, /*!<  Select the TX PKT_RAM bank for usage for Fast Peripheral Reg upload/download. */
+  RX_PKT_RAM_SEL = 1U, /*!<  Select the RX PKT_RAM bank for usage for Fast Peripheral Reg upload/download. */
 } PKT_RAM_BANK_SEL_T;
 
 /*! @brief  Packet RAM 2 IPS transfer type field. */
 typedef enum
 {
-    PR2IPS_END_OF_DESCRIP = 0U, /*!<  Denotes the last PR2IPS descriptor in a sequence. */
-    PR2IPS_SINGLE_XFER    = 1U, /*!<  Selects a single transfer in the PR2IPS descriptor. */
-    PR2IPS_BURST_XFER     = 2U  /*!<  Selects a burst transfer in the PR2IPS descriptor. */
+  PR2IPS_END_OF_DESCRIP = 0U, /*!<  Denotes the last PR2IPS descriptor in a sequence. */
+  PR2IPS_SINGLE_XFER = 1U,       /*!<  Selects a single transfer in the PR2IPS descriptor. */
+  PR2IPS_BURST_XFER = 2U         /*!<  Selects a burst transfer in the PR2IPS descriptor. */
 } PR2IPS_XFER_T;
 
 /*! @brief Current configuration of the radio. */
@@ -467,19 +470,19 @@ typedef struct
  */
 typedef struct
 {
-    uint32_t dcoc_bba_step_reg;    /*!< XCVR_RX_DIG->DCOC_BBA_STEP contents */
-    uint32_t dcoc_tza_step_0_reg;  /*!< XCVR_RX_DIG->DCOC_TZA_STEP_0 contents */
-    uint32_t dcoc_tza_step_1_reg;  /*!< XCVR_RX_DIG->DCOC_TZA_STEP_1 contents */
-    uint32_t dcoc_tza_step_2_reg;  /*!< XCVR_RX_DIG->DCOC_TZA_STEP_2 contents */
-    uint32_t dcoc_tza_step_3_reg;  /*!< XCVR_RX_DIG->DCOC_TZA_STEP_3 contents */
-    uint32_t dcoc_tza_step_4_reg;  /*!< XCVR_RX_DIG->DCOC_TZA_STEP_4 contents */
-    uint32_t dcoc_tza_step_5_reg;  /*!< XCVR_RX_DIG->DCOC_TZA_STEP_5 contents */
-    uint32_t dcoc_tza_step_6_reg;  /*!< XCVR_RX_DIG->DCOC_TZA_STEP_6 contents */
-    uint32_t dcoc_tza_step_7_reg;  /*!< XCVR_RX_DIG->DCOC_TZA_STEP_7 contents */
-    uint32_t dcoc_tza_step_8_reg;  /*!< XCVR_RX_DIG->DCOC_TZA_STEP_8 contents */
-    uint32_t dcoc_tza_step_9_reg;  /*!< XCVR_RX_DIG->DCOC_TZA_STEP_9 contents */
+    uint32_t dcoc_bba_step_reg; /*!< XCVR_RX_DIG->DCOC_BBA_STEP contents */
+    uint32_t dcoc_tza_step_0_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_0 contents */
+    uint32_t dcoc_tza_step_1_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_1 contents */
+    uint32_t dcoc_tza_step_2_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_2 contents */
+    uint32_t dcoc_tza_step_3_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_3 contents */
+    uint32_t dcoc_tza_step_4_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_4 contents */
+    uint32_t dcoc_tza_step_5_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_5 contents */
+    uint32_t dcoc_tza_step_6_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_6 contents */
+    uint32_t dcoc_tza_step_7_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_7 contents */
+    uint32_t dcoc_tza_step_8_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_8 contents */
+    uint32_t dcoc_tza_step_9_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_9 contents */
     uint32_t dcoc_tza_step_10_reg; /*!< XCVR_RX_DIG->DCOC_TZA_STEP_10 contents */
-    uint32_t dcoc_dac_init_reg;    /*!< XCVR_RX_DIG->DCOC_DAC_INIT contents */
+    uint32_t dcoc_dac_init_reg; /*!< XCVR_RX_DIG->DCOC_DAC_INIT contents */
 } xcvr_DcocDacTrim_t;
 
 /*!
@@ -488,10 +491,10 @@ typedef struct
  */
 typedef struct
 {
-    uint32_t crcw_cfg;  /*!< RBME->CRCW_CFG contents */
-    uint32_t crcw_cfg3; /*!< RBME->CRCW_CFG3 contents */
-    uint32_t crc_init;  /*!< RBME->CRC_INIT contents */
-    uint32_t crc_poly;  /*!< RBME->CRC_POLY contents */
+    uint32_t crcw_cfg;          /*!< RBME->CRCW_CFG contents */
+    uint32_t crcw_cfg3;         /*!< RBME->CRCW_CFG3 contents */
+    uint32_t crc_init;          /*!< RBME->CRC_INIT contents */
+    uint32_t crc_poly;          /*!< RBME->CRC_POLY contents */
 } rbme_crc_config_t;
 
 /*!
@@ -500,10 +503,10 @@ typedef struct
  */
 typedef struct
 {
-    uint32_t whiten_cfg;    /*!< RBME->WHITEN_CFG contents */
-    uint32_t whiten_poly;   /*!< RBME->WHITEN_POLY contents */
-    uint32_t whiten_sz_thr; /*!< RBME->WHITEN_SZ_THR contents */
-    uint32_t wht_cfg;       /*!< RBME->WHT_CFG contents */
+    uint32_t whiten_cfg;        /*!< RBME->WHITEN_CFG contents */
+    uint32_t whiten_poly;       /*!< RBME->WHITEN_POLY contents */
+    uint32_t whiten_sz_thr;     /*!< RBME->WHITEN_SZ_THR contents */
+    uint32_t wht_cfg;           /*!< RBME->WHT_CFG contents */
 } rbme_whiten_config_t;
 
 /*!
@@ -526,10 +529,11 @@ typedef struct
     int8_t max_temp_degc;        /*!< The temperature corresponding to the last LUT entry, in deg C */
     uint8_t trim_below_min_temp; /*!< The CDAC value to use when temp is below the min temp for the LUT */
     uint8_t trim_above_max_temp; /*!< The CDAC value to use when temp is above the max temp for the LUT */
-    int8_t temp_step_degc;       /*!< The temperature step between each LUT entry, in deg C */
+    int8_t temp_step_degc;      /*!< The temperature step between each LUT entry, in deg C */
     uint8_t xtal_trim_lut[XTAL_TEMP_COMP_LUT_SIZE]; /*!< The CDAC values for the LUT, stored in ascending temperature,
                                                        from min to max with temp_step increments */
 } xcvr_temp_comp_lut_t;
+
 
 /*!
  * @brief Panic callback function type
@@ -566,7 +570,8 @@ typedef double float64_t;
 /* Expose TX_RX_ON_DELAY and SYNTH_DELAY for BLE LL to access for setting registers appropriately */
 extern const uint16_t tx_rx_on_delay;
 extern uint16_t tx_rx_synth_delay; /* Not constant, allows for A0/B0 KW37 support */
-#endif                             /* !defined(RADIO_IS_GEN_4P5) */
+#endif /* !defined(RADIO_IS_GEN_4P5) */
+
 
 /* Asembly NOP function encapsulation */
 static inline void ASM_NOP(void)
@@ -574,9 +579,10 @@ static inline void ASM_NOP(void)
     __asm("nop");
 };
 
-    /*******************************************************************************
-     * API
-     ******************************************************************************/
+
+/*******************************************************************************
+ * API
+ ******************************************************************************/
 
 #if defined(__cplusplus)
 extern "C" {
@@ -628,7 +634,7 @@ void XCVR_Deinit(void);
  * @param[in] xcvr_config  Pointer to a pointer to the full XCVR settings structure.
  * @return Status of the call.
  */
-xcvrStatus_t XCVR_RadioRegSetup(const xcvr_config_t **xcvr_config);
+xcvrStatus_t XCVR_RadioRegSetup(const xcvr_config_t ** xcvr_config);
 
 /*!
  * @brief Initializes an XCVR instance.
@@ -641,9 +647,9 @@ xcvrStatus_t XCVR_RadioRegSetup(const xcvr_config_t **xcvr_config);
  * mode change (== XCVR_MODE_CHANGE)
  * @return Status of the call.
  */
-xcvrStatus_t XCVR_Configure(const xcvr_config_t **xcvr_config,
-                            const xcvr_coding_config_t **rbme_config,
-                            XCVR_INIT_MODE_CHG_T first_init);
+xcvrStatus_t XCVR_Configure(const xcvr_config_t ** xcvr_config,
+                                const xcvr_coding_config_t ** rbme_config,
+                                XCVR_INIT_MODE_CHG_T first_init);
 
 /*!
  * @brief Initializes the RBME block.
@@ -653,7 +659,7 @@ xcvrStatus_t XCVR_Configure(const xcvr_config_t **xcvr_config,
  * @param[in] rbme  Pointer to a pointer to the RBME settings structure for coding, CRC, whitening setup.
  * @return Status of the call.
  */
-xcvrStatus_t XCVR_RBME_Configure(const xcvr_coding_config_t **rbme);
+xcvrStatus_t XCVR_RBME_Configure(const xcvr_coding_config_t ** rbme);
 
 /*!
  * @brief Startup the radio.
@@ -693,7 +699,7 @@ xcvrStatus_t XCVR_ChangeMode(const xcvr_config_t **xcvr_config, const xcvr_codin
  * fetching Whitener settings.
  * @note This API will return meaningless results if called before the radio and RBME are initialized.
  */
-void XCVR_GetCRCWConfig(rbme_crc_config_t *crc_config, rbme_whiten_config_t *whiten_config);
+void XCVR_GetCRCWConfig(rbme_crc_config_t * crc_config, rbme_whiten_config_t * whiten_config );
 
 /*!
  * @brief Sets the  configuration of the RBME CRC and Whitening.
@@ -706,7 +712,8 @@ void XCVR_GetCRCWConfig(rbme_crc_config_t *crc_config, rbme_whiten_config_t *whi
  * Whitener settings.
  * @note This API will return meaningless results if called before the radio and RBME are initialized.
  */
-void XCVR_SetCRCWConfig(const rbme_crc_config_t *crc_config, const rbme_whiten_config_t *whiten_config);
+void XCVR_SetCRCWConfig(const rbme_crc_config_t * crc_config, const rbme_whiten_config_t * whiten_config );
+
 
 /*!
  * @brief Enable Narrowband RSSI measurement.
@@ -717,6 +724,7 @@ void XCVR_SetCRCWConfig(const rbme_crc_config_t *crc_config, const rbme_whiten_c
  */
 void XCVR_EnaNBRSSIMeas(bool IIRnbEnable);
 
+
 /*!
  * @brief Register a callback from upper layers.
  *
@@ -724,7 +732,8 @@ void XCVR_EnaNBRSSIMeas(bool IIRnbEnable);
  *
  * @param[in] fptr  The function pointer to a panic callback.
  */
-void XCVR_RegisterPanicCb(panic_fptr fptr); /* allow upper layers to provide PANIC callback */
+void XCVR_RegisterPanicCb ( panic_fptr fptr ); /* allow upper layers to provide PANIC callback */
+
 
 /*!
  * @brief Panic function for XCVR related fatal errors.
@@ -777,7 +786,7 @@ link_layer_t XCVR_GetIRQMapping(uint8_t int_num);
  *
  * @note This API will return meaningless results if called before the radio is initialized.
  */
-xcvrStatus_t XCVR_GetCurrentConfig(xcvr_currConfig_t *curr_config);
+xcvrStatus_t XCVR_GetCurrentConfig(xcvr_currConfig_t * curr_config);
 
 /*!
  * @brief Controls setting the active link layer.
@@ -793,6 +802,7 @@ xcvrStatus_t XCVR_GetCurrentConfig(xcvr_currConfig_t *curr_config);
  */
 xcvrStatus_t XCVR_SetActiveLL(XCVR_ACTIVE_LL_SEL_T active_ll);
 
+
 /*!
  * @brief Controls fetching the current active link layer.
  *
@@ -800,7 +810,7 @@ xcvrStatus_t XCVR_SetActiveLL(XCVR_ACTIVE_LL_SEL_T active_ll);
  *
  * @return The active link layer.
  */
-XCVR_ACTIVE_LL_SEL_T XCVR_GetActiveLL(void);
+XCVR_ACTIVE_LL_SEL_T  XCVR_GetActiveLL(void);
 
 /*!
  * @brief Controls setting the PLL band selection.
@@ -823,7 +833,7 @@ xcvrStatus_t XCVR_SetPLLBand(XCVR_BAND_SEL_T band);
  *
  * @return The selected band.
  */
-XCVR_BAND_SEL_T XCVR_GetPLLBand(void);
+XCVR_BAND_SEL_T  XCVR_GetPLLBand(void);
 
 /*!
  * @brief Controls setting the seed for the MSK to FSK transform in the PHY.
@@ -836,6 +846,8 @@ XCVR_BAND_SEL_T XCVR_GetPLLBand(void);
  * @return The status of the change.
  */
 xcvrStatus_t XCVR_SetMSKPreambleSeed(uint8_t last_preamble_bit);
+
+
 
 /*! @}*/
 
@@ -858,6 +870,7 @@ xcvrStatus_t XCVR_SetMSKPreambleSeed(uint8_t last_preamble_bit);
  */
 xcvrStatus_t XCVR_SetXtalTrim(uint8_t xtalTrim);
 
+
 /*!
  * @brief Controls getting the XTAL trim value.
  *
@@ -866,7 +879,7 @@ xcvrStatus_t XCVR_SetXtalTrim(uint8_t xtalTrim);
  *
  * @return The XTAL trim compensation factor that is currently programmed.
  */
-uint8_t XCVR_GetXtalTrim(void);
+uint8_t  XCVR_GetXtalTrim(void);
 
 /*!
  * @brief Controls temp compensating the XTAL trim value.
@@ -877,7 +890,8 @@ uint8_t XCVR_GetXtalTrim(void);
  * @param[in] temp_deg_c  The temperature in degrees C.
  * @return The status of the trim process.
  */
-xcvrStatus_t XCVR_SetXtalTempComp(const xcvr_temp_comp_lut_t *temp_comp_lut, int8_t temp_deg_c);
+xcvrStatus_t XCVR_SetXtalTempComp(const xcvr_temp_comp_lut_t * temp_comp_lut, int8_t temp_deg_c);
+
 
 /*!
  * @brief  Controls setting the RSSI adjustment.
@@ -897,7 +911,7 @@ xcvrStatus_t XCVR_SetRssiAdjustment(int8_t adj);
  *
  * @return The RSSI adjustment value as a signed 8-bit value, representing 1/4 dBm steps..
  */
-int8_t XCVR_GetRssiAdjustment(void);
+int8_t  XCVR_GetRssiAdjustment(void);
 
 #if defined(RADIO_IS_GEN_3P5)
 /*!
@@ -942,7 +956,7 @@ int16_t XCVR_GetRssiResult(void);
  * @param[inout] trim_values  Pointer to the location in memory where the routine should store the trim results.
  * @return The status of the trim routine.
  */
-xcvrStatus_t XCVR_CalculateDcocDacTrims(xcvr_DcocDacTrim_t *trim_values);
+xcvrStatus_t XCVR_CalculateDcocDacTrims(xcvr_DcocDacTrim_t * trim_values);
 
 /*!
  * @brief  Controls setting the DCOC DAC trim register contents.
@@ -955,7 +969,7 @@ xcvrStatus_t XCVR_CalculateDcocDacTrims(xcvr_DcocDacTrim_t *trim_values);
  * programming into registers.
  * @return The status of the trim setting.
  */
-xcvrStatus_t XCVR_SetDcocDacTrims(const xcvr_DcocDacTrim_t *trim_values);
+xcvrStatus_t XCVR_SetDcocDacTrims(const xcvr_DcocDacTrim_t * trim_values);
 
 /*!
  * @brief  Controls getting the DCOC DAC trim register contents.
@@ -968,7 +982,7 @@ xcvrStatus_t XCVR_SetDcocDacTrims(const xcvr_DcocDacTrim_t *trim_values);
  * read from registers.
  * @return The status of the routine.
  */
-xcvrStatus_t XCVR_GetDcocDacTrims(xcvr_DcocDacTrim_t *trim_values);
+xcvrStatus_t XCVR_GetDcocDacTrims(xcvr_DcocDacTrim_t * trim_values);
 #endif /* defined(RADIO_IS_GEN_3P5)  */ /* Gen 4 and later radios don't include DAC trims */
 
 /*!
@@ -983,7 +997,7 @@ xcvrStatus_t XCVR_GetDcocDacTrims(xcvr_DcocDacTrim_t *trim_values);
  * function. This must be done before any other PLL channel or frequency over-ride function is used OR before the link
  * layer channel control is used.
  */
-xcvrStatus_t XCVR_OverrideChannel(uint8_t channel);
+xcvrStatus_t XCVR_OverrideChannel (uint8_t channel);
 
 /*!
  * @brief Controls setting the PLL to a particular channel using external SW channel table entry.
@@ -998,21 +1012,21 @@ xcvrStatus_t XCVR_OverrideChannel(uint8_t channel);
  * function. This must be done before any other PLL channel or frequency over-ride function is used OR before the link
  * layer channel control is used.
  */
-xcvrStatus_t XCVR_OverrideCustomChannel(const xcvr_pllChannel_t *customChannel);
+xcvrStatus_t XCVR_OverrideCustomChannel (const xcvr_pllChannel_t * customChannel);
 
 #if defined(RADIO_IS_GEN_3P5) /* Gen 4 and later radios use low IF receivers and need custom override for RX and TX */
-                              /*!
-                               * @brief Set an arbitrary frequency for RX and TX for the radio.
-                               *
-                               * This function sets the radio frequency used for RX and TX.
-                               *
-                               * @param[in] freq  Target frequency setting in Hz.
-                               * @return Status of the call.
+/*!
+ * @brief Set an arbitrary frequency for RX and TX for the radio.
+ *
+ * This function sets the radio frequency used for RX and TX.
+ *
+ * @param[in] freq  Target frequency setting in Hz.
+ * @return Status of the call.
                                * @note The ::XCVR_ReleasePLLOverride() function must be called to release the PLL over-ride bits which are set by this
                                * function. This must be done before                               any other PLL channel or frequency over-ride function is used OR before the link
                                * layer channel control is used.
-                               */
-xcvrStatus_t XCVR_OverrideFrequency(uint32_t freq);
+ */
+    xcvrStatus_t XCVR_OverrideFrequency (uint32_t freq);
 #else
 /*!
  * @brief Set an arbitrary frequency for RX (only) for the radio.
@@ -1030,7 +1044,7 @@ xcvrStatus_t XCVR_OverrideFrequency(uint32_t freq);
  * function. This must be done before any other PLL channel or frequency over-ride function is used OR before the link
  * layer channel control is used.
  */
-xcvrStatus_t XCVR_OverrideRxFrequency(uint32_t freq, int32_t offset_freq);
+xcvrStatus_t XCVR_OverrideRxFrequency (uint32_t freq, int32_t offset_freq);
 
 /*!
  * @brief Set an arbitrary frequency for TX (only) for the radio.
@@ -1044,7 +1058,7 @@ xcvrStatus_t XCVR_OverrideRxFrequency(uint32_t freq, int32_t offset_freq);
  * function. This must be done before any other PLL channel or frequency over-ride function is used OR before the link
  * layer channel control is used.
  */
-xcvrStatus_t XCVR_OverrideTxFrequency(uint32_t freq);
+xcvrStatus_t XCVR_OverrideTxFrequency (uint32_t freq);
 #endif /* defined(RADIO_IS_GEN_3P5)*/
 
 /*!
@@ -1061,25 +1075,26 @@ xcvrStatus_t XCVR_OverrideTxFrequency(uint32_t freq);
 void XCVR_ReleasePLLOverride(void);
 
 #if defined(RADIO_IS_GEN_3P5) /* Gen 4 and later radios use low IF receivers and need custom override for RX and TX */
-                              /*!
-                               * @brief Reads the current frequency for RX and TX for the radio.
-                               *
-                               * This function reads the radio frequency used for RX and TX.
-                               *
-                               * @return Current radio frequency setting in Hz.
-                               */
-#else
 /*!
  * @brief Reads the current frequency for RX and TX for the radio.
  *
  * This function reads the radio frequency used for RX and TX.
  *
  * @return Current radio frequency setting in Hz.
+ */
+ #else
+ /*!
+  * @brief Reads the current frequency for RX and TX for the radio.
+  *
+  * This function reads the radio frequency used for RX and TX.
+  *
+  * @return Current radio frequency setting in Hz.
  * @note If the frequency was set using ::XCVR_OverrideRxFrequency() then this routine returns the sum of the target and
  * offset frequencies.
- */
+  */
 #endif /* defined(RADIO_IS_GEN_3P5)*/
-uint32_t XCVR_GetFreq(void);
+uint32_t XCVR_GetFreq ( void );
+
 
 /*!
  * @brief Force receiver warmup.
@@ -1087,7 +1102,8 @@ uint32_t XCVR_GetFreq(void);
  * This function forces the initiation of a receiver warmup sequence.
  *
  */
-void XCVR_ForceRxWu(void);
+void XCVR_ForceRxWu ( void );
+
 
 /*!
  * @brief Force receiver warmdown.
@@ -1095,7 +1111,8 @@ void XCVR_ForceRxWu(void);
  * This function forces the initiation of a receiver warmdown sequence.
  *
  */
-void XCVR_ForceRxWd(void);
+void XCVR_ForceRxWd ( void );
+
 
 /*!
  * @brief Force transmitter warmup.
@@ -1103,7 +1120,8 @@ void XCVR_ForceRxWd(void);
  * This function forces the initiation of a transmit warmup sequence.
  *
  */
-void XCVR_ForceTxWu(void);
+void XCVR_ForceTxWu ( void );
+
 
 /*!
  * @brief Force transmitter warmdown.
@@ -1111,7 +1129,7 @@ void XCVR_ForceTxWu(void);
  * This function forces the initiation of a transmit warmdown sequence.
  *
  */
-void XCVR_ForceTxWd(void);
+void XCVR_ForceTxWd ( void );
 
 /*!
  * @brief Wait (poll) for completion of receiver warmup.
@@ -1119,7 +1137,7 @@ void XCVR_ForceTxWd(void);
  * This function polls for the TSM to complete a  receive warmup sequence.
  *
  */
-void XCVR_WaitRxWu(void);
+void XCVR_WaitRxWu ( void );
 
 /*!
  * @brief Wait (poll) for completion of transmitter warmup.
@@ -1127,7 +1145,7 @@ void XCVR_WaitRxWu(void);
  * This function polls for the TSM to complete a  transmit warmup sequence.
  *
  */
-void XCVR_WaitTxWu(void);
+void XCVR_WaitTxWu ( void );
 
 /*!
  * @brief Wait (poll) for completion of transmitter or receiver warmdown.
@@ -1201,6 +1219,7 @@ xcvrStatus_t XCVR_ForcePAPower(uint8_t pa_power);
  */
 void XCVR_ReleasePAPower(void);
 
+
 /*!
  * @brief Starts CW TX.
  *
@@ -1226,17 +1245,20 @@ xcvrStatus_t XCVR_DftTxCW(uint32_t rf_freq);
  */
 xcvrStatus_t XCVR_EnableAnaPaRamp(uint8_t smoother_cur);
 
+
 /*!
  * @brief Function to disable Analog PA ramping and return to prior settings.
  *
  * This function disables Analog PA ramping and restores the settings to those prior to ::XCVR_EnableAnaPaRamp().
  *
- * @pre  The function ::XCVR_EnableAnaPaRamp() must have been called first in order to backup the
+ * @pre  The function ::XCVR_EnableAnaPaRamp() must have been called first in order to backup the 
  *  settings in the affected registers.
  *
  */
 void XCVR_DisableAnaPaRamp(void);
-#endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
+#endif  /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
+
+
 
 /*!
  * @brief Function to set AGC to manual and DCOC to auto.
@@ -1277,7 +1299,7 @@ void XCVR_bumpPaPowerUp(void);
  * @note
  *    The power level change requires DCDC voltage to be changed as well. This is NOT done by the XCVR driver.
  */
-void XCVR_releasePaPowerBump(void);
+ void XCVR_releasePaPowerBump(void);
 
 /*!
  * @brief Fetches the radio version for this silicon.
@@ -1296,7 +1318,7 @@ uint16_t XCVR_IdentifyRadioVer(uint32_t radio_ver);
 /*!
  * @brief Function to override the TX filter to reduce sideband power during TX.
  *
- * This function overrides the TX filter settings for 802.15.4 mode and is intended to be used when transmitting on
+ * This function overrides the TX filter settings for 802.15.4 mode and is intended to be used when transmitting on 
  * channel 11 or 26 at power levels > 0dB. It allows the system to meet regulatory lower/upper band power limits.
  *
  * @param[in] level  The level of filtering to apply 0 through 4 are valid; Zero means release all filtering, 1 - 4 are
@@ -1384,7 +1406,7 @@ unsigned char XCVR_getLdoAntTrim(void);
  * @pre The descriptors must be loaded into the desired PKT_RAM bank at the specified offset prior to running this
  * routine.
  *
- * @warning This routine does NOT have the ability to check if the descriptors are configured correctly and can produce
+ * @warning This routine does NOT have the ability to check if the descriptors are configured correctly and can produce 
  * unexpected results if the descriptors overrun the targeted PKT_RAM space.
  */
 void XCVR_FastPeriphReg_UpDownload_Go(PKT_RAM_BANK_SEL_T pkt_ram_sel, uint32_t offset_in_pkt_ram, bool upload);
@@ -1427,7 +1449,7 @@ xcvrStatus_t XCVR_FastPeriphDescrip_Load(uint32_t *descriptor_list,
  *
  * @return The status of the descriptor and data load to PKT_RAM.
  *
- * @post The descriptors and data will be loaded into the desired PKT_RAM bank at the specified offset
+ * @post The descriptors and data will be loaded into the desired PKT_RAM bank at the specified offset 
  * and a single word of all zeros will be added to the end to indicate the completion of the list.
  *
  * @note The XCVR_ValidateFastPeriphDescrip() or other means must be used to validate the input date before calling this
@@ -1441,7 +1463,7 @@ xcvrStatus_t XCVR_FastPeriphDescripData_Load(uint32_t *descriptor_data_list,
 /*!
  * @brief Function to validate a descriptor list for fast DMA upload/download of peripheral registers.
  *
- * This function validates a descriptor list to be used in the fast DMA upload or download functionality. It
+ * This function validates a descriptor list to be used in the fast DMA upload or download functionality. It 
  * requires that the  XCVR_FastPeriphDescrip_WordCount() routine first be used to calculate the word count.
  *
  * @param[in] pkt_ram_sel  The bank of PKT RAM to use; Zero means use TX PKT_RAM; 1 means use RX PKT_RAM.
@@ -1476,7 +1498,7 @@ xcvrStatus_t XCVR_ValidateFastPeriphDescrip(PKT_RAM_BANK_SEL_T pkt_ram_sel,
  *
  * @return Thenumber of words it will occupy in PKT RAM.
  */
-uint32_t XCVR_FastPeriphDescrip_WordCount(uint32_t *descriptor_list, uint16_t num_descrips, bool compressed_list);
+ uint32_t  XCVR_FastPeriphDescrip_WordCount(uint32_t * descriptor_list, uint16_t num_descrips , bool compressed_list);
 
 /*!
  * @brief Function towait for completion of a FastPeriph to IPS upload or download.
@@ -1486,7 +1508,7 @@ uint32_t XCVR_FastPeriphDescrip_WordCount(uint32_t *descriptor_list, uint16_t nu
  *
  * @return False if an error is asserted at completion of the transfer; True if the error bit is clear.
  *
- * @post The enable bit for the FastPeriph function is cleared by this routine so it will be ready for subsequent usage.
+ * @post The enable bit for the FastPeriph function is cleared by this routine so it will be ready for subsequent usage. 
  */
 bool XCVR_FastPeriph_WaitComplete(void);
 
@@ -1507,10 +1529,12 @@ bool XCVR_FastPeriph_CheckErrorComplete(void);
 
 #endif /* defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470) */
 
+
 /*! @}*/
 
 #if defined(__cplusplus)
 }
 #endif
+
 
 #endif /* NB2P4_XCVR_H */
