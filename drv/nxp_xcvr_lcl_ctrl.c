@@ -2955,7 +2955,7 @@ xcvrLclStatus_t XCVR_LCL_CalibrateDcocComplete(void)
     /* Remove any PLL settings that caused out-of-band receive operations (for safety) */
     xcvr_status = XCVR_OverrideRxFrequency((uint32_t)(2402000000UL), (int32_t)(-1000000L));
     assert(xcvr_status == gXcvrSuccess_c);
-    (void)status;
+    (void)xcvr_status;
 
     XCVR_ReleasePLLOverride();
 #else
