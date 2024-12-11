@@ -2407,7 +2407,7 @@ xcvrLclStatus_t XCVR_LCL_ConfigLclBlock(xcvr_lcl_rsm_config_t *rsm_settings_ptr,
             temp                      = toneAntennaIDs_p[3];
             temp                      = toneAntennaIDs_p[2] | (temp << 4U);
             temp                      = toneAntennaIDs_p[1] | (temp << 4U);
-            temp                      = toneAntennaIDs_p[1] | (temp << 4U);
+            temp                      = toneAntennaIDs_p[0] | (temp << 4U);
             XCVR_MISC->LCL_GPIO_CTRL0 = temp;
             
             temp = XCVR_RX_DIG->AGC_CTRL_STAT;
