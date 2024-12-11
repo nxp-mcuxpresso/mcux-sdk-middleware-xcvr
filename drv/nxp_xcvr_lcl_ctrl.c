@@ -1111,8 +1111,6 @@ xcvrLclStatus_t XCVR_LCL_RsmInit(const xcvr_lcl_rsm_config_t *rsm_settings_ptr)
 
         temp |= XCVR_RX_DIG_DFT_CTRL_CGM_OVRD(4); // to maintain rx_dig_mixer_clk
 #endif
-        /* [CONNRF-1139] FIX Tx_gain not applied when TX WU runs DCOC */
-        temp |= 1UL << (9U + XCVR_RX_DIG_DFT_CTRL_CGM_OVRD_SHIFT);
         XCVR_RX_DIG->DFT_CTRL = temp;
 
 #if defined(NXP_RADIO_GEN) && (NXP_RADIO_GEN >= 470)
@@ -1339,10 +1337,6 @@ void XCVR_LCL_RsmDeInit(void)
 {
     /* Disable mask capability from RX DIG to allow independent IQ capture  */
     XCVR_RX_DIG->CTRL1 &= ~(XCVR_RX_DIG_CTRL1_RX_IQ_PH_OUTPUT_COND_MASK);
-#if (0)
-    /* [CONNRF-1139] Disable AGC Clock override to allow gain config update in TX after DCOC */
-    XCVR_RX_DIG->DFT_CTRL &= ~(1UL << (9U + XCVR_RX_DIG_DFT_CTRL_CGM_OVRD_SHIFT));
-#endif
 
     /* Restore Tx_dig */
     XCVR_TX_DIG->DATA_PADDING_CTRL   = xcvr_settings.tx_dig_data_padding_ctrl;
