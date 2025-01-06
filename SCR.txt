@@ -1,5 +1,5 @@
 Release Name: Connectivity Middleware Transceiver Driver
-Release Version: 2.1.4
+Release Version: 2.1.5
 Release Location: https://github.com/nxp-mcuxpresso/mcux-sdk-middleware-xcvr
 Outgoing License: BSD-3-Clause
 License File: LICENSE.txt                   
